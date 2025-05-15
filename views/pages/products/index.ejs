@@ -1,0 +1,102 @@
+<div class="row">
+  <!-- Sidebar với bộ lọc -->
+  <div class="col-lg-3 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Danh mục</h5>
+      </div>
+      <div class="list-group list-group-flush">
+        <a
+          href="/products"
+          class="list-group-item list-group-item-action <%= !query.category ? 'active' : '' %>"
+        >
+          Tất cả sản phẩm
+        </a>
+        <% if (categories && categories.length > 0) { %> <%
+        categories.forEach(category => { %>
+        <a
+          href="/products?category=<%= category._id %>"
+          class="list-group-item list-group-item-action <%= query && query.category === category._id.toString() ? 'active' : '' %>"
+        >
+          <%= category.name %>
+        </a>
+        <% }) %> <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Danh sách sản phẩm -->
+  <div class="col-lg-9">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Sản phẩm</h2>
+      <% if (query && query.search) { %>
+      <p>Kết quả tìm kiếm cho: "<%= query.search %>"</p>
+      <% } %>
+    </div>
+
+    <% if (products && products.length > 0) { %>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      <% products.forEach(product => { %>
+      <div class="col">
+        <div class="card h-100 product-card">
+          <img
+            src="<%= product.imageURL %>"
+            class="card-img-top"
+            alt="<%= product.name %>"
+          />
+          <div class="card-body">
+            <h5 class="card-title"><%= product.name %></h5>
+            <p class="text-muted"><%= product.category.name %></p>
+            <p class="card-text fw-bold text-danger">
+              <%= formatPrice(product.price) %>
+            </p>
+          </div>
+          <div class="card-footer bg-transparent border-top-0">
+            <a href="/products/<%= product._id %>" class="btn btn-primary w-100"
+              >Chi tiết</a
+            >
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+
+    <!-- Phân trang -->
+    <% if (totalPages > 1) { %>
+    <nav aria-label="Page navigation" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <% if (currentPage > 1) { %>
+        <li class="page-item">
+          <a
+            class="page-link"
+            href="/products?page=<%= currentPage - 1 %><%= query.category ? '&category=' + query.category : '' %><%= query.search ? '&search=' + query.search : '' %>"
+          >
+            Trước
+          </a>
+        </li>
+        <% } %> <% for(let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+          <a
+            class="page-link"
+            href="/products?page=<%= i %><%= query.category ? '&category=' + query.category : '' %><%= query.search ? '&search=' + query.search : '' %>"
+          >
+            <%= i %>
+          </a>
+        </li>
+        <% } %> <% if (currentPage < totalPages) { %>
+        <li class="page-item">
+          <a
+            class="page-link"
+            href="/products?page=<%= currentPage + 1 %><%= query.category ? '&category=' + query.category : '' %><%= query.search ? '&search=' + query.search : '' %>"
+          >
+            Tiếp
+          </a>
+        </li>
+        <% } %>
+      </ul>
+    </nav>
+    <% } %> <% } else { %>
+    <div class="alert alert-info">Không tìm thấy sản phẩm nào.</div>
+    <% } %>
+  </div>
+</div>

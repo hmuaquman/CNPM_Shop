@@ -1,0 +1,66 @@
+<div class="p-5 mb-4 bg-light rounded-3 hero-section">
+  <div class="container py-5">
+    <h1 class="display-5 fw-bold">Electronic Store</h1>
+    <p class="fs-4">
+      Chào mừng đến với cửa hàng điện tử của chúng tôi. Nơi cung cấp các sản
+      phẩm điện tử chính hãng, chất lượng cao.
+    </p>
+    <a class="btn btn-primary btn-lg" href="/products">Xem sản phẩm</a>
+  </div>
+</div>
+
+<div class="container my-4">
+  <h2 class="mb-4">Danh mục sản phẩm</h2>
+  <div class="row g-4">
+    <% if (categories && categories.length > 0) { %> <%
+    categories.forEach(category => { %>
+    <div class="col-md-3 col-6">
+      <a
+        href="/products?category=<%= category._id %>"
+        class="text-decoration-none"
+      >
+        <div class="card category-card h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title"><%= category.name %></h5>
+          </div>
+        </div>
+      </a>
+    </div>
+    <% }) %> <% } %>
+  </div>
+</div>
+
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Sản phẩm mới nhất</h2>
+    <a href="/products" class="btn btn-outline-primary">Xem tất cả</a>
+  </div>
+  <div class="row g-4">
+    <% if (latestProducts && latestProducts.length > 0) { %> <%
+    latestProducts.forEach(product => { %>
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <div class="card product-card h-100">
+        <img
+          src="<%= product.imageURL %>"
+          class="card-img-top"
+          alt="<%= product.name %>"
+        />
+        <div class="card-body">
+          <h5 class="card-title"><%= truncateText(product.name, 40) %></h5>
+          <p class="text-muted"><%= product.category.name %></p>
+          <p class="card-text fw-bold text-danger">
+            <%= formatPrice(product.price) %>
+          </p>
+          <a href="/products/<%= product._id %>" class="btn btn-primary"
+            >Chi tiết</a
+          >
+        </div>
+      </div>
+    </div>
+    <% }) %> <% } else { %>
+    <div class="col-12">
+      <p class="text-center">Hiện chưa có sản phẩm nào.</p>
+    </div>
+    <% } %>
+  </div>
+</div>

@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" href="/">Electronic Store</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Trang chủ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/products">Sản phẩm</a>
+        </li>
+      </ul>
+      <form class="d-flex me-2" action="/products" method="GET">
+        <input
+          class="form-control me-2"
+          type="search"
+          name="search"
+          placeholder="Tìm sản phẩm..."
+        />
+        <button class="btn btn-outline-light" type="submit">Tìm</button>
+      </form>
+      <ul class="navbar-nav">
+        <% if (locals.user) { %>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="userDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+          >
+            <%= locals.user.fullName %>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <% if (locals.user && locals.user.role === 'admin') { %>
+            <li><a class="dropdown-item" href="/admin/products">Quản lý</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <% } %>
+            <li><a class="dropdown-item" href="/auth/logout">Đăng xuất</a></li>
+          </ul>
+        </li>
+        <% } else { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/auth/login">Đăng nhập</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/auth/register">Đăng ký</a>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>
