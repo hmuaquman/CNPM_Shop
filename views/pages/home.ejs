@@ -9,6 +9,7 @@
   </div>
 </div>
 
+<!-- Danh mục sản phẩm -->
 <div class="container my-4">
   <h2 class="mb-4">Danh mục sản phẩm</h2>
   <div class="row g-4">
@@ -30,6 +31,110 @@
   </div>
 </div>
 
+<!-- Sản phẩm nổi bật -->
+<% if (featuredProducts && featuredProducts.length > 0) { %>
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Sản phẩm nổi bật</h2>
+    <a href="/products?featured=true" class="btn btn-outline-primary"
+      >Xem tất cả</a
+    >
+  </div>
+  <div class="row g-4">
+    <% featuredProducts.forEach(product => { %>
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <div class="card product-card h-100">
+        <div class="position-relative">
+          <img
+            src="<%= product.imageURL %>"
+            class="card-img-top"
+            alt="<%= product.name %>"
+          />
+          <span class="badge bg-primary position-absolute top-0 end-0 mt-2 me-2"
+            >Nổi bật</span
+          >
+        </div>
+        <div class="card-body">
+          <h5 class="card-title"><%= truncateText(product.name, 40) %></h5>
+          <p class="text-muted">
+            <%= product.brand %> | <%= product.category.name %>
+          </p>
+          <% if (product.discountPercentage > 0) { %>
+          <p class="card-text mb-0">
+            <span class="text-decoration-line-through text-muted"
+              ><%= formatPrice(product.basePrice) %></span
+            >
+            <span class="badge bg-danger ms-2"
+              >-<%= product.discountPercentage %>%</span
+            >
+          </p>
+          <p class="card-text fw-bold text-danger">
+            <%= formatPrice(product.price) %>
+          </p>
+          <% } else { %>
+          <p class="card-text fw-bold text-danger">
+            <%= formatPrice(product.price) %>
+          </p>
+          <% } %>
+          <a href="/products/<%= product._id %>" class="btn btn-primary"
+            >Chi tiết</a
+          >
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+<% } %>
+
+<!-- Sản phẩm giảm giá -->
+<% if (discountedProducts && discountedProducts.length > 0) { %>
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Khuyến mãi hot</h2>
+    <a href="/products?discount=true" class="btn btn-outline-primary"
+      >Xem tất cả</a
+    >
+  </div>
+  <div class="row g-4">
+    <% discountedProducts.forEach(product => { %>
+    <div class="col-lg-3 col-md-4 col-sm-6">
+      <div class="card product-card h-100">
+        <div class="position-relative">
+          <img
+            src="<%= product.imageURL %>"
+            class="card-img-top"
+            alt="<%= product.name %>"
+          />
+          <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">
+            -<%= product.discountPercentage %>%
+          </span>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title"><%= truncateText(product.name, 40) %></h5>
+          <p class="text-muted">
+            <%= product.brand %> | <%= product.category.name %>
+          </p>
+          <p class="card-text mb-0">
+            <span class="text-decoration-line-through text-muted"
+              ><%= formatPrice(product.basePrice) %></span
+            >
+          </p>
+          <p class="card-text fw-bold text-danger">
+            <%= formatPrice(product.price) %>
+          </p>
+          <a href="/products/<%= product._id %>" class="btn btn-primary"
+            >Chi tiết</a
+          >
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+<% } %>
+
+<!-- Sản phẩm mới nhất -->
 <div class="container my-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Sản phẩm mới nhất</h2>
@@ -40,17 +145,37 @@
     latestProducts.forEach(product => { %>
     <div class="col-lg-3 col-md-4 col-sm-6">
       <div class="card product-card h-100">
-        <img
-          src="<%= product.imageURL %>"
-          class="card-img-top"
-          alt="<%= product.name %>"
-        />
+        <div class="position-relative">
+          <img
+            src="<%= product.imageURL %>"
+            class="card-img-top"
+            alt="<%= product.name %>"
+          />
+          <% if (product.discountPercentage > 0) { %>
+          <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">
+            -<%= product.discountPercentage %>%
+          </span>
+          <% } %>
+        </div>
         <div class="card-body">
           <h5 class="card-title"><%= truncateText(product.name, 40) %></h5>
-          <p class="text-muted"><%= product.category.name %></p>
+          <p class="text-muted">
+            <%= product.brand %> | <%= product.category.name %>
+          </p>
+          <% if (product.discountPercentage > 0) { %>
+          <p class="card-text mb-0">
+            <span class="text-decoration-line-through text-muted"
+              ><%= formatPrice(product.basePrice) %></span
+            >
+          </p>
           <p class="card-text fw-bold text-danger">
             <%= formatPrice(product.price) %>
           </p>
+          <% } else { %>
+          <p class="card-text fw-bold text-danger">
+            <%= formatPrice(product.price) %>
+          </p>
+          <% } %>
           <a href="/products/<%= product._id %>" class="btn btn-primary"
             >Chi tiết</a
           >

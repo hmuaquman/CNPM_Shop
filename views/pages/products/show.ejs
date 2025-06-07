@@ -1,15 +1,154 @@
 <div class="row">
   <div class="col-lg-6 mb-4">
-    <img
-      src="<%= product.imageURL %>"
-      class="img-fluid rounded"
-      alt="<%= product.name %>"
-    />
+    <!-- Gallery ảnh -->
+    <div class="product-gallery mb-3">
+      <img
+        src="<%= product.imageURL %>"
+        class="img-fluid rounded main-image"
+        alt="<%= product.name %>"
+        id="mainImage"
+      />
+      <!-- Thêm gallery nếu có -->
+      <% if (product.images && product.images.gallery &&
+      product.images.gallery.length > 0) { %>
+      <div class="row mt-2">
+        <% product.images.gallery.forEach((img, index) => { %>
+        <div class="col-3">
+          <img
+            src="<%= img %>"
+            class="img-fluid rounded gallery-thumbnail"
+            alt="<%= product.name %>"
+            onclick="changeMainImage(this.src)"
+          />
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Reviews -->
+    <div class="mt-4">
+      <h3>Đánh giá (<%= reviews ? reviews.length : 0 %>)</h3>
+
+      <div class="d-flex align-items-center mb-3">
+        <div class="me-3">
+          <span class="fs-1"><%= ratingStats.average.toFixed(1) %></span>
+          <div class="small text-muted"><%= ratingStats.count %> đánh giá</div>
+        </div>
+        <div class="rating-stars fs-3">
+          <% for(let i = 1; i <= 5; i++) { %>
+          <i
+            class="fas fa-star <%= i <= Math.round(ratingStats.average) ? 'text-warning' : 'text-muted' %>"
+          ></i>
+          <% } %>
+        </div>
+      </div>
+
+      <% if (reviews && reviews.length > 0) { %> <% reviews.forEach(review => {
+      %>
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-2">
+            <h5 class="card-title"><%= review.username %></h5>
+            <small class="text-muted"
+              ><%= new Date(review.createdAt).toLocaleDateString() %></small
+            >
+          </div>
+          <div class="mb-2">
+            <% for(let i = 1; i <= 5; i++) { %>
+            <i
+              class="fas fa-star <%= i <= review.rating ? 'text-warning' : 'text-muted' %>"
+            ></i>
+            <% } %> <% if (review.isPurchaseVerified) { %>
+            <span class="badge bg-success ms-2">Đã mua hàng</span>
+            <% } %>
+          </div>
+          <p class="card-text"><%= review.comment %></p>
+        </div>
+      </div>
+      <% }) %> <% } else { %>
+      <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+      <% } %>
+
+      <!-- Form thêm đánh giá -->
+      <% if (locals.user) { %>
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5>Thêm đánh giá của bạn</h5>
+        </div>
+        <div class="card-body">
+          <form action="/reviews/create" method="POST">
+            <input type="hidden" name="productId" value="<%= product._id %>" />
+
+            <div class="mb-3">
+              <label class="form-label">Đánh giá của bạn</label>
+              <div class="rating-select">
+                <div class="stars">
+                  <input
+                    type="radio"
+                    name="rating"
+                    id="rating-5"
+                    value="5"
+                    required
+                  />
+                  <label for="rating-5"><i class="fas fa-star"></i></label>
+                  <input type="radio" name="rating" id="rating-4" value="4" />
+                  <label for="rating-4"><i class="fas fa-star"></i></label>
+                  <input type="radio" name="rating" id="rating-3" value="3" />
+                  <label for="rating-3"><i class="fas fa-star"></i></label>
+                  <input type="radio" name="rating" id="rating-2" value="2" />
+                  <label for="rating-2"><i class="fas fa-star"></i></label>
+                  <input type="radio" name="rating" id="rating-1" value="1" />
+                  <label for="rating-1"><i class="fas fa-star"></i></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="comment" class="form-label">Nhận xét của bạn</label>
+              <textarea
+                class="form-control"
+                id="comment"
+                name="comment"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+          </form>
+        </div>
+      </div>
+      <% } else { %>
+      <div class="alert alert-info mt-4">
+        <p>Vui lòng <a href="/auth/login">đăng nhập</a> để thêm đánh giá.</p>
+      </div>
+      <% } %>
+    </div>
   </div>
+
   <div class="col-lg-6">
     <h1 class="mb-3"><%= product.name %></h1>
-    <p class="text-muted mb-2">Danh mục: <%= product.category.name %></p>
+    <p class="text-muted mb-2">
+      Danh mục: <%= product.category.name %> | Thương hiệu: <%= product.brand %>
+    </p>
+
+    <!-- Giá và khuyến mãi -->
+    <% if (product.discountPercentage > 0) { %>
+    <div class="mb-3">
+      <span class="text-decoration-line-through text-muted fs-5"
+        ><%= formatPrice(product.basePrice) %></span
+      >
+      <span class="badge bg-danger ms-2"
+        >-<%= product.discountPercentage %>%</span
+      >
+    </div>
     <h3 class="text-danger mb-4"><%= formatPrice(product.price) %></h3>
+    <% } else { %>
+    <h3 class="text-danger mb-4"><%= formatPrice(product.price) %></h3>
+    <% } %>
+
+    <!-- Trạng thái tồn kho -->
     <% if (product.quantity > 0) { %>
     <p class="text-success mb-4">
       <i class="fas fa-check-circle me-2"></i>Còn hàng (<%= product.quantity %>
@@ -21,11 +160,98 @@
     </p>
     <% } %>
 
+    <!-- Variants -->
+    <% if (product.variants && product.variants.length > 0) { %>
+    <div class="mb-4">
+      <h5 class="mb-3">Phiên bản sản phẩm:</h5>
+      <form id="variant-form">
+        <% Object.keys(variantAttributes).forEach(attrName => { %> <% if
+        (variantAttributes[attrName].length > 0) { %>
+        <div class="mb-3">
+          <label class="form-label">
+            <%= attrName === 'ram' ? 'RAM' : attrName.charAt(0).toUpperCase() +
+            attrName.slice(1) %>
+          </label>
+          <div
+            class="btn-group variant-selector"
+            role="group"
+            aria-label="<%= attrName %> selection"
+          >
+            <% variantAttributes[attrName].forEach(attrValue => { %> <input
+            type="radio" class="btn-check" name="<%= attrName %>" id="<%=
+            attrName %>_<%= attrValue %>" value="<%= attrValue %>" <%=
+            defaultVariant && defaultVariant.attributes &&
+            defaultVariant.attributes[attrName] === attrValue ? 'checked' : ''
+            %> >
+            <label
+              class="btn btn-outline-primary"
+              for="<%= attrName %>_<%= attrValue %>"
+            >
+              <%= attrValue %>
+            </label>
+            <% }) %>
+          </div>
+        </div>
+        <% } %> <% }) %>
+
+        <input
+          type="hidden"
+          id="selected-variant-sku"
+          name="variantId"
+          value="<%= product.defaultVariantSku %>"
+        />
+      </form>
+    </div>
+    <% } %>
+
     <div class="mb-4">
       <h5>Mô tả sản phẩm:</h5>
       <p><%= product.description %></p>
     </div>
 
+    <!-- Thông số kỹ thuật chung -->
+    <% if (product.commonSpecs) { %>
+    <div class="mb-4">
+      <h5>Thông số kỹ thuật chung:</h5>
+      <table class="table table-bordered">
+        <tbody>
+          <% Object.entries(product.commonSpecs).forEach(([key, value]) => { if
+          (typeof value !== 'object') { %>
+          <tr>
+            <td width="40%">
+              <strong
+                ><%= key.charAt(0).toUpperCase() +
+                key.slice(1).replace(/([A-Z])/g, ' $1') %></strong
+              >
+            </td>
+            <td><%= value %></td>
+          </tr>
+          <% }}) %>
+
+          <!-- Thông tin bảo hành nếu có -->
+          <% if (product.commonSpecs.warrantyInfo) { %>
+          <tr>
+            <td width="40%"><strong>Bảo hành</strong></td>
+            <td>
+              <%= product.commonSpecs.warrantyInfo.durationInMonths %> tháng
+            </td>
+          </tr>
+          <tr>
+            <td width="40%"><strong>Loại bảo hành</strong></td>
+            <td><%= product.commonSpecs.warrantyInfo.type %></td>
+          </tr>
+          <% if (product.commonSpecs.warrantyInfo.coverage) { %>
+          <tr>
+            <td width="40%"><strong>Phạm vi bảo hành</strong></td>
+            <td><%= product.commonSpecs.warrantyInfo.coverage %></td>
+          </tr>
+          <% } %> <% } %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+
+    <!-- Thuộc tính sản phẩm -->
     <% if (product.attributeValues && product.attributeValues.length > 0) { %>
     <div class="mb-4">
       <h5>Thông số kỹ thuật:</h5>
@@ -40,9 +266,19 @@
         </tbody>
       </table>
     </div>
-    <% } %> <% if (product.quantity > 0) { %>
+    <% } %>
+
+    <!-- Form thêm sản phẩm vào giỏ hàng -->
+    <% if (product.quantity > 0) { %>
     <form action="/cart/add" method="POST" class="d-flex align-items-center">
       <input type="hidden" name="productId" value="<%= product._id %>" />
+      <input
+        type="hidden"
+        name="variantId"
+        id="cart-variant-id"
+        value="<%= product.variants?.find(v => v.isDefault)?.sku || '' %>"
+      />
+
       <div class="input-group me-3" style="max-width: 150px">
         <button
           class="btn btn-outline-secondary"
@@ -71,10 +307,15 @@
         <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ
       </button>
     </form>
+    <% } else { %>
+    <button class="btn btn-secondary" disabled>
+      <i class="fas fa-times-circle me-2"></i>Hết hàng
+    </button>
     <% } %>
   </div>
 </div>
 
+<!-- Sản phẩm tương tự -->
 <% if (similarProducts && similarProducts.length > 0) { %>
 <div class="mt-5">
   <h3 class="mb-4">Sản phẩm tương tự</h3>
@@ -82,16 +323,34 @@
     <% similarProducts.forEach(prod => { %>
     <div class="col">
       <div class="card h-100 product-card">
-        <img
-          src="<%= prod.imageURL %>"
-          class="card-img-top"
-          alt="<%= prod.name %>"
-        />
+        <div class="position-relative">
+          <img
+            src="<%= prod.imageURL %>"
+            class="card-img-top"
+            alt="<%= prod.name %>"
+          />
+          <% if (prod.discountPercentage > 0) { %>
+          <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">
+            -<%= prod.discountPercentage %>%
+          </span>
+          <% } %>
+        </div>
         <div class="card-body">
           <h5 class="card-title"><%= prod.name %></h5>
+          <% if (prod.discountPercentage > 0) { %>
+          <p class="card-text mb-0">
+            <span class="text-decoration-line-through text-muted"
+              ><%= formatPrice(prod.basePrice) %></span
+            >
+          </p>
           <p class="card-text fw-bold text-danger">
             <%= formatPrice(prod.price) %>
           </p>
+          <% } else { %>
+          <p class="card-text fw-bold text-danger">
+            <%= formatPrice(prod.price) %>
+          </p>
+          <% } %>
           <a
             href="/products/<%= prod._id %>"
             class="btn btn-outline-primary w-100"
@@ -104,3 +363,161 @@
   </div>
 </div>
 <% } %>
+
+<!-- Script để xử lý variants -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Dữ liệu tất cả variants - Sửa lỗi ở đây
+    const allVariants = <%- JSON.stringify(product.variants || []) %>;
+
+    // Lấy tất cả selector variants
+    const variantSelectors = document.querySelectorAll(
+      ".variant-selector input"
+    );
+
+    // Hàm cập nhật variant khi chọn
+    function updateSelectedVariant() {
+      // Lấy giá trị hiện tại của tất cả selectors
+      const currentSelection = {};
+      document
+        .querySelectorAll(".variant-selector input:checked")
+        .forEach((input) => {
+          currentSelection[input.name] = input.value;
+        });
+
+      // Tìm variant phù hợp
+      const matchedVariant = allVariants.find((variant) => {
+        return Object.keys(currentSelection).every(
+          (key) =>
+            variant.attributes &&
+            variant.attributes[key] === currentSelection[key]
+        );
+      });
+
+      if (matchedVariant) {
+        // Cập nhật giá
+        document.querySelector("h3.text-danger").innerText = formatPrice(
+          matchedVariant.price
+        );
+
+        // Cập nhật trạng thái tồn kho
+        updateStockStatus(matchedVariant);
+
+        // Cập nhật SKU cho cart form
+        updateCartForm(matchedVariant);
+      }
+    }
+
+    // Hàm cập nhật trạng thái tồn kho
+    function updateStockStatus(variant) {
+      const stockElements = document.querySelectorAll("p.mb-4");
+      let stockElement = null;
+      for (let i = 0; i < stockElements.length; i++) {
+        if (stockElements[i].querySelector("i.fas")) {
+          stockElement = stockElements[i];
+          break;
+        }
+      }
+
+      if (stockElement) {
+        if (variant.stock > 0) {
+          stockElement.className = "text-success mb-4";
+          stockElement.innerHTML =
+            '<i class="fas fa-check-circle me-2"></i>Còn hàng (' +
+            variant.stock +
+            " sản phẩm)";
+          enableAddToCartForm(variant.stock);
+        } else {
+          stockElement.className = "text-danger mb-4";
+          stockElement.innerHTML =
+            '<i class="fas fa-times-circle me-2"></i>Hết hàng';
+          disableAddToCartForm();
+        }
+      }
+    }
+
+    // Hàm bật form thêm vào giỏ hàng
+    function enableAddToCartForm(stock) {
+      const submitBtn = document.querySelector(
+        'form[action="/cart/add"] button[type="submit"]'
+      );
+      const quantityInput = document.querySelector(
+        'form[action="/cart/add"] input[name="quantity"]'
+      );
+
+      if (submitBtn) {
+        submitBtn.removeAttribute("disabled");
+        submitBtn.className = "btn btn-primary";
+      }
+
+      if (quantityInput) {
+        quantityInput.max = stock;
+      }
+    }
+
+    // Hàm tắt form thêm vào giỏ hàng
+    function disableAddToCartForm() {
+      const submitBtn = document.querySelector(
+        'form[action="/cart/add"] button[type="submit"]'
+      );
+
+      if (submitBtn) {
+        submitBtn.setAttribute("disabled", true);
+        submitBtn.className = "btn btn-secondary";
+      }
+    }
+
+    // Hàm cập nhật form giỏ hàng
+    function updateCartForm(variant) {
+      document.getElementById("selected-variant-sku").value = variant.sku;
+      document.getElementById("cart-variant-id").value = variant.sku;
+    }
+
+    // Đăng ký sự kiện change cho mỗi selector
+    variantSelectors.forEach((input) => {
+      input.addEventListener("change", updateSelectedVariant);
+    });
+
+    // Khởi tạo với variant mặc định
+    updateSelectedVariant();
+  });
+
+  // Hàm đổi ảnh chính
+  function changeMainImage(src) {
+    document.getElementById("mainImage").src = src;
+  }
+
+  // Hàm format giá
+  function formatPrice(price) {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(price);
+  }
+</script>
+
+<!-- Thêm CSS cho form đánh giá -->
+<style>
+  .rating-select .stars {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+
+  .rating-select .stars input {
+    display: none;
+  }
+
+  .rating-select .stars label {
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0 0.2rem;
+    color: #ddd;
+  }
+
+  .rating-select .stars label:hover,
+  .rating-select .stars label:hover ~ label,
+  .rating-select .stars input:checked ~ label {
+    color: #ffc107;
+  }
+</style>
