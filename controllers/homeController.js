@@ -3,45 +3,47 @@ const Category = require("../models/Category");
 
 exports.getHomePage = async (req, res) => {
   try {
-    // Lấy 8 sản phẩm mới nhất
-    const latestProducts = await Product.find()
+    // Lấy sản phẩm mới nhất (6 sản phẩm)
+    const latestProducts = await Product.find({ status: "active" })
+      .populate("category", "name")
       .sort({ createdAt: -1 })
-      .limit(8)
-      .populate("category");
+      .limit(6);
 
-    // Lấy 4 sản phẩm nổi bật
-    const featuredProducts = await Product.find({ featured: true })
-      .limit(4)
-      .populate("category");
+    // Lấy tất cả categories
+    const categories = await Category.find().sort({ name: 1 });
 
-    // Lấy sản phẩm đang giảm giá (có discount)
-    const discountedProducts = await Product.find({
-      discountPercentage: { $gt: 0 },
-      discountStartDate: { $lte: new Date() },
-      discountEndDate: { $gte: new Date() },
-    })
-      .sort({ discountPercentage: -1 })
-      .limit(4)
-      .populate("category");
-
-    // Lấy danh sách danh mục
-    const categories = await Category.find();
+    console.log("Categories found:", categories.length);
+    console.log("Products found:", latestProducts.length);
 
     res.render("pages/home", {
-      title: "Trang chủ - Electronic Store",
+      title: "Tech4U - Cửa hàng điện tử",
+      layout: "layouts/main",
       latestProducts,
-      featuredProducts,
-      discountedProducts,
       categories,
+      isHomePage: true,
+      // Helper functions
+      formatPrice: (price) => {
+        return price.toLocaleString("vi-VN") + "₫";
+      },
+      truncateText: (text, length) => {
+        return text.length > length ? text.substring(0, length) + "..." : text;
+      },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error loading home page:", error);
     res.render("pages/home", {
-      title: "Trang chủ - Electronic Store",
+      title: "Tech4U - Cửa hàng điện tử",
+      layout: "layouts/main",
       latestProducts: [],
-      featuredProducts: [],
-      discountedProducts: [],
       categories: [],
+      isHomePage: true,
+      // Helper functions
+      formatPrice: (price) => {
+        return price.toLocaleString("vi-VN") + "₫";
+      },
+      truncateText: (text, length) => {
+        return text.length > length ? text.substring(0, length) + "..." : text;
+      },
     });
   }
 };

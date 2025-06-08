@@ -12,43 +12,56 @@ const createToken = (id) => {
 exports.showRegisterForm = (req, res) => {
   res.render("pages/auth/register", {
     title: "Đăng ký tài khoản",
+    layout: "layouts/auth",
   });
 };
 
 // Xử lý đăng ký
 exports.register = async (req, res) => {
   try {
-    const { fullName, email, password, phone, address } = req.body;
+    const {
+      fullName,
+      userName,
+      email,
+      password,
+      phone,
+      addresses,
+      agreeTerms,
+    } = req.body;
 
-    // Kiểm tra email đã tồn tại chưa
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      req.flash("error_msg", "Email đã được sử dụng");
+    // Kiểm tra checkbox đồng ý điều khoản
+    if (!agreeTerms) {
+      req.flash("error_msg", "Bạn phải đồng ý với điều khoản dịch vụ");
+      return res.redirect("/auth/register");
+    }
+
+    // Kiểm tra user đã tồn tại
+    const existingUser = await User.findOne({
+      $or: [{ email }, { userName }],
+    });
+
+    if (existingUser) {
+      req.flash("error_msg", "Email hoặc tên đăng nhập đã tồn tại");
       return res.redirect("/auth/register");
     }
 
     // Tạo user mới
-    const user = await User.create({
+    const newUser = new User({
       fullName,
+      userName,
       email,
       password,
       phone,
-      address,
+      addresses: addresses ? [addresses[0]] : [],
+      role: "customer",
     });
 
-    // Đăng nhập user và redirect
-    const token = createToken(user._id);
+    await newUser.save();
 
-    // Lưu token vào cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
-
-    req.flash("success_msg", "Đăng ký thành công!");
-    res.redirect("/");
+    req.flash("success_msg", "Đăng ký thành công! Vui lòng đăng nhập");
+    res.redirect("/auth/login");
   } catch (error) {
-    console.error(error);
+    console.error("Register error:", error);
     req.flash("error_msg", "Có lỗi xảy ra khi đăng ký");
     res.redirect("/auth/register");
   }
@@ -58,25 +71,40 @@ exports.register = async (req, res) => {
 exports.showLoginForm = (req, res) => {
   res.render("pages/auth/login", {
     title: "Đăng nhập",
+    layout: "layouts/auth",
   });
 };
 
 // Xử lý đăng nhập
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { usernameOrEmail, password } = req.body;
 
-    // Kiểm tra email tồn tại
-    const user = await User.findOne({ email }).select("+password");
+    console.log("🔍 Login attempt:", {
+      usernameOrEmail,
+      passwordLength: password?.length,
+    });
+
+    // Tìm user theo username HOẶC email
+    const user = await User.findOne({
+      $or: [{ userName: usernameOrEmail }, { email: usernameOrEmail }],
+    }).select("+password");
+
     if (!user) {
-      req.flash("error_msg", "Email hoặc mật khẩu không chính xác");
+      console.log("❌ User not found");
+      req.flash("error_msg", "Tài khoản hoặc mật khẩu không chính xác");
       return res.redirect("/auth/login");
     }
 
+    console.log("✓ User found:", user.userName, user.email, "Role:", user.role);
+
     // Kiểm tra mật khẩu
     const isMatch = await user.matchPassword(password);
+    console.log("🔓 Password match result:", isMatch);
+
     if (!isMatch) {
-      req.flash("error_msg", "Email hoặc mật khẩu không chính xác");
+      console.log("❌ Password does not match");
+      req.flash("error_msg", "Tài khoản hoặc mật khẩu không chính xác");
       return res.redirect("/auth/login");
     }
 
@@ -88,10 +116,24 @@ exports.login = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
 
+    console.log(
+      "✅ Login successful for user:",
+      user.userName,
+      "Role:",
+      user.role
+    );
     req.flash("success_msg", "Đăng nhập thành công!");
-    res.redirect("/");
+
+    // Phân quyền dựa trên role
+    if (user.role === "admin") {
+      console.log("🔑 Redirecting to admin dashboard");
+      return res.redirect("/admin/dashboard");
+    } else {
+      console.log("👤 Redirecting to user home");
+      return res.redirect("/");
+    }
   } catch (error) {
-    console.error(error);
+    console.error("💥 Login error:", error);
     req.flash("error_msg", "Có lỗi xảy ra khi đăng nhập");
     res.redirect("/auth/login");
   }
@@ -135,4 +177,21 @@ exports.protect = async (req, res, next) => {
     req.flash("error_msg", "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại");
     res.redirect("/auth/login");
   }
+};
+
+// Middleware kiểm tra quyền admin
+exports.requireAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== "admin") {
+    req.flash("error_msg", "Bạn không có quyền truy cập trang này");
+    return res.redirect("/");
+  }
+  next();
+};
+
+exports.adminDashboard = (req, res) => {
+  res.render("pages/admin/dashboard", {
+    title: "Admin Dashboard - Tech4U",
+    layout: "layouts/admin",
+    user: req.user,
+  });
 };

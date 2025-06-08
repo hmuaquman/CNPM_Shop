@@ -1,72 +1,77 @@
-<div class="row justify-content-center">
-  <div class="col-md-8">
-    <div class="card">
-      <div class="card-header">
-        <h4>Đăng ký tài khoản</h4>
-      </div>
-      <div class="card-body">
-        <form action="/auth/register" method="POST">
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="fullName" class="form-label"
-                >Họ và tên <span class="text-danger">*</span></label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="fullName"
-                name="fullName"
-                required
-              />
-            </div>
-            <div class="col-md-6">
-              <label for="userName" class="form-label"
-                >Tên đăng nhập <span class="text-danger">*</span></label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="userName"
-                name="userName"
-                required
-              />
+<div class="container">
+  <!-- Thay đổi: loại bỏ card, thêm container -->
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <!-- Thay đổi: tăng chiều rộng cột -->
+      <h3 class="mb-1">Đăng ký</h3>
+      <p class="text-muted small mb-4">
+        Đăng ký Tech4U để mua sắm ngay hôm nay
+      </p>
+
+      <form action="/auth/register" method="POST">
+        <!-- Thông tin cơ bản -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="fullName" class="form-label">
+              Họ và tên <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="fullName"
+              name="fullName"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label for="userName" class="form-label">
+              Tên đăng nhập <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="userName"
+              name="userName"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="email" class="form-label">
+              Email <span class="text-danger">*</span>
+            </label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Số điện thoại</label>
+            <input
+              type="tel"
+              class="form-control"
+              id="phone"
+              name="phone"
+              pattern="(\+84|0)[0-9]{9}"
+              placeholder="VD: 0912345678"
+            />
+            <div class="form-text text-muted small">
+              Định dạng: 10 chữ số, bắt đầu bằng 0 hoặc +84
             </div>
           </div>
+        </div>
 
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="email" class="form-label"
-                >Email <span class="text-danger">*</span></label
-              >
-              <input
-                type="email"
-                class="form-control"
-                id="email"
-                name="email"
-                required
-              />
-            </div>
-            <div class="col-md-6">
-              <label for="phone" class="form-label">Số điện thoại</label>
-              <input
-                type="tel"
-                class="form-control"
-                id="phone"
-                name="phone"
-                pattern="(\+84|0)[0-9]{9}"
-                placeholder="Ví dụ: 0912345678"
-              />
-              <div class="form-text">
-                Định dạng: 10 số, bắt đầu bằng 0 hoặc +84
-              </div>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="password" class="form-label"
-                >Mật khẩu <span class="text-danger">*</span></label
-              >
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="password" class="form-label">
+              Mật khẩu <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
               <input
                 type="password"
                 class="form-control"
@@ -75,12 +80,23 @@
                 minlength="6"
                 required
               />
-              <div class="form-text">Mật khẩu phải có ít nhất 6 ký tự</div>
+              <span class="input-group-text">
+                <i
+                  class="fas fa-eye"
+                  id="togglePassword"
+                  style="cursor: pointer"
+                ></i>
+              </span>
             </div>
-            <div class="col-md-6">
-              <label for="confirmPassword" class="form-label"
-                >Xác nhận mật khẩu <span class="text-danger">*</span></label
-              >
+            <div class="form-text text-muted small">
+              Phải có ít nhất 6 ký tự
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="confirmPassword" class="form-label">
+              Xác nhận mật khẩu <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
               <input
                 type="password"
                 class="form-control"
@@ -89,127 +105,142 @@
                 minlength="6"
                 required
               />
+              <span class="input-group-text">
+                <i
+                  class="fas fa-eye"
+                  id="toggleConfirmPassword"
+                  style="cursor: pointer"
+                ></i>
+              </span>
             </div>
           </div>
+        </div>
 
-          <hr class="my-4" />
-          <h5>Địa chỉ giao hàng</h5>
+        <!-- Địa chỉ giao hàng -->
+        <hr class="my-4" />
+        <h5 class="mb-3">Địa chỉ giao hàng</h5>
 
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="addresses.0.recipientName" class="form-label"
-                >Tên người nhận <span class="text-danger">*</span></label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="addresses.0.recipientName"
-                name="addresses.0.recipientName"
-                required
-              />
-            </div>
-            <div class="col-md-6">
-              <label for="addresses.0.recipientPhone" class="form-label"
-                >Điện thoại người nhận <span class="text-danger">*</span></label
-              >
-              <input
-                type="tel"
-                class="form-control"
-                id="addresses.0.recipientPhone"
-                name="addresses.0.recipientPhone"
-                required
-                pattern="(\+84|0)[0-9]{9}"
-                placeholder="Ví dụ: 0912345678"
-              />
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <label for="addresses.0.name" class="form-label"
-              >Tên địa chỉ (ví dụ: Nhà riêng, Cơ quan...)</label
-            >
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="addresses.0.recipientName" class="form-label">
+              Tên người nhận <span class="text-danger">*</span>
+            </label>
             <input
               type="text"
               class="form-control"
-              id="addresses.0.name"
-              name="addresses.0.name"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label for="addresses.0.streetAndNumber" class="form-label"
-              >Địa chỉ đường/phố, số nhà
-              <span class="text-danger">*</span></label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="addresses.0.streetAndNumber"
-              name="addresses.0.streetAndNumber"
+              id="addresses.0.recipientName"
+              name="addresses.0.recipientName"
               required
             />
           </div>
-
-          <div class="row mb-3">
-            <div class="col-md-4">
-              <label for="addresses.0.ward" class="form-label"
-                >Phường/Xã <span class="text-danger">*</span></label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="addresses.0.ward"
-                name="addresses.0.ward"
-                required
-              />
-            </div>
-            <div class="col-md-4">
-              <label for="addresses.0.district" class="form-label"
-                >Quận/Huyện <span class="text-danger">*</span></label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="addresses.0.district"
-                name="addresses.0.district"
-                required
-              />
-            </div>
-            <div class="col-md-4">
-              <label for="addresses.0.city" class="form-label"
-                >Tỉnh/Thành phố <span class="text-danger">*</span></label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="addresses.0.city"
-                name="addresses.0.city"
-                required
-              />
-            </div>
-          </div>
-
-          <div class="mb-3 form-check">
+          <div class="col-md-6">
+            <label for="addresses.0.recipientPhone" class="form-label">
+              Số điện thoại người nhận <span class="text-danger">*</span>
+            </label>
             <input
-              type="checkbox"
-              class="form-check-input"
-              id="addresses.0.isDefault"
-              name="addresses.0.isDefault"
-              value="true"
-              checked
+              type="tel"
+              class="form-control"
+              id="addresses.0.recipientPhone"
+              name="addresses.0.recipientPhone"
+              required
+              pattern="(\+84|0)[0-9]{9}"
+              placeholder="VD: 0912345678"
             />
-            <label class="form-check-label" for="addresses.0.isDefault"
-              >Đặt làm địa chỉ mặc định</label
-            >
           </div>
-
-          <div class="d-grid gap-2 mt-4">
-            <button type="submit" class="btn btn-primary">Đăng ký</button>
-          </div>
-        </form>
-        <div class="mt-3 text-center">
-          <p>Đã có tài khoản? <a href="/auth/login">Đăng nhập</a></p>
         </div>
+
+        <div class="mb-3">
+          <label for="addresses.0.name" class="form-label">
+            Tên địa chỉ (VD: Nhà, Văn phòng...)
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="addresses.0.name"
+            name="addresses.0.name"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="addresses.0.streetAndNumber" class="form-label">
+            Địa chỉ đường & số nhà <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="addresses.0.streetAndNumber"
+            name="addresses.0.streetAndNumber"
+            required
+          />
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="addresses.0.ward" class="form-label">
+              Phường/Xã <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="addresses.0.ward"
+              name="addresses.0.ward"
+              required
+            />
+          </div>
+          <div class="col-md-4">
+            <label for="addresses.0.district" class="form-label">
+              Quận/Huyện <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="addresses.0.district"
+              name="addresses.0.district"
+              required
+            />
+          </div>
+          <div class="col-md-4">
+            <label for="addresses.0.city" class="form-label">
+              Tỉnh/Thành phố <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="addresses.0.city"
+              name="addresses.0.city"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="mb-4 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="agreeTerms"
+            name="agreeTerms"
+            required
+          />
+          <label class="form-check-label" for="agreeTerms">
+            Bằng việc tạo tài khoản, bạn đồng ý với
+            <a href="/terms" target="_blank">Điều khoản dịch vụ</a> và
+            <a href="/privacy" target="_blank">Chính sách bảo mật</a> của chúng
+            tôi
+          </label>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-dark btn-lg">
+            Tạo tài khoản
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-4 text-center">
+        <p>
+          Đã có tài khoản?
+          <a href="/auth/login" class="text-decoration-none">Đăng nhập</a>
+        </p>
       </div>
     </div>
   </div>
@@ -218,6 +249,7 @@
 <!-- Validation script -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // Form validation
     const form = document.querySelector("form");
     const password = document.getElementById("password");
     const confirmPassword = document.getElementById("confirmPassword");
@@ -225,9 +257,33 @@
     form.addEventListener("submit", function (event) {
       if (password.value !== confirmPassword.value) {
         event.preventDefault();
-        alert("Mật khẩu xác nhận không khớp!");
+        alert("Xác nhận mật khẩu không khớp!");
         confirmPassword.focus();
       }
+    });
+
+    // Password toggle for main password
+    const togglePassword = document.querySelector("#togglePassword");
+    togglePassword.addEventListener("click", function () {
+      const type =
+        password.getAttribute("type") === "password" ? "text" : "password";
+      password.setAttribute("type", type);
+      this.classList.toggle("fa-eye");
+      this.classList.toggle("fa-eye-slash");
+    });
+
+    // Password toggle for confirmation password
+    const toggleConfirmPassword = document.querySelector(
+      "#toggleConfirmPassword"
+    );
+    toggleConfirmPassword.addEventListener("click", function () {
+      const type =
+        confirmPassword.getAttribute("type") === "password"
+          ? "text"
+          : "password";
+      confirmPassword.setAttribute("type", type);
+      this.classList.toggle("fa-eye");
+      this.classList.toggle("fa-eye-slash");
     });
   });
 </script>

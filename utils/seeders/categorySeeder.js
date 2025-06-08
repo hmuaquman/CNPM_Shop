@@ -18,14 +18,6 @@ const categoriesData = [
     name: "Thiết bị lưu trữ",
     description: "Ổ cứng SSD, HDD, thẻ nhớ và USB",
   },
-  {
-    name: "Màn hình",
-    description: "Màn hình máy tính với nhiều kích thước và độ phân giải",
-  },
-  {
-    name: "Linh kiện PC",
-    description: "Các linh kiện để nâng cấp hoặc tự build PC",
-  },
 ];
 
 const categoryAttributes = {
@@ -61,17 +53,14 @@ const categoryAttributes = {
     "Tốc độ đọc/ghi",
     "Cổng kết nối",
   ],
-  "Màn hình": [
-    "Kích thước màn",
-    "Tần số quét",
-    "Công nghệ màn hình",
-    "Cổng kết nối",
-  ],
-  "Linh kiện PC": ["CPU", "RAM", "Cổng kết nối", "Card đồ họa"],
 };
 
 const seedCategories = async (attributesMap) => {
   console.log("Đang tạo danh mục sản phẩm...");
+
+  // Xóa tất cả categories cũ
+  await Category.deleteMany({});
+
   const categories = await Category.insertMany(categoriesData);
 
   // Map categories để dễ truy cập theo tên
@@ -85,8 +74,12 @@ const seedCategories = async (attributesMap) => {
     categoryAttributes
   )) {
     const category = categoryMap.get(categoryName);
-    category.attributes = attributeNames.map((name) => attributesMap.get(name));
-    await category.save();
+    if (category && attributesMap) {
+      category.attributes = attributeNames.map((name) =>
+        attributesMap.get(name)
+      );
+      await category.save();
+    }
   }
 
   console.log("Đã tạo và liên kết danh mục sản phẩm");

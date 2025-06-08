@@ -6,7 +6,7 @@ const usersData = [
     fullName: "Admin User",
     userName: "admin",
     email: "admin@example.com",
-    password: "admin123",
+    password: "admin123", // Để nguyên password thô
     phone: "0901234567",
     addresses: [
       {
@@ -27,7 +27,7 @@ const usersData = [
     fullName: "Nguyễn Văn A",
     userName: "nguyenvana",
     email: "nguyenvana@example.com",
-    password: "password123",
+    password: "password123", // Để nguyên password thô
     phone: "0912345678",
     addresses: [
       {
@@ -58,7 +58,7 @@ const usersData = [
     fullName: "Trần Thị B",
     userName: "tranthib",
     email: "tranthib@example.com",
-    password: "password123",
+    password: "password123", // Để nguyên password thô
     phone: "0978123456",
     addresses: [
       {
@@ -78,25 +78,33 @@ const usersData = [
 ];
 
 const seedUsers = async () => {
-  console.log("Đang tạo tài khoản người dùng...");
-  const userPromises = usersData.map(async (userData) => {
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    return User.create({
-      ...userData,
-      password: hashedPassword,
+  try {
+    console.log("Đang xóa tài khoản cũ...");
+    await User.deleteMany({});
+
+    console.log("Đang tạo tài khoản người dùng...");
+
+    // Tạo từng user một để middleware pre('save') tự động hash password
+    const users = [];
+    for (const userData of usersData) {
+      const user = new User(userData);
+      await user.save(); // Middleware sẽ tự động hash password
+      users.push(user);
+      console.log(`✓ Đã tạo user: ${user.userName} (${user.email})`);
+    }
+
+    // Map users
+    const userMap = new Map();
+    users.forEach((user) => {
+      userMap.set(user.userName, user);
     });
-  });
 
-  const users = await Promise.all(userPromises);
-
-  // Map users
-  const userMap = new Map();
-  users.forEach((user) => {
-    userMap.set(user.userName, user);
-  });
-
-  console.log("Đã tạo tài khoản người dùng");
-  return userMap;
+    console.log(`✓ Đã tạo ${users.length} tài khoản người dùng`);
+    return userMap;
+  } catch (error) {
+    console.error("❌ Lỗi khi tạo users:", error);
+    throw error;
+  }
 };
 
 module.exports = seedUsers;

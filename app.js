@@ -91,6 +91,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", require("./routes/index"));
 app.use("/products", require("./routes/products"));
 app.use("/auth", require("./routes/auth"));
+app.use("/admin", require("./routes/admin"));
 
 // 404 handler
 app.use((req, res) => {

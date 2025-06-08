@@ -3,111 +3,218 @@ const Category = require("../models/Category");
 const Attribute = require("../models/Attribute");
 const Review = require("../models/Review");
 
-// Hiển thị danh sách sản phẩm
 exports.getProducts = async (req, res) => {
   try {
-    // Xử lý filter và pagination
-    const page = parseInt(req.query.page) || 1;
+    let query = { status: "active" };
+    const {
+      category,
+      search,
+      brand,
+      minPrice,
+      maxPrice,
+      page = 1,
+      sort,
+      onSale,
+      featured,
+    } = req.query;
     const limit = 12;
     const skip = (page - 1) * limit;
 
-    // Xây dựng query filters
-    const filter = {};
-
-    // Filter theo category nếu có
-    if (req.query.category) {
-      filter.category = req.query.category;
+    // Filter theo category ObjectId
+    if (category) {
+      query.category = category;
     }
 
-    // Filter theo brand nếu có
-    if (req.query.brand) {
-      filter.brand = req.query.brand;
+    // Search filter
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+      ];
     }
 
-    // Filter theo giá nếu có
-    if (req.query.minPrice || req.query.maxPrice) {
-      filter.price = {};
-      if (req.query.minPrice) {
-        filter.price.$gte = parseInt(req.query.minPrice);
-      }
-      if (req.query.maxPrice) {
-        filter.price.$lte = parseInt(req.query.maxPrice);
-      }
+    // Brand filter
+    if (brand) {
+      query.brand = brand;
+    }
+
+    // Price range filter
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = parseInt(minPrice);
+      if (maxPrice) query.price.$lte = parseInt(maxPrice);
     }
 
     // Filter sản phẩm có khuyến mãi
-    if (req.query.onSale === "true") {
-      filter.discountPercentage = { $gt: 0 };
+    if (onSale === "true") {
+      query.discountPercentage = { $gt: 0 };
     }
 
-    // Tìm danh sách sản phẩm với filter
-    const products = await Product.find(filter)
+    // Filter sản phẩm nổi bật
+    if (featured === "true") {
+      query.featured = true;
+    }
+
+    // Sorting
+    let sortOptions = { createdAt: -1 }; // Default: newest first
+    if (sort) {
+      switch (sort) {
+        case "price_asc":
+          sortOptions = { price: 1 };
+          break;
+        case "price_desc":
+          sortOptions = { price: -1 };
+          break;
+        case "name_asc":
+          sortOptions = { name: 1 };
+          break;
+        case "name_desc":
+          sortOptions = { name: -1 };
+          break;
+        default:
+          sortOptions = { createdAt: -1 };
+      }
+    }
+
+    // Get products với pagination
+    const products = await Product.find(query)
       .populate("category", "name")
-      .sort({ createdAt: -1 })
+      .sort(sortOptions)
       .skip(skip)
       .limit(limit);
 
-    // Đếm tổng số sản phẩm thỏa mãn filter
-    const totalProducts = await Product.countDocuments(filter);
+    // Get total count cho pagination
+    const totalProducts = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / limit);
 
-    // Lấy danh sách categories và brands để hiển thị filter
-    const categories = await Category.find({ status: "active" });
-    const brands = await Product.distinct("brand");
+    // Get tất cả categories cho filter
+    const categories = await Category.find({ status: "active" }).sort({
+      name: 1,
+    });
+
+    // Get unique brands cho filter
+    const brands = await Product.distinct("brand", { status: "active" });
+
+    // Tìm category hiện tại để hiển thị title
+    let currentCategory = null;
+    if (category) {
+      currentCategory = await Category.findById(category);
+    }
+
+    // Debug log
+    console.log("Categories found:", categories.length);
+    console.log("Brands found:", brands.length);
+    console.log("Products found:", products.length);
 
     res.render("pages/products/index", {
-      title: "Danh sách sản phẩm",
+      title: currentCategory
+        ? `Sản phẩm - ${currentCategory.name}`
+        : "Sản phẩm",
+      layout: "layouts/main",
       products,
-      currentPage: page,
+      categories,
+      brands: brands.sort(),
+      currentFilters: {
+        category,
+        search,
+        brand,
+        minPrice,
+        maxPrice,
+        sort,
+        onSale,
+        featured,
+      },
+      query: {
+        category,
+        search,
+        brand,
+        minPrice,
+        maxPrice,
+        sort,
+        onSale,
+        featured,
+      },
+      currentPage: parseInt(page),
       totalPages,
       totalProducts,
-      categories,
-      brands,
-      query: req.query,
+      currentCategory,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+      formatPrice: (price) => price.toLocaleString("vi-VN") + "₫",
     });
   } catch (error) {
-    console.error(error);
-    req.flash("error_msg", "Có lỗi xảy ra khi tải danh sách sản phẩm");
-    res.redirect("/");
+    console.error("Error loading products:", error);
+    res.render("pages/products/index", {
+      title: "Sản phẩm",
+      layout: "layouts/main",
+      products: [],
+      categories: [],
+      brands: [],
+      currentFilters: {},
+      query: {},
+      currentPage: 1,
+      totalPages: 0,
+      totalProducts: 0,
+      currentCategory: null,
+      pagination: {
+        currentPage: 1,
+        totalPages: 0,
+        hasNext: false,
+        hasPrev: false,
+      },
+      formatPrice: (price) => price.toLocaleString("vi-VN") + "₫",
+    });
   }
 };
 
-// Hiển thị chi tiết sản phẩm
 exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id)
-      .populate("category")
-      .populate("attributeValues.attribute");
+    const { id } = req.params;
+
+    // Get product với populate category và attributeValues
+    const product = await Product.findById(id)
+      .populate("category", "name description")
+      .populate("attributeValues.attribute", "name");
 
     if (!product) {
-      req.flash("error_msg", "Không tìm thấy sản phẩm");
-      return res.redirect("/products");
+      return res.status(404).render("pages/404", {
+        title: "Sản phẩm không tồn tại",
+        layout: "layouts/main",
+      });
     }
 
     // Lấy reviews của sản phẩm
     const reviews = await Review.find({
       product: product._id,
       isApproved: true,
-    }).populate("user", "fullName");
+    })
+      .populate("user", "fullName userName")
+      .sort({ createdAt: -1 });
 
-    // Tính trung bình rating
-    let ratingStats = { average: 0, count: 0 };
-    if (reviews.length > 0) {
-      const totalRating = reviews.reduce(
-        (sum, review) => sum + review.rating,
-        0
-      );
-      ratingStats = {
-        average: totalRating / reviews.length,
-        count: reviews.length,
-      };
-    }
+    // Tính trung bình rating sử dụng static method từ Review model
+    let ratingStats = await Review.calculateAverageRating(product._id);
 
-    // Lấy sản phẩm tương tự
+    // Get sản phẩm tương tự cùng category
     const similarProducts = await Product.find({
       category: product.category._id,
       _id: { $ne: product._id },
-    }).limit(4);
+      status: "active",
+    })
+      .populate("category", "name")
+      .limit(4);
+
+    // Get tất cả categories cho sidebar
+    const categories = await Category.find({ status: "active" }).sort({
+      name: 1,
+    });
+
+    // Get unique brands cho filter
+    const brands = await Product.distinct("brand", { status: "active" });
 
     // Xử lý và chuẩn bị dữ liệu variants
     const variantAttributes = prepareVariantAttributes(product.variants || []);
@@ -124,28 +231,34 @@ exports.getProductById = async (req, res) => {
       defaultVariantSku: defaultVariant?.sku || "",
     };
 
-    // Hàm format giá tiền
-    const formatPrice = (price) => {
-      return new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-      }).format(price);
-    };
+    // Debug log
+    console.log("📦 Product detail loaded:", {
+      product: product.name,
+      reviews: reviews.length,
+      ratingStats,
+      variants: product.variants?.length || 0,
+    });
 
     res.render("pages/products/show", {
       title: product.name,
+      layout: "layouts/main",
       product: formattedProduct,
       similarProducts,
+      categories,
+      brands: brands.sort(),
       reviews,
       ratingStats,
       variantAttributes,
       defaultVariant,
-      formatPrice,
+      formatPrice: (price) => price.toLocaleString("vi-VN") + "₫",
     });
   } catch (error) {
-    console.error(error);
-    req.flash("error_msg", "Có lỗi xảy ra khi lấy thông tin sản phẩm");
-    res.redirect("/products");
+    console.error("Error loading product detail:", error);
+    res.status(404).render("pages/404", {
+      title: "Không tìm thấy sản phẩm",
+      layout: "layouts/main",
+      message: "Sản phẩm bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
+    });
   }
 };
 

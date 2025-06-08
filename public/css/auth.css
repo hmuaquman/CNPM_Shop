@@ -1,0 +1,177 @@
+/* CSS dành riêng cho các trang đăng nhập, đăng ký */
+body {
+  background-color: #f8f9fa;
+  display: flex;
+  min-height: 100vh;
+}
+
+.auth-container {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  min-height: 100vh;
+}
+
+.auth-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  max-width: 100%; /* Đảm bảo form có thể sử dụng tối đa không gian */
+}
+
+.auth-banner {
+  flex: 1;
+  background-color: #1a56db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.auth-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/images/auth-pattern.svg");
+  background-size: cover;
+  opacity: 0.2;
+}
+
+@media (max-width: 991px) {
+  .auth-banner {
+    display: none;
+  }
+}
+
+/* Tăng kích thước form container */
+.form-container {
+  max-width: 800px; /* Tăng kích thước tối đa từ 450px lên 800px */
+  margin: 0 auto;
+  width: 100%;
+}
+
+.logo-container {
+  margin-bottom: 2rem;
+  text-align: center; /* Logo căn giữa */
+}
+
+.tech4u-logo {
+  height: 40px;
+  width: auto;
+}
+
+/* Form styling */
+.form-control {
+  padding: 12px 16px; /* Input cao hơn */
+  border-radius: 6px;
+}
+
+.form-control:focus {
+  border-color: #1a56db;
+  box-shadow: 0 0 0 0.25rem rgba(26, 86, 219, 0.1);
+}
+
+.btn-dark {
+  background-color: #111827;
+  border-color: #111827;
+  padding: 12px 24px; /* Nút lớn hơn */
+  border-radius: 6px;
+}
+
+.btn-dark:hover {
+  background-color: #1f2937;
+  border-color: #1f2937;
+}
+
+.text-primary {
+  color: #1a56db !important;
+}
+
+/* Link styling */
+a {
+  color: #1a56db;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #1e429f;
+  text-decoration: underline;
+}
+
+/* Style cho container đăng ký */
+.container {
+  width: 100%;
+  max-width: 900px; /* Form đăng ký rộng hơn */
+  margin: 0 auto;
+  padding: 2rem 3rem; /* Thêm padding cho container */
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Style cho các input trên form */
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Style cho tiêu đề các phần */
+h3,
+h5 {
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+h5 {
+  font-size: 1.1rem;
+}
+
+/* Căn chỉnh checkbox tốt hơn */
+.form-check-input {
+  margin-top: 0.3rem;
+}
+
+/* Tăng spacing giữa các phần form */
+hr {
+  margin: 2rem 0;
+  opacity: 0.15;
+}
+
+/* Style cho trường input không hợp lệ */
+.form-control:invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.1);
+}
+
+/* Thêm đường viền mỏng cho tiêu đề phần */
+.section-title {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 1.5rem;
+}
+
+/* Thêm style cho label có dấu * bắt buộc */
+.text-danger {
+  font-weight: bold;
+}
+
+/* Thêm style giống mẫu */
+.col-lg-10 {
+  padding: 0;
+}
+
+/* Thêm padding cho input-group-text */
+.input-group-text {
+  padding: 0 15px;
+  background-color: white;
+}
