@@ -117,6 +117,232 @@ const productsData = () => [
     imageURL:
       "https://dlcdnwebimgs.asus.com/gain/31814954-8900-4254-B777-E40BEDAFDAA9/w1000/h732",
   },
+  {
+    name: "Laptop Gaming Acer Nitro V",
+    description:
+      "Laptop mang một thiết kế gaming mạnh mẽ, màn hình 15.6” 144Hz FHD, cấu hình cân mọi tựa game với chip i5-13420H/ i7-13620H  từ Intel",
+    brand: "Acer",
+    basePrice: 16990000,
+    price: 16990000 ,
+    quantity: 35,
+    commonSpecs: {
+      processor: "Intel Core i5-13420H/ i7-13620H",
+      operatingSystem: "Windows 11 Home",
+      screenSize: "15.6 inch",
+      weight: "2.11 kg",
+      origin: "Chính hãng",
+      warrantyInfo: {
+        durationInMonths: 24,
+        type: "Bảo hành tại hãng",
+        coverage: "Bảo hành 2 năm, hỗ trợ 1 đổi 1 trong 7 ngày",
+      },
+    },
+    variants: [
+      {
+        sku: "Acer Nitro V ANV15-51-58AN",
+        price: 16990000,
+        stock: 8,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        isDefault: true,
+        status: "active",
+      },
+      {
+        sku: "Acer Nitro V ANV15-51-72VS",
+        price: 19990000,
+        stock: 7,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        status: "active",
+      },
+      {
+        sku: "Acer Nitro V ANV15-51-57B2, RTX 4050",
+        price: 23390000,
+        stock: 6,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        status: "active",
+      },
+      {
+        sku: "Acer Nitro V ANV15-51-55CA, RTX 4050",
+        price: 24190000,
+        stock: 5,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        status: "active",
+      },
+      {
+        sku: "Acer Nitro V ANV15-51-75GS, RTX 4050",
+        price: 28990000,
+        stock: 4,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        status: "active",
+      },
+    ],
+    status: "active",
+    featured: true,
+    tags: ["laptop", "acer", "gaming", "Intel", "nitro"],
+    imageURL:
+      "https://product.hstatic.net/200000722513/product/nitro-v_755588bd95514b6386940d73d3951e2d_1024x1024.png",
+  },
+  {
+    name: "Laptop Lenovo LOQ 15IAX9",
+    description:
+      "Laptop trang bị bộ xử lý Intel Core i5-12450HX, mang lại khả năng xử lý mạnh mẽ cho các tác vụ đa nhiệm và chơi game",
+    brand: "Lenovo",
+    basePrice: 18490000,
+    price: 18490000 ,
+    quantity: 15,
+    commonSpecs: {
+      processor: "Intel Core i5-12450HX",
+      operatingSystem: "Windows 11 Home",
+      screenSize: "15.6 inch",
+      weight: "2.38 kg",
+      origin: "Chính hãng",
+      warrantyInfo: {
+        durationInMonths: 24,
+        type: "Bảo hành tại hãng",
+        coverage: "Bảo hành trong 24 tháng, hỗ trợ mới trong 7 ngày",
+      },
+    },
+    variants: [
+      {
+        sku: "Lenovo LOQ 15IAX9E 83LK0036VN, RTX 3050",
+        price: 18490000,
+        stock: 5,
+        attributes: {
+          ram: "12GB",
+          storage: "512GB SSD",
+          color: "Xám",
+        },
+        isDefault: true,
+        status: "active",
+      },
+      {
+        sku: "Lenovo LOQ 15IAX9 83GS001SVN, RTX 2050",
+        price: 19290000,
+        stock: 5,
+        attributes: {
+          ram: "12GB",
+          storage: "512GB SSD",
+          color: "Xám",
+        },
+        isDefault: true,
+        status: "active",
+      },
+      {
+        sku: "Lenovo LOQ 15IAX9 83GS001RVN, RTX 3050",
+        price: 19490000,
+        stock: 5,
+        attributes: {
+          ram: "12GB",
+          storage: "512GB SSD",
+          color: "Xám",
+        },
+        isDefault: true,
+        status: "active",
+      },
+
+    ],
+    status: "active",
+    featured: true,
+    tags: ["laptop", "lenovo", "gaming", "Intel", "LOQ"],
+    imageURL:
+      "https://cdn.tgdd.vn/Products/Images/44/328139/lenovo-loq-15iax9-i5-83gs001svn-thumb-600x600.jpg",
+  },
+  {
+    name: "Laptop MSI Modern",
+    description:
+      "Thuộc phân khúc laptop học tập, văn phòng với trọng lượng cực mỏng nhẹ chỉ 1.4 kg",
+    brand: "MSI",
+    basePrice: 11590000,
+    price: 11590000 ,
+    quantity: 22,
+    commonSpecs: {
+      processor: "Intel Core i5-1235U",
+      operatingSystem: "Windows 11 Home",
+      screenSize: "14 inch",
+      weight: "1.4 kg",
+      origin: "Chính hãng",
+      warrantyInfo: {
+        durationInMonths: 36,
+        type: "Bảo hành tại hãng",
+        coverage: "Bảo hành đến 36 tháng",
+      },
+    },
+    variants: [
+      {
+        sku: "MSI Modern 14 C12MO-660VN",
+        price: 11590000,
+        stock: 6,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        isDefault: true,
+        status: "active",
+      },
+      {
+        sku: "MSI Modern 15 B13M-438VN",
+        price: 11990000,
+        stock: 5,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        isDefault: true,
+        status: "active",
+      },
+      {
+        sku: "MSI Modern 14 C13M-608VN",
+        price: 12790000,
+        stock: 6,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        isDefault: true,
+        status: "active",
+      },
+      {
+        sku: "MSI Modern 14 C13M-607VN, i7-1355U",
+        price: 15690000,
+        stock: 6,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        isDefault: true,
+        status: "active",
+      },
+
+    ],
+    status: "active",
+    featured: true,
+    tags: ["laptop", "MSI", "mỏng nhẹ", "Intel", "Modern"],
+    imageURL:
+      "https://cdn.tgdd.vn/Products/Images/44/304539/msi-modern-14-c11m-i3-011vn-040523-124356-600x600.jpg",
+  },
   // ĐIỆN THOẠI
   {
     name: "iPhone 15 Pro Max",
