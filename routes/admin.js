@@ -1,16 +1,12 @@
-const express = require("express");
+// routes/admin.js
+const express = require('express');
 const router = express.Router();
-const {
-  protect,
-  requireAdmin,
-  adminDashboard,
-} = require("../controllers/authController");
+const adminController = require('../controllers/adminController');
 
-// Áp dụng middleware bảo vệ cho tất cả routes admin
-router.use(protect);
-router.use(requireAdmin);
+// Kiểm tra xem adminController có đúng không
+console.log('Admin controller:', Object.keys(adminController));
 
-// Admin Dashboard
-router.get("/dashboard", adminDashboard);
+// Route cho dashboard - CHỈ DÙNG dashboard
+router.get('/dashboard', adminController.dashboard);
 
 module.exports = router;
