@@ -1,5 +1,3 @@
-<%- include('../../partials/head') %>
-
 <body class="d-flex flex-column vh-100">
 
     <main class="flex-shrink-0 mb-5">
@@ -12,48 +10,54 @@
                 <div class="row mt-4">
                     <div class="col-lg-8">
                         <div class="table-responsive">
-                            <table class="table align-middle">
+                            <table class="table">
                                 <thead>
-                                    <tr>
-                                        <th scope="col" style="width: 40%;">Sản phẩm</th>
-                                        <th scope="col" style="width: 15%;">Giá</th>
-                                        <th scope="col" style="width: 25%;">Số lượng</th>
-                                        <th scope="col" style="width: 15%;" class="text-end">Tổng cộng</th>
-                                        <th scope="col" style="width: 5%;"></th>
-                                    </tr>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Tổng cộng</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <% cart.items.forEach(item => { %>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <a href="/products/<%= (item.product && item.product.slug) ? item.product.slug : '' %>">
-                                                        <img src="<%= (item.product && item.product.images && item.product.images[0]) ? item.product.images[0] : item.image %>" alt="<%= (item.product && item.product.name) ? item.product.name : item.name %>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.25rem;">
-                                                    </a>
-                                                    <a href="/products/<%= (item.product && item.product.slug) ? item.product.slug : '' %>" class="ms-3 text-dark text-decoration-none fw-bold"><%= (item.product && item.product.name) ? item.product.name : item.name %></a>
+                                <% cart.items.forEach(item => { %>
+                                    <tr>
+                                        <td style="max-width: 300px;">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <img src="<%= item.image || '/img/default-product.jpg' %>" alt="<%= item.name %>" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: contain;">
+                                                <div>
+                                                    <h6 class="mb-0"><%= item.name %></h6>
+                                                    <% 
+                                                    // Khởi tạo variantInfo nếu không tồn tại
+                                                    const variantInfo = item.variantInfo || { color: "Tiêu chuẩn", storage: "Mặc định", ram: "Mặc định" };
+                                                    %>
+                                                    <small class="text-muted">
+                                                        màu: <%= variantInfo.color || 'Tiêu chuẩn' %>, 
+                                                        bộ nhớ : <%= variantInfo.storage || 'Mặc định' %>, 
+                                                        ram: <%= variantInfo.ram || 'Mặc định' %>
+                                                    </small>
                                                 </div>
-                                            </td>
-                                            <td><%= formatPrice((item.product && item.product.price) ? item.product.price : item.price) %></td>
-                                            <td>
-                                                <form action="/cart/update/<%= item.product ? item.product._id : item.product %>" method="POST" class="d-flex align-items-center">
-                                                    <input type="number" name="quantity" value="<%= item.quantity %>" min="1" max="<%= (item.product && item.product.stock) ? item.product.stock : 99 %>" class="form-control form-control-sm" style="width: 70px;">
-                                                    <% if (item.variantId) { %>
-                                                        <input type="hidden" name="variantId" value="<%= item.variantId %>">
-                                                    <% } %>
-                                                    <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Cập nhật</button>
-                                                </form>
-                                            </td>
-                                            <td class="text-end"><%= formatPrice(item.quantity * ((item.product && item.product.price) ? item.product.price : item.price)) %></td>
-                                            <td class="text-center">
-                                                <form action="/cart/remove/<%= item.product ? item.product._id : item.product %>" method="POST">
-                                                    <% if (item.variantId) { %>
-                                                        <input type="hidden" name="variantId" value="<%= item.variantId %>">
-                                                    <% } %>
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa sản phẩm">&times;</button>
-                                                </form>
-                                            </td>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle"><%= formatPrice(item.price || (item.product ? item.product.price : 0)) %></td>
+                                        <td class="align-middle">
+                                            <div class="d-flex justify-content-center align-items-center" data-product-id="<%= item.product._id %>" data-variant-id="<%= item.variantId || '' %>">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm quantity-btn" data-action="decrease">−</button>
+                                            <span class="mx-3 fw-medium quantity-display"><%= item.quantity %></span>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm quantity-btn" data-action="increase" data-max="99">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                            <span><%= formatPrice(item.quantity * (item.price || (item.product ? item.product.price : 0))) %></span>
+                                            <form action="/cart/remove/<%= item.product._id %>" method="POST" class="ms-3">
+                                                <input type="hidden" name="variantId" value="<%= item.variantId || '' %>">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">×</button>
+                                            </form>
+                                            </div>
+                                        </td>
                                         </tr>
-                                    <% }); %>
+                                <% }); %>
                                 </tbody>
                             </table>
                         </div>
@@ -86,9 +90,95 @@
         </div>
     </main>
 
-    <%- include('../../partials/footer') %>
-    <%- include('../../partials/scripts') %>
 </body>
 
-</html>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all quantity buttons
+    const quantityBtns = document.querySelectorAll('.quantity-btn');
+    
+    // Add click event to each button
+    quantityBtns.forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const container = this.closest('.d-flex');
+            const productId = container.dataset.productId;
+            const variantId = container.dataset.variantId;
+            const action = this.dataset.action;
+            const quantityDisplay = container.querySelector('.quantity-display');
+            let currentQty = parseInt(quantityDisplay.textContent);
+            let newQty;
+            
+            if (action === 'increase') {
+                const maxQty = parseInt(this.dataset.max);
+                if (currentQty < maxQty) {
+                    newQty = currentQty + 1;
+                } else {
+                    alert('Không thể thêm số lượng (đã đạt giới hạn tồn kho)');
+                    return;
+                }
+            } else { // decrease
+                if (currentQty > 1) {
+                    newQty = currentQty - 1;
+                } else {
+                    if (confirm('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+                        // Submit remove form
+                        const row = container.closest('tr');
+                        const removeForm = row.querySelector('form[action^="/cart/remove"]');
+                        removeForm.submit();
+                    }
+                    return;
+                }
+            }
+            
+            // Update cart via AJAX
+            try {
+                const response = await fetch(`/cart/update/${productId}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        quantity: newQty,
+                        variantId: variantId || ''
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    // Update display
+                    quantityDisplay.textContent = newQty;
+                    
+                    // Update item total
+                    const row = container.closest('tr');
+                    const priceCell = row.querySelector('td:nth-child(2)');
+                    const totalCell = row.querySelector('td:nth-child(4)');
+                    
+                    if (priceCell && totalCell) {
+                        const priceText = priceCell.textContent.trim();
+                        const price = parseFloat(priceText.replace(/[^\d]/g, ''));
+                        const newTotal = price * newQty;
+                        
+                        // Format the total with the same formatter
+                        const formatter = new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND',
+                            minimumFractionDigits: 0
+                        });
+                        
+                        totalCell.textContent = formatter.format(newTotal).replace('₫', 'đ');
+                    }
+                    
+                    // Update cart total (requires page reload or additional calculation)
+                    window.location.reload();
+                } else {
+                    throw new Error('Failed to update cart');
+                }
+            } catch (error) {
+                console.error('Error updating cart:', error);
+                alert('Có lỗi xảy ra khi cập nhật giỏ hàng. Vui lòng thử lại.');
+            }
+        });
+    });
+});
+</script>
 

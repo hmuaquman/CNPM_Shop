@@ -39,45 +39,6 @@ const seedOrders = async (userMap, productMap) => {
       paymentStatus: "pending",
       createdAt: new Date("2025-06-02"),
     },
-    {
-      user: userMap.get("tranthib")._id,
-      items: [
-        {
-          product: productMap.get("iPad Pro M3 12.9 inch")._id,
-          variantId: "IPAD-PRO-M3-8-256-WIFI",
-          name: "iPad Pro M3 12.9 inch",
-          price: 34990000,
-          quantity: 1,
-          variantInfo: {
-            ram: "8GB",
-            storage: "256GB",
-            connectivity: "WiFi",
-            color: "Space Gray",
-          },
-        },
-      ],
-      shippingAddress: {
-        recipientName: "Trần Thị B",
-        recipientPhone: "0978123456",
-        streetAndNumber: "789 Trần Hưng Đạo",
-        ward: "Phường Cầu Ông Lãnh",
-        district: "Quận 1",
-        city: "Hồ Chí Minh",
-      },
-      shippingInfo: {
-        provider: "GHN",
-        trackingCode: "GHN98765432",
-        shippingFee: 0, // Free shipping
-        estimatedDeliveryDate: new Date("2025-05-20"),
-        actualDeliveryDate: new Date("2025-05-19"),
-      },
-      itemsAmount: 34990000,
-      totalAmount: 34990000,
-      paymentMethod: "vnpay_qr",
-      status: "Delivered",
-      paymentStatus: "completed",
-      createdAt: new Date("2025-05-15"),
-    },
   ];
 
   await Order.insertMany(ordersToCreate);

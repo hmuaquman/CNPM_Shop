@@ -10,81 +10,69 @@
     <% } else { %>
         <div class="row">
             <div class="col-md-7 col-lg-8">
-                <h4 class="mb-3">Địa chỉ giao hàng</h4>
-                <form action="/orders/place" method="POST" class="needs-validation" novalidate>
-                    <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <% } %>
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label for="fullName" class="form-label">Họ và tên</label>
-                            <input type="text" class="form-control" id="fullName" name="fullName" placeholder="" value="<%= userAddress && userAddress.fullName ? userAddress.fullName : (currentUser && currentUser.fullName ? currentUser.fullName : '') %>" required>
-                            <div class="invalid-feedback">
-                                Vui lòng nhập họ tên.
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <label for="phone" class="form-label">Số điện thoại</label>
-                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="" value="<%= userAddress && userAddress.phone ? userAddress.phone : (currentUser && currentUser.phone ? currentUser.phone : '') %>" required>
-                            <div class="invalid-feedback">
-                                Vui lòng nhập số điện thoại.
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <label for="street" class="form-label">Địa chỉ</label>
-                            <input type="text" class="form-control" id="street" name="street" placeholder="Số nhà, tên đường, phường/xã" value="<%= userAddress && userAddress.street ? userAddress.street : '' %>" required>
-                            <div class="invalid-feedback">
-                                Vui lòng nhập địa chỉ.
-                            </div>
-                        </div>
-
-                        <div class="col-md-5">
-                            <label for="city" class="form-label">Tỉnh/Thành phố</label>
-                            <input type="text" class="form-control" id="city" name="city" placeholder="" value="<%= userAddress && userAddress.city ? userAddress.city : '' %>" required>
-                            <div class="invalid-feedback">
-                                Vui lòng nhập tỉnh/thành phố.
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="country" class="form-label">Quốc gia</label>
-                            <input type="text" class="form-control" id="country" name="country" placeholder="" value="<%= userAddress && userAddress.country ? userAddress.country : 'Việt Nam' %>" required>
-                            <div class="invalid-feedback">
-                                Vui lòng nhập quốc gia.
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label for="postalCode" class="form-label">Mã bưu điện</label>
-                            <input type="text" class="form-control" id="postalCode" name="postalCode" placeholder="" value="<%= userAddress && userAddress.postalCode ? userAddress.postalCode : '' %>">
-                            <div class="invalid-feedback">
-                                Mã bưu điện không hợp lệ.
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Địa chỉ giao hàng</h4>
+                    <a href="/user/profile" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i>Cập nhật
+                    </a>
+                </div>
+                
+                <% if (currentUser && currentUser.addresses && currentUser.addresses.length > 0) { %>
+                    <!-- Hiển thị địa chỉ đã lưu -->
+                    <div class="card mb-4">
+                        <div class="card-body p-4">
+                            <div class="address-info">
+                                <div class="name-phone mb-2">
+                                    <strong><%=  currentUser.addresses[0].recipientName || currentUser.fullName %></strong>
+                                    <span class="text-muted ms-2">(<%=  currentUser.addresses[0].recipientPhone || currentUser.phone %>)</span>
+                                </div>
+                                <div class="address-line">
+                                    <%= currentUser.addresses[0].streetAndNumber || '' %>
+                                    <% if (currentUser.addresses[0].ward) { %>, <%= currentUser.addresses[0].ward %><% } %>
+                                    <% if (currentUser.addresses[0].district) { %>, <%= currentUser.addresses[0].district %><% } %>
+                                    <% if (currentUser.addresses[0].city) { %>, <%= currentUser.addresses[0].city %><% } %>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="form-check mt-3">
-                        <input type="checkbox" class="form-check-input" id="saveAddress" name="saveAddress" checked>
-                        <label class="form-check-label" for="saveAddress">Lưu địa chỉ này cho lần mua sau</label>
+                <% } else { %>
+                    <!-- Hiển thị thông báo khi không có địa chỉ -->
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Bạn chưa có địa chỉ giao hàng. Vui lòng cập nhật thông tin để tiếp tục đặt hàng.
                     </div>
-
+                    <div class="text-center my-4">
+                        <a href="/user/profile" class="btn btn-primary">
+                            <i class="fas fa-user me-1"></i>Cập nhật thông tin
+                        </a>
+                    </div>
+                <% } %>
+                
+                <% if (currentUser && currentUser.addresses && currentUser.addresses.length > 0) { %>
                     <hr class="my-4">
-
-                    <h4 class="mb-3">Phương thức thanh toán</h4>
-                    <div class="my-3">
-                        <div class="form-check">
-                            <input id="cod" name="paymentMethod" type="radio" class="form-check-input" value="COD" checked required>
-                            <label class="form-check-label" for="cod">Thanh toán khi nhận hàng (COD)</label>
+                    
+                    <!-- Phương thức thanh toán và phần còn lại của form -->
+                    <form action="/orders/place" method="POST" class="needs-validation" novalidate>
+                        <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <% } %>
+                        
+                        <input type="hidden" name="addressId" value="<%= currentUser.addresses[0]._id %>">
+                        
+                        <h4 class="mb-3">Phương thức thanh toán</h4>
+                        <div class="my-3">
+                            <div class="form-check">
+                                <input id="cod" name="paymentMethod" type="radio" class="form-check-input" value="cod" checked required>
+                                <label class="form-check-label" for="cod">Thanh toán khi nhận hàng (COD)</label>
+                            </div>
+                            <!-- Thêm các phương thức thanh toán khác nếu cần -->
                         </div>
-                        <!-- Add other payment methods here if needed -->
-                    </div>
-
-                    <hr class="my-4">
-
-                    <button class="w-100 btn btn-primary btn-lg" type="submit">Đặt hàng</button>
-                </form>
+                        
+                        <hr class="my-4">
+                        
+                        <button class="w-100 btn btn-primary btn-lg" type="submit">Đặt hàng</button>
+                    </form>
+                <% } %>
             </div>
 
             <div class="col-md-5 col-lg-4 order-md-last">
@@ -94,17 +82,44 @@
                 </h4>
                 <ul class="list-group mb-3">
                     <% items.forEach(item => { %>
-                        <li class="list-group-item d-flex justify-content-between lh-sm">
-                            <div>
-                                <h6 class="my-0"><%= item.name %></h6>
-                                <small class="text-muted">Số lượng: <%= item.quantity %></small>
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div class="me-auto">
+                                    <h6 class="my-0"><%= item.name %></h6>
+                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                        <small class="text-muted">
+                                            màu: <%= item.variantInfo.color || 'Tiêu chuẩn' %>, 
+                                            bộ nhớ: <%= item.variantInfo.storage || 'Mặc định' %>, 
+                                            ram: <%= item.variantInfo.ram || 'Mặc định' %>
+                                        </small>
+                                    <% } %>
+                                    <small class="d-block text-muted">Số lượng: <%= item.quantity %></small>
+                                </div>
+                                <span class="text-muted"><%- formatPrice(item.price * item.quantity) %></span>
                             </div>
-                            <span class="text-muted"><%- formatPrice(item.price * item.quantity) %></span>
                         </li>
                     <% }); %>
+                    
+                    <!-- Phí vận chuyển -->
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Phí vận chuyển</h6>
+                            <% 
+                                // Tính phí vận chuyển - miễn phí nếu tổng giá trị đơn hàng từ 1,000,000đ
+                                const shippingFee = totalAmount > 1000000 ? 0 : 30000;
+                                const shippingText = shippingFee === 0 ? "0đ" : formatPrice(shippingFee);
+                            %>
+                            <% if (shippingFee === 0) { %>
+                                <small class="text-success">Miễn ship cho đơn hàng từ 1.000.000đ</small>
+                            <% } %>
+                        </div>
+                        <span class="text-muted"><%= shippingText %></span>
+                    </li>
+                    
+                    <!-- Tổng cộng -->
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Tổng cộng (VND)</span>
-                        <strong><%- formatPrice(totalAmount) %></strong>
+                        <strong><%- formatPrice(totalAmount + (totalAmount > 1000000 ? 0 : 30000)) %></strong>
                     </li>
                 </ul>
                 <div class="text-center">
@@ -115,25 +130,17 @@
     <% } %>
 </div>
 
-<script>
-// Example starter JavaScript for disabling form submissions if there are invalid fields
-(function () {
-  'use strict'
-
-  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-  var forms = document.querySelectorAll('.needs-validation')
-
-  // Loop over them and prevent submission
-  Array.prototype.slice.call(forms)
-    .forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
-
-        form.classList.add('was-validated')
-      }, false)
-    })
-})()
-</script>
+<style>
+/* Thêm một chút style để làm cho hiển thị đẹp hơn */
+.address-info {
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+.name-phone {
+    font-size: 18px;
+}
+/* Hiển thị variant info đẹp hơn */
+.list-group-item h6 {
+    margin-bottom: 4px;
+}
+</style>

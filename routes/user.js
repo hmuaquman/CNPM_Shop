@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const orderController = require("../controllers/orderController");
 const { protect } = require("../controllers/authController");
 
 // Tất cả routes đều cần đăng nhập
@@ -14,6 +15,6 @@ router.post("/profile", userController.updateProfile);
 router.post("/address/update", userController.updateAddress);
 
 // Lịch sử mua hàng
-router.get("/orders", userController.getOrderHistory);
+router.get("/orders", orderController.getMyOrders);
 
 module.exports = router;

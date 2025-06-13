@@ -218,7 +218,24 @@
                                     <% if (variantAttributes[attrName].length > 0) { %>
                                         <div class="mb-3">
                                             <label class="variant-label d-block">
-                                                <%= attrName === 'ram' ? 'RAM' : attrName.charAt(0).toUpperCase() + attrName.slice(1) %>
+                                                <% 
+                                                // Chuyển đổi tên thuộc tính sang tiếng Việt
+                                                let displayName;
+                                                switch(attrName.toLowerCase()) {
+                                                    case 'color':
+                                                        displayName = 'Màu';
+                                                        break;
+                                                    case 'storage':
+                                                        displayName = 'Bộ nhớ';
+                                                        break;
+                                                    case 'ram':
+                                                        displayName = 'RAM';
+                                                        break;
+                                                    default:
+                                                        displayName = attrName.charAt(0).toUpperCase() + attrName.slice(1);
+                                                }
+                                                %>
+                                                <%= displayName %>
                                             </label>
                                             <div class="btn-group variant-selector" role="group" aria-label="<%= attrName %> selection">
                                                 <% variantAttributes[attrName].forEach(attrValue => { %>
@@ -247,13 +264,37 @@
                             <h5>Thông số kỹ thuật chung:</h5>
                             <table class="table table-bordered">
                                 <tbody>
-                                    <% Object.entries(product.commonSpecs).forEach(([key, value]) => { if (typeof value !== 'object') { %>
-                                        <tr>
-                                            <td width="40%">
-                                                <strong><%= key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1') %></strong>
-                                            </td>
-                                            <td><%= value %></td>
-                                        </tr>
+                                    <% Object.entries(product.commonSpecs).forEach(([key, value]) => { 
+                                        if (typeof value !== 'object') { 
+                                            // Chuyển đổi tên trường sang tiếng Việt
+                                            let displayName;
+                                            switch(key.toLowerCase()) {
+                                                case 'processor':
+                                                    displayName = 'Bộ xử lý';
+                                                    break;
+                                                case 'operatingsystem':
+                                                    displayName = 'Hệ điều hành';
+                                                    break;
+                                                case 'screensize':
+                                                    displayName = 'Kích thước màn hình';
+                                                    break;
+                                                case 'weight':
+                                                    displayName = 'Trọng lượng';
+                                                    break;
+                                                case 'origin':
+                                                    displayName = 'Xuất xứ';
+                                                    break;
+                                                default:
+                                                    // Nếu không có trong danh sách xác định, vẫn định dạng như cũ
+                                                    displayName = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+                                            }
+                                    %>
+                                    <tr>
+                                        <td width="40%">
+                                            <strong><%= displayName %></strong>
+                                        </td>
+                                        <td><%= value %></td>
+                                    </tr>
                                     <% }}) %>
 
                                     <!-- Thông tin bảo hành nếu có -->
@@ -319,139 +360,172 @@
 
             <!-- Sản phẩm tương tự -->
             <% if (similarProducts && similarProducts.length > 0) { %>
-                <div class="mt-5">
-                    <h3 class="mb-4">Sản phẩm tương tự</h3>
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
-                        <% similarProducts.forEach(prod => { %>
-                            <div class="col">
-                                <div class="card h-100 product-card">
-                                    <div class="position-relative">
-                                        <img src="<%= prod.imageURL %>" class="card-img-top" alt="<%= prod.name %>" />
-                                        <% if (prod.discountPercentage > 0) { %>
-                                            <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">
-                                                -<%= prod.discountPercentage %>%
-                                            </span>
-                                        <% } %>
-                                    </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title"><%= prod.name %></h5>
-                                        <% if (prod.discountPercentage > 0) { %>
-                                            <p class="card-text mb-0">
-                                                <span class="text-decoration-line-through text-muted"><%= formatPrice(prod.basePrice) %></span>
-                                            </p>
-                                            <p class="card-text fw-bold text-danger">
-                                                <%= formatPrice(prod.price) %>
-                                            </p>
-                                        <% } else { %>
-                                            <p class="card-text fw-bold text-danger">
-                                                <%= formatPrice(prod.price) %>
-                                            </p>
-                                        <% } %>
-                                        <a href="/products/<%= prod._id %>" class="btn btn-outline-primary w-100">
-                                            Chi tiết
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        <% }) %>
+            <div class="mt-5">
+            <h3 class="mb-4">Sản phẩm tương tự</h3>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+                <% similarProducts.forEach(prod => { %>
+                <div class="col">
+                <div class="card h-100 d-flex flex-column">
+                    <div class="position-relative">
+                    <img
+                        src="<%= prod.imageURL %>"
+                        class="card-img-top"
+                        alt="<%= prod.name %>"
+                        style="object-fit: contain; max-height: 200px"
+                    />
+                    <% if (prod.discountPercentage > 0) { %>
+                    <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">
+                        -<%= prod.discountPercentage %>%
+                    </span>
+                    <% } %>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                    <h5 class="card-title"><%= prod.name %></h5>
+                    <% if (prod.discountPercentage > 0) { %>
+                    <p class="card-text mb-0">
+                        <span class="text-decoration-line-through text-muted"
+                        ><%= formatPrice(prod.basePrice) %></span
+                        >
+                    </p>
+                    <% } %>
+                    <p class="card-text fw-bold text-danger mb-3">
+                        <%= formatPrice(prod.price) %>
+                    </p>
+                    <div class="mt-auto">
+                        <a
+                        href="/products/<%= prod._id %>"
+                        class="btn btn-outline-primary w-100"
+                        >Chi tiết</a
+                        >
+                    </div>
                     </div>
                 </div>
+                </div>
+                <% }) %>
+            </div>
+            </div>
             <% } %>
         </div>
     </main>
+<script>
+const minusBtn = document.getElementById('button-minus');
+const plusBtn = document.getElementById('button-plus');
+const qtyInput = document.querySelector('input[name="quantity"]');
 
-    <%- include('../../partials/footer') %>
-    <%- include('../../partials/scripts') %>
+if (minusBtn && plusBtn && qtyInput) {
+  minusBtn.addEventListener('click', function() {
+    let currentQty = parseInt(qtyInput.value);
+    if (currentQty > 1) {
+      qtyInput.value = currentQty - 1;
+    }
+  });
+  
+  plusBtn.addEventListener('click', function() {
+    let currentQty = parseInt(qtyInput.value);
+    const maxQty = parseInt(qtyInput.max || 99);
+    if (currentQty < maxQty) {
+      qtyInput.value = currentQty + 1;
+    }
+  });
+  
+  // Đảm bảo giá trị nhập vào hợp lệ
+  qtyInput.addEventListener('change', function() {
+    let value = parseInt(this.value);
+    const max = parseInt(this.max || 99);
+    if (isNaN(value) || value < 1) this.value = 1;
+    else if (value > max) this.value = max;
+    else this.value = value;
+  });
+}
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Dữ liệu tất cả variants
-            const allVariants = <%= JSON.stringify(product.variants || []) %>;
-
-            // Lấy tất cả selector variants
-            const variantSelectors = document.querySelectorAll(".variant-selector input");
-
-            // Hàm cập nhật variant khi chọn
-            function updateSelectedVariant() {
-                const selectedAttrs = getSelectedAttributes();
-                const selectedVariant = findVariantByAttributes(selectedAttrs);
-                const cartPriceField = document.getElementById('cart-form-product-price');
-
-                if (selectedVariant) {
-                    variantPriceElement.textContent = formatPrice(selectedVariant.price);
-                    cartPriceField.value = selectedVariant.price; // Update hidden price field
-
-                    if (selectedVariant.stock > 0) {
-                        stockStatusElement.innerHTML = `<span class="badge bg-success">Còn hàng</span> (Còn lại: ${selectedVariant.stock} sản phẩm)`;
-                        addToCartButton.disabled = false;
-                    } else {
-                        stockStatusElement.innerHTML = `<span class="badge bg-danger">Hết hàng</span>`;
-                        addToCartButton.disabled = true;
-                    }
-                    cartFormVariantIdField.value = selectedVariant._id;
-                } else {
-                    const allRequiredSelected = areAllRequiredAttributesSelected();
-                    if (allRequiredSelected) {
-                        variantPriceElement.textContent = 'N/A';
-                        stockStatusElement.innerHTML = `<span class="badge bg-secondary">Không có sẵn</span>`;
-                        addToCartButton.disabled = true;
-                        cartPriceField.value = ''; // Clear price if variant is not available
-                    }
-                }
+// Xử lý form thêm vào giỏ hàng
+const addToCartForm = document.getElementById('add-to-cart-form');
+if (addToCartForm) {
+  addToCartForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Lấy nút thêm vào giỏ
+    const addToCartBtn = document.getElementById('add-to-cart-btn');
+    // Lưu trạng thái nút ban đầu
+    const originalBtnText = addToCartBtn.innerHTML;
+    
+    try {
+      // Hiển thị trạng thái đang xử lý
+      addToCartBtn.disabled = true;
+      addToCartBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...';
+      
+      // Tạo FormData từ form
+      const formData = new FormData(this);
+      
+      // Gửi request
+      const response = await fetch('/cart/add', {
+        method: 'POST',
+        body: JSON.stringify({
+            productId: this.querySelector('input[name="productId"]').value,
+            quantity: this.querySelector('input[name="quantity"]').value || 1,
+            variantId: this.querySelector('input[name="variantId"]')?.value || ''
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+        });
+        
+      // Xử lý kết quả
+      const result = await response.json();
+      
+      if (response.ok) {
+        // Hiển thị thông báo thành công
+        const messageContainer = document.createElement('div');
+        messageContainer.className = 'alert alert-success alert-dismissible fade show position-fixed start-50 translate-middle-x mt-3';
+        messageContainer.style.zIndex = '1050';
+        messageContainer.style.top = '10px';
+        messageContainer.style.maxWidth = '90%';
+        
+        messageContainer.innerHTML = `
+          <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong>${result.message}</strong>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        document.body.appendChild(messageContainer);
+        
+        // Cập nhật số lượng giỏ hàng nếu có phần hiển thị này
+        const cartCountElements = document.querySelectorAll('.cart-count');
+        if (cartCountElements.length > 0 && result.cartCount) {
+          cartCountElements.forEach(el => {
+            el.textContent = result.cartCount;
+          });
+        }
+        
+        // Tự động ẩn thông báo sau 3 giây
+        setTimeout(() => {
+          messageContainer.classList.remove('show');
+          setTimeout(() => {
+            if (document.body.contains(messageContainer)) {
+              document.body.removeChild(messageContainer);
             }
+          }, 150);
+        }, 3000);
+      } else {
+        // Hiển thị thông báo lỗi
+        alert(result.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Có lỗi xảy ra khi thêm vào giỏ hàng. Vui lòng thử lại sau.');
+    } finally {
+      // Khôi phục trạng thái nút
+      addToCartBtn.disabled = false;
+      addToCartBtn.innerHTML = originalBtnText;
+    }
+  });
+}
 
-            // Hàm cập nhật trạng thái tồn kho
-            function updateStockStatus(variant) {
-                const stockElements = document.querySelectorAll("p.mb-4");
-                let stockElement = null;
-                for (let i = 0; i < stockElements.length; i++) {
-                    if (stockElements[i].querySelector("i.fas")) {
-                        stockElement = stockElements[i];
-                        break;
-                    }
-                }
-
-                if (stockElement) {
-                    if (variant.stock > 0) {
-                        stockElement.className = "text-success mb-4";
-                        stockElement.innerHTML = '<i class="fas fa-check-circle me-2"></i>Còn hàng (' + variant.stock + " sản phẩm)";
-                        enableAddToCartForm(variant.stock);
-                    } else {
-                        stockElement.className = "text-danger mb-4";
-                        stockElement.innerHTML = '<i class="fas fa-times-circle me-2"></i>Hết hàng';
-                        disableAddToCartForm();
-                    }
-                }
-            }
-
-            // Hàm bật form thêm vào giỏ hàng
-            function enableAddToCartForm(stock) {
-                const submitBtn = document.querySelector('form[action="/cart/add"] button[type="submit"]');
-                const quantityInput = document.querySelector('form[action="/cart/add"] input[name="quantity"]');
-
-                if (submitBtn) {
-                    submitBtn.removeAttribute("disabled");
-                    submitBtn.className = "btn btn-primary";
-                }
-
-                if (quantityInput) {
-                    quantityInput.max = stock;
-                }
-            }
-
-            // Hàm tắt form thêm vào giỏ hàng
-            function disableAddToCartForm() {
-                const submitBtn = document.querySelector('form[action="/cart/add"] button[type="submit"]');
-
-                if (submitBtn) {
-                    submitBtn.setAttribute("disabled", true);
-                    submitBtn.className = "btn btn-secondary";
-                }
-            }
-
-            // Hàm cập nhật form giỏ hàng
-            function updateCartForm(variant) {
-                document.getElementById("selected-variant-sku").value = variant.sku;
-                document.getElementById("cart-form-variant-id").value = variant.sku;
-            }
-    </script>
+// Hàm định dạng giá tiền
+function formatPrice(price) {
+  return new Intl.NumberFormat('vi-VN').format(price) + 'đ';
+}
+</script>

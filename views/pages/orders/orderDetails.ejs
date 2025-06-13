@@ -71,7 +71,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% order.orderItems.forEach(item => { %>
+                            <% order.items.forEach(item => { %>
                                 <tr>
                                     <td>
                                         <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="img-fluid" style="max-height: 50px; object-fit: contain;">
@@ -99,7 +99,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="4" class="text-end fw-bold">Tổng tiền hàng:</td>
-                                <td class="text-end fw-bold"><%- formatPrice(order.orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0)) %></td>
+                                <td class="text-end fw-bold"><%- formatPrice(order.items.reduce((acc, item) => acc + (item.price * item.quantity), 0)) %></td>
                             </tr>
                             <% if (order.shippingPrice && order.shippingPrice > 0) { %>
                             <tr>

@@ -1,0 +1,612 @@
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Tiêu đề trang -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Lịch sử đơn hàng</h2>
+            </div>
+
+            <!-- Tab xem đơn hàng theo trạng thái -->
+            <ul class="nav nav-tabs mb-4" id="orderStatusTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">
+                        Tất cả
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="processing-tab" data-bs-toggle="tab" data-bs-target="#processing" type="button" role="tab" aria-controls="processing" aria-selected="false">
+                        Đang xử lý
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="delivering-tab" data-bs-toggle="tab" data-bs-target="#delivering" type="button" role="tab" aria-controls="delivering" aria-selected="false">
+                        Đang giao
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="delivered-tab" data-bs-toggle="tab" data-bs-target="#delivered" type="button" role="tab" aria-controls="delivered" aria-selected="false">
+                        Đã giao hàng
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="canceled-tab" data-bs-toggle="tab" data-bs-target="#canceled" type="button" role="tab" aria-controls="canceled" aria-selected="false">
+                        Đã hủy
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="orderStatusTabContent">
+                <!-- Tab tất cả đơn hàng -->
+                <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+                    <% if (!orders || orders.length === 0) { %>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Bạn chưa có đơn hàng nào.
+                            <div class="mt-3">
+                                <a href="/products" class="btn btn-primary">Mua sắm ngay</a>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div class="order-list">
+                            <% orders.forEach(order => { %>
+                                <div class="card mb-4 order-card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <span class="order-date">
+                                            <i class="far fa-calendar-alt me-2"></i>
+                                            Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                        </span>
+                                        <span class="order-id">
+                                            Mã đơn hàng: #<%= order._id %>
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Danh sách sản phẩm trong đơn hàng -->
+                                        <% const itemsToShow = order.items || order.orderItems || []; %>
+                                        <% itemsToShow.slice(0, 3).forEach(item => { %>
+                                            <div class="d-flex mb-3 order-item">
+                                                <div class="flex-shrink-0">
+                                                    <% // Đảm bảo path ảnh đúng %>
+                                                    <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="rounded order-item-img" width="60" height="60" onerror="this.src='/images/default-product.jpg'">
+                                                </div>
+                                                <div class="ms-3 flex-grow-1">
+                                                    <div class="fw-bold"><%= item.name %></div>
+                                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                                        <div class="text-muted small">
+                                                            <% 
+                                                            // Dịch thuộc tính sang tiếng Việt
+                                                            const translations = {
+                                                                'color': 'màu',
+                                                                'storage': 'bộ nhớ',
+                                                                'ram': 'RAM',
+                                                                'size': 'kích thước',
+                                                                'material': 'chất liệu'
+                                                            };
+                                                            
+                                                            const translatedInfo = [];
+                                                            Object.entries(item.variantInfo).forEach(([key, value]) => {
+                                                                const translatedKey = translations[key.toLowerCase()] || key;
+                                                                translatedInfo.push(`${translatedKey}: ${value}`);
+                                                            });
+                                                            %>
+                                                            <%= translatedInfo.join(', ') %>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="text-muted">
+                                                        <span><%= formatPrice(item.price) %></span>
+                                                        <span class="mx-1">x</span>
+                                                        <span><%= item.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <% if (itemsToShow.length > 3) { %>
+                                            <div class="text-muted mb-3">
+                                                và <%= itemsToShow.length - 3 %> sản phẩm khác
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Hiển thị trạng thái đơn hàng -->
+                                        <div class="order-status-section">
+                                            <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                                                <div>
+                                                    <% let statusClass = ''; %>
+                                                    <% let statusText = ''; %>
+                                                    <% let paymentStatusText = ''; %>
+                                                    <% let paymentStatusClass = ''; %>
+                                                    
+                                                    <% // Xử lý trạng thái đơn hàng %>
+                                                    <% switch(order.status) { 
+                                                        case 'processing': 
+                                                            statusClass = 'text-warning';
+                                                            statusText = 'Đang xử lý';
+                                                            break;
+                                                        case 'delivering': 
+                                                            statusClass = 'text-primary';
+                                                            statusText = 'Đang giao hàng';
+                                                            break;
+                                                        case 'delivered': 
+                                                            statusClass = 'text-success';
+                                                            statusText = 'Đã giao hàng';
+                                                            break;
+                                                        case 'canceled': 
+                                                            statusClass = 'text-danger';
+                                                            statusText = 'Đã hủy';
+                                                            break;
+                                                        default: 
+                                                            statusClass = 'text-muted';
+                                                            statusText = order.status || 'không xác định';
+                                                    } %>
+                                                    
+                                                    <% // Xử lý trạng thái thanh toán %>
+                                                    <% switch(order.paymentStatus) {
+                                                        case 'pending':
+                                                            paymentStatusClass = 'text-warning';
+                                                            paymentStatusText = 'Chưa thanh toán';
+                                                            break;
+                                                        case 'completed':
+                                                            paymentStatusClass = 'text-success';
+                                                            paymentStatusText = 'Đã thanh toán';
+                                                            break;
+                                                        default:
+                                                            paymentStatusClass = 'text-muted';
+                                                            paymentStatusText = order.paymentStatus;
+                                                    } %>
+                                                    
+                                                    <div class="fw-bold">Trạng thái: <span class="<%= statusClass %>"><%= statusText %></span></div>
+                                                    <div class="mt-1">Thanh toán: <span class="<%= paymentStatusClass %>"><%= paymentStatusText %></span></div>
+                                                </div>
+                                                <div class="text-end">
+                                                    <div class="fs-5 fw-bold mb-2"><%= formatPrice(order.totalAmount) %></div>
+                                                    <!-- Nút Chi tiết đã bị xóa -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+
+                        <!-- Phân trang nếu có nhiều đơn hàng -->
+                        <% if (pages && pages > 1) { %>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    <% for (let i = 1; i <= pages; i++) { %>
+                                        <li class="page-item <%= i === page ? 'active' : '' %>">
+                                            <a class="page-link" href="/user/orders?page=<%= i %>"><%= i %></a>
+                                        </li>
+                                    <% } %>
+                                </ul>
+                            </nav>
+                        <% } %>
+                    <% } %>
+                </div>
+
+                <!-- Tab đơn hàng đang xử lý -->
+                <div class="tab-pane fade" id="processing" role="tabpanel" aria-labelledby="processing-tab">
+                    <% const processingOrders = orders && orders.filter(o => o.status === 'processing') || []; %>
+                    
+                    <% if (!processingOrders.length) { %>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Không có đơn hàng đang xử lý.
+                        </div>
+                    <% } else { %>
+                        <div class="order-list">
+                            <% processingOrders.forEach(order => { %>
+                                <div class="card mb-4 order-card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <span class="order-date">
+                                            <i class="far fa-calendar-alt me-2"></i>
+                                            Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                        </span>
+                                        <span class="order-id">
+                                            Mã đơn hàng: #<%= order._id %>
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Danh sách sản phẩm trong đơn hàng -->
+                                        <% const itemsToShow = order.items || order.orderItems || []; %>
+                                        <% itemsToShow.slice(0, 3).forEach(item => { %>
+                                            <div class="d-flex mb-3 order-item">
+                                                <div class="flex-shrink-0">
+                                                    <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="rounded order-item-img" width="60" height="60" onerror="this.src='/images/default-product.jpg'">
+                                                </div>
+                                                <div class="ms-3 flex-grow-1">
+                                                    <div class="fw-bold"><%= item.name %></div>
+                                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                                        <div class="text-muted small">
+                                                            <% 
+                                                            // Dịch thuộc tính sang tiếng Việt
+                                                            const translations = {
+                                                                'color': 'màu',
+                                                                'storage': 'bộ nhớ',
+                                                                'ram': 'RAM',
+                                                                'size': 'kích thước',
+                                                                'material': 'chất liệu'
+                                                            };
+                                                            
+                                                            const translatedInfo = [];
+                                                            Object.entries(item.variantInfo).forEach(([key, value]) => {
+                                                                const translatedKey = translations[key.toLowerCase()] || key;
+                                                                translatedInfo.push(`${translatedKey}: ${value}`);
+                                                            });
+                                                            %>
+                                                            <%= translatedInfo.join(', ') %>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="text-muted">
+                                                        <span><%= formatPrice(item.price) %></span>
+                                                        <span class="mx-1">x</span>
+                                                        <span><%= item.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <% if (itemsToShow.length > 3) { %>
+                                            <div class="text-muted mb-3">
+                                                và <%= itemsToShow.length - 3 %> sản phẩm khác
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Hiển thị trạng thái đơn hàng -->
+                                        <div class="order-status-section">
+                                            <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                                                <div>
+                                                    <div class="fw-bold">Trạng thái: <span class="text-warning">Đang xử lý</span></div>
+                                                    <div class="mt-1">Thanh toán: 
+                                                        <span class="<%= order.paymentStatus === 'completed' ? 'text-success' : 'text-warning' %>">
+                                                            <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-end">
+                                                    <div class="fs-5 fw-bold mb-2"><%= formatPrice(order.totalAmount) %></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Tab đơn hàng đang giao -->
+                <div class="tab-pane fade" id="delivering" role="tabpanel" aria-labelledby="delivering-tab">
+                    <% const deliveringOrders = orders && orders.filter(o => o.status === 'delivering') || []; %>
+                    
+                    <% if (!deliveringOrders.length) { %>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Không có đơn hàng đang giao.
+                        </div>
+                    <% } else { %>
+                        <div class="order-list">
+                            <% deliveringOrders.forEach(order => { %>
+                                <div class="card mb-4 order-card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <span class="order-date">
+                                            <i class="far fa-calendar-alt me-2"></i>
+                                            Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                        </span>
+                                        <span class="order-id">
+                                            Mã đơn hàng: #<%= order._id %>
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Danh sách sản phẩm trong đơn hàng -->
+                                        <% const itemsToShow = order.items || order.orderItems || []; %>
+                                        <% itemsToShow.slice(0, 3).forEach(item => { %>
+                                            <div class="d-flex mb-3 order-item">
+                                                <div class="flex-shrink-0">
+                                                    <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="rounded order-item-img" width="60" height="60" onerror="this.src='/images/default-product.jpg'">
+                                                </div>
+                                                <div class="ms-3 flex-grow-1">
+                                                    <div class="fw-bold"><%= item.name %></div>
+                                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                                        <div class="text-muted small">
+                                                            <% 
+                                                            // Dịch thuộc tính sang tiếng Việt
+                                                            const translations = {
+                                                                'color': 'màu',
+                                                                'storage': 'bộ nhớ',
+                                                                'ram': 'RAM',
+                                                                'size': 'kích thước',
+                                                                'material': 'chất liệu'
+                                                            };
+                                                            
+                                                            const translatedInfo = [];
+                                                            Object.entries(item.variantInfo).forEach(([key, value]) => {
+                                                                const translatedKey = translations[key.toLowerCase()] || key;
+                                                                translatedInfo.push(`${translatedKey}: ${value}`);
+                                                            });
+                                                            %>
+                                                            <%= translatedInfo.join(', ') %>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="text-muted">
+                                                        <span><%= formatPrice(item.price) %></span>
+                                                        <span class="mx-1">x</span>
+                                                        <span><%= item.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <% if (itemsToShow.length > 3) { %>
+                                            <div class="text-muted mb-3">
+                                                và <%= itemsToShow.length - 3 %> sản phẩm khác
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Hiển thị trạng thái đơn hàng -->
+                                        <div class="order-status-section">
+                                            <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                                                <div>
+                                                    <div class="fw-bold">Trạng thái: <span class="text-warning">Đang xử lý</span></div>
+                                                    <div class="mt-1">Thanh toán: 
+                                                        <span class="<%= order.paymentStatus === 'completed' ? 'text-success' : 'text-warning' %>">
+                                                            <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-end">
+                                                    <div class="fs-5 fw-bold mb-2"><%= formatPrice(order.totalAmount) %></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Tab đơn hàng đã giao -->
+                <div class="tab-pane fade" id="delivered" role="tabpanel" aria-labelledby="delivered-tab">
+                    <% const deliveredOrders = orders && orders.filter(o => o.status === 'delivered') || []; %>
+                    
+                    <% if (!deliveredOrders.length) { %>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Không có đơn hàng đã giao.
+                        </div>
+                    <% } else { %>
+                        <div class="order-list">
+                            <% deliveredOrders.forEach(order => { %>
+                                <div class="card mb-4 order-card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <span class="order-date">
+                                            <i class="far fa-calendar-alt me-2"></i>
+                                            Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                        </span>
+                                        <span class="order-id">
+                                            Mã đơn hàng: #<%= order._id %>
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Danh sách sản phẩm trong đơn hàng -->
+                                        <% const itemsToShow = order.items || order.orderItems || []; %>
+                                        <% itemsToShow.slice(0, 3).forEach(item => { %>
+                                            <div class="d-flex mb-3 order-item">
+                                                <div class="flex-shrink-0">
+                                                    <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="rounded order-item-img" width="60" height="60" onerror="this.src='/images/default-product.jpg'">
+                                                </div>
+                                                <div class="ms-3 flex-grow-1">
+                                                    <div class="fw-bold"><%= item.name %></div>
+                                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                                        <div class="text-muted small">
+                                                            <% 
+                                                            // Dịch thuộc tính sang tiếng Việt
+                                                            const translations = {
+                                                                'color': 'màu',
+                                                                'storage': 'bộ nhớ',
+                                                                'ram': 'RAM',
+                                                                'size': 'kích thước',
+                                                                'material': 'chất liệu'
+                                                            };
+                                                            
+                                                            const translatedInfo = [];
+                                                            Object.entries(item.variantInfo).forEach(([key, value]) => {
+                                                                const translatedKey = translations[key.toLowerCase()] || key;
+                                                                translatedInfo.push(`${translatedKey}: ${value}`);
+                                                            });
+                                                            %>
+                                                            <%= translatedInfo.join(', ') %>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="text-muted">
+                                                        <span><%= formatPrice(item.price) %></span>
+                                                        <span class="mx-1">x</span>
+                                                        <span><%= item.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <% if (itemsToShow.length > 3) { %>
+                                            <div class="text-muted mb-3">
+                                                và <%= itemsToShow.length - 3 %> sản phẩm khác
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Hiển thị trạng thái đơn hàng -->
+                                        <div class="order-status-section">
+                                            <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                                                <div>
+                                                    <div class="fw-bold">Trạng thái: <span class="text-warning">Đang xử lý</span></div>
+                                                    <div class="mt-1">Thanh toán: 
+                                                        <span class="<%= order.paymentStatus === 'completed' ? 'text-success' : 'text-warning' %>">
+                                                            <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-end">
+                                                    <div class="fs-5 fw-bold mb-2"><%= formatPrice(order.totalAmount) %></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Tab đơn hàng đã hủy -->
+                <div class="tab-pane fade" id="canceled" role="tabpanel" aria-labelledby="canceled-tab">
+                    <% const canceledOrders = orders && orders.filter(o => o.status === 'canceled') || []; %>
+                    
+                    <% if (!canceledOrders.length) { %>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Không có đơn hàng đã hủy.
+                        </div>
+                    <% } else { %>
+                        <div class="order-list">
+                            <% canceledOrders.forEach(order => { %>
+                                <div class="card mb-4 order-card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <span class="order-date">
+                                            <i class="far fa-calendar-alt me-2"></i>
+                                            Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                        </span>
+                                        <span class="order-id">
+                                            Mã đơn hàng: #<%= order._id %>
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Danh sách sản phẩm trong đơn hàng -->
+                                        <% const itemsToShow = order.items || order.orderItems || []; %>
+                                        <% itemsToShow.slice(0, 3).forEach(item => { %>
+                                            <div class="d-flex mb-3 order-item">
+                                                <div class="flex-shrink-0">
+                                                    <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="rounded order-item-img" width="60" height="60" onerror="this.src='/images/default-product.jpg'">
+                                                </div>
+                                                <div class="ms-3 flex-grow-1">
+                                                    <div class="fw-bold"><%= item.name %></div>
+                                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                                        <div class="text-muted small">
+                                                            <% 
+                                                            // Dịch thuộc tính sang tiếng Việt
+                                                            const translations = {
+                                                                'color': 'màu',
+                                                                'storage': 'bộ nhớ',
+                                                                'ram': 'RAM',
+                                                                'size': 'kích thước',
+                                                                'material': 'chất liệu'
+                                                            };
+                                                            
+                                                            const translatedInfo = [];
+                                                            Object.entries(item.variantInfo).forEach(([key, value]) => {
+                                                                const translatedKey = translations[key.toLowerCase()] || key;
+                                                                translatedInfo.push(`${translatedKey}: ${value}`);
+                                                            });
+                                                            %>
+                                                            <%= translatedInfo.join(', ') %>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="text-muted">
+                                                        <span><%= formatPrice(item.price) %></span>
+                                                        <span class="mx-1">x</span>
+                                                        <span><%= item.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <% if (itemsToShow.length > 3) { %>
+                                            <div class="text-muted mb-3">
+                                                và <%= itemsToShow.length - 3 %> sản phẩm khác
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Hiển thị trạng thái đơn hàng -->
+                                        <div class="order-status-section">
+                                            <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                                                <div>
+                                                    <div class="fw-bold">Trạng thái: <span class="text-warning">Đang xử lý</span></div>
+                                                    <div class="mt-1">Thanh toán: 
+                                                        <span class="<%= order.paymentStatus === 'completed' ? 'text-success' : 'text-warning' %>">
+                                                            <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-end">
+                                                    <div class="fs-5 fw-bold mb-2"><%= formatPrice(order.totalAmount) %></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .order-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .order-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .order-item-img {
+        object-fit: contain;
+        background-color: #f8f9fa;
+    }
+    
+    .order-status-section {
+        margin-top: 1rem;
+    }
+    
+    .nav-tabs .nav-link {
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Lấy trạng thái từ URL (nếu có)
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    
+    // Kích hoạt tab tương ứng dựa trên tham số URL
+    if (status) {
+        const tabEl = document.getElementById(`${status.toLowerCase()}-tab`);
+        if (tabEl) {
+            const tab = new bootstrap.Tab(tabEl);
+            tab.show();
+        }
+    }
+    
+    // Cập nhật URL khi chuyển tab
+    const tabs = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', event => {
+            const targetId = event.target.id.replace('-tab', '');
+            if (targetId !== 'all') {
+                history.replaceState(null, null, `?status=${targetId}`);
+            } else {
+                history.replaceState(null, null, window.location.pathname);
+            }
+        });
+    });
+});
+</script>
