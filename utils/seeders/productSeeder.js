@@ -35,6 +35,9 @@ const seedProducts = async (categoryMap, attributesMap) => {
       product.name.toLowerCase().includes("card")
     ) {
       categoryId = categoryMap.get("Linh kiện PC")._id;
+    } else {
+      // Gán một category mặc định nếu không khớp
+      categoryId = categoryMap.get("Linh kiện PC")._id; 
     }
 
     // Xử lý attributeValues nếu có

@@ -1,523 +1,825 @@
-<div class="row">
-  <div class="col-lg-6 mb-4">
-    <!-- Gallery ảnh -->
-    <div class="product-gallery mb-3">
-      <img
-        src="<%= product.imageURL %>"
-        class="img-fluid rounded main-image"
-        alt="<%= product.name %>"
-        id="mainImage"
-      />
-      <!-- Thêm gallery nếu có -->
-      <% if (product.images && product.images.gallery &&
-      product.images.gallery.length > 0) { %>
-      <div class="row mt-2">
-        <% product.images.gallery.forEach((img, index) => { %>
-        <div class="col-3">
-          <img
-            src="<%= img %>"
-            class="img-fluid rounded gallery-thumbnail"
-            alt="<%= product.name %>"
-            onclick="changeMainImage(this.src)"
-          />
-        </div>
-        <% }) %>
-      </div>
-      <% } %>
-    </div>
+<!-- <%- include('../../partials/head', { pageTitle: product.name }) %> -->
 
-    <!-- Reviews -->
-    <div class="mt-4">
-      <h3>Đánh giá (<%= reviews ? reviews.length : 0 %>)</h3>
+<body class="d-flex flex-column vh-100">
 
-      <div class="d-flex align-items-center mb-3">
-        <div class="me-3">
-          <span class="fs-1"><%= ratingStats.average.toFixed(1) %></span>
-          <div class="small text-muted"><%= ratingStats.count %> đánh giá</div>
-        </div>
-        <div class="rating-stars fs-3">
-          <% for(let i = 1; i <= 5; i++) { %>
-          <i
-            class="fas fa-star <%= i <= Math.round(ratingStats.average) ? 'text-warning' : 'text-muted' %>"
-          ></i>
-          <% } %>
-        </div>
-      </div>
+    <main class="flex-shrink-0 mb-5">
+        <div class="container mt-5">
+            <%- include('../../partials/messages') %>
 
-      <% if (reviews && reviews.length > 0) { %> <% reviews.forEach(review => {
-      %>
-      <div class="card mb-3">
-        <div class="card-body">
-          <div class="d-flex justify-content-between mb-2">
-            <h5 class="card-title"><%= review.username %></h5>
-            <small class="text-muted"
-              ><%= new Date(review.createdAt).toLocaleDateString() %></small
-            >
-          </div>
-          <div class="mb-2">
-            <% for(let i = 1; i <= 5; i++) { %>
-            <i
-              class="fas fa-star <%= i <= review.rating ? 'text-warning' : 'text-muted' %>"
-            ></i>
-            <% } %> <% if (review.isPurchaseVerified) { %>
-            <span class="badge bg-success ms-2">Đã mua hàng</span>
-            <% } %>
-          </div>
-          <p class="card-text"><%= review.comment %></p>
-        </div>
-      </div>
-      <% }) %> <% } else { %>
-      <p>Chưa có đánh giá nào cho sản phẩm này.</p>
-      <% } %>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <!-- Gallery ảnh -->
+                    <div class="product-gallery mb-3">
+                        <img src="<%= product.imageURL %>" class="img-fluid rounded main-image" alt="<%= product.name %>" id="mainImage" />
+                        <!-- Thêm gallery nếu có -->
+                        <% if (product.images && product.images.gallery && product.images.gallery.length > 0) { %>
+                            <div class="row mt-2">
+                                <% product.images.gallery.forEach((img, index) => { %>
+                                    <div class="col-3">
+                                        <img src="<%= img %>" class="img-fluid rounded gallery-thumbnail" alt="<%= product.name %>" onclick="changeMainImage(this.src)" />
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } %>
+                    </div>
 
-      <!-- Form thêm đánh giá -->
-      <% if (locals.user) { %>
-      <div class="card mt-4">
-        <div class="card-header">
-          <h5>Thêm đánh giá của bạn</h5>
-        </div>
-        <div class="card-body">
-          <form action="/reviews/create" method="POST">
-            <input type="hidden" name="productId" value="<%= product._id %>" />
+                    <!-- Reviews -->
+                    <div class="mt-4">
+                        <h3>Đánh giá (<%= reviews ? reviews.length : 0 %>)</h3>
 
-            <div class="mb-3">
-              <label class="form-label">Đánh giá của bạn</label>
-              <div class="rating-select">
-                <div class="stars">
-                  <input
-                    type="radio"
-                    name="rating"
-                    id="rating-5"
-                    value="5"
-                    required
-                  />
-                  <label for="rating-5"><i class="fas fa-star"></i></label>
-                  <input type="radio" name="rating" id="rating-4" value="4" />
-                  <label for="rating-4"><i class="fas fa-star"></i></label>
-                  <input type="radio" name="rating" id="rating-3" value="3" />
-                  <label for="rating-3"><i class="fas fa-star"></i></label>
-                  <input type="radio" name="rating" id="rating-2" value="2" />
-                  <label for="rating-2"><i class="fas fa-star"></i></label>
-                  <input type="radio" name="rating" id="rating-1" value="1" />
-                  <label for="rating-1"><i class="fas fa-star"></i></label>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <span class="fs-1"><%= ratingStats.average.toFixed(1) %></span>
+                                <div class="small text-muted"><%= ratingStats.count %> đánh giá</div>
+                            </div>
+                            <div class="rating-stars fs-3">
+                                <% for(let i = 1; i <= 5; i++) { %>
+                                    <i class="fas fa-star <%= i <= Math.round(ratingStats.average) ? 'text-warning' : 'text-muted' %>"></i>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <% if (reviews && reviews.length > 0) { %>
+                            <% reviews.forEach(review => { %>
+                                <div class="review-card border rounded p-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="mb-1"><%= review.user ? (review.user.fullName || review.user.userName) : (review.username || 'Người dùng ẩn danh') %></h6>
+                                        <small><%= new Date(review.createdAt).toLocaleDateString('vi-VN') %></small>
+                                    </div>
+                                    <div class="rating mb-2">
+                                        <% for(let i = 1; i <= 5; i++) { %>
+                                            <i class="fa-star <%= i <= review.rating ? 'fas text-warning' : 'far text-muted' %>"></i>
+                                        <% } %>
+                                        <span class="ms-2 badge bg-success">Đã mua hàng</span>
+                                    </div>
+                                    <p><%= review.comment %></p>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                        <% } %>
+                    </div>
+
+                    <!-- Form thêm đánh giá -->
+                    <% if (locals.user) { %>
+                        <style>
+                            .stars {
+                                display: flex;
+                                flex-direction: row-reverse;
+                                justify-content: flex-end;
+                            }
+                    
+                            .stars input {
+                                display: none;
+                            }
+                    
+                            .stars label {
+                                font-size: 1.5rem;
+                                color: #ccc;
+                                cursor: pointer;
+                                transition: color 0.2s;
+                            }
+                    
+                            .stars input:checked~label,
+                            .stars label:hover,
+                            .stars label:hover~label {
+                                color: #ffc107;
+                            }
+                        </style>
+                    
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5>Thêm đánh giá của bạn</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- <% if (locals.error) { %>
+                                    <div class="alert alert-danger">
+                                        <%= error %>
+                                    </div>
+                                    <% } %> -->
+                    
+                                        <form action="/reviews/<%= product._id %>" method="POST" id="reviewForm">
+                                            <input type="hidden" name="productId" value="<%= product._id %>" />
+                                        
+                                            <div class="mb-3">
+                                                <label class="form-label">Đánh giá của bạn</label>
+                                                <div class="rating-select">
+                                                    <div class="stars">
+                                                        <input type="radio" name="rating" id="rating-5" value="5" required />
+                                                        <label for="rating-5" title="Rất tốt"><i class="fas fa-star"></i></label>
+                                                        <input type="radio" name="rating" id="rating-4" value="4" />
+                                                        <label for="rating-4" title="Tốt"><i class="fas fa-star"></i></label>
+                                                        <input type="radio" name="rating" id="rating-3" value="3" />
+                                                        <label for="rating-3" title="Bình thường"><i class="fas fa-star"></i></label>
+                                                        <input type="radio" name="rating" id="rating-2" value="2" />
+                                                        <label for="rating-2" title="Kém"><i class="fas fa-star"></i></label>
+                                                        <input type="radio" name="rating" id="rating-1" value="1" />
+                                                        <label for="rating-1" title="Rất kém"><i class="fas fa-star"></i></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="mb-3">
+                                                <label for="comment" class="form-label">Nhận xét của bạn</label>
+                                                <textarea class="form-control" id="comment" name="comment" rows="3" required maxlength="300"
+                                                    placeholder="Nhập nhận xét chi tiết về sản phẩm..."></textarea>
+                                                <small class="form-text text-muted">Tối đa 300 ký tự.</small>
+                                            </div>
+                                        
+                                            <button type="submit" class="btn btn-primary" id="submitBtn">Gửi đánh giá</button>
+                                        </form>
+                            </div>
+                        </div>
+                    
+                        <script>
+                            const form = document.getElementById('reviewForm');
+                            const btn = document.getElementById('submitBtn');
+                            form.addEventListener('submit', () => {
+                                btn.disabled = true;
+                                btn.innerHTML = 'Đang gửi...';
+                            });
+                        </script>
+                    <% } else { %>
+                            <div class="alert alert-info mt-4">
+                                <p>Vui lòng <a href="/auth/login">đăng nhập</a> để thêm đánh giá.</p>
+                            </div>
+                    <% } %>
+                     
+                    
+                    <!-- <% if (locals.user) { %>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5>Thêm đánh giá của bạn</h5>
+                            </div>
+                            <div class="card-body">
+                                <form action="/reviews/<%= product._id %>" method="POST">
+                                    <input type="hidden" name="productId" value="<%= product._id %>" />
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Đánh giá của bạn</label>
+                                        <div class="rating-select">
+                                            <div class="stars">
+                                                <input type="radio" name="rating" id="rating-5" value="5" required />
+                                                <label for="rating-5"><i class="fas fa-star"></i></label>
+                                                <input type="radio" name="rating" id="rating-4" value="4" />
+                                                <label for="rating-4"><i class="fas fa-star"></i></label>
+                                                <input type="radio" name="rating" id="rating-3" value="3" />
+                                                <label for="rating-3"><i class="fas fa-star"></i></label>
+                                                <input type="radio" name="rating" id="rating-2" value="2" />
+                                                <label for="rating-2"><i class="fas fa-star"></i></label>
+                                                <input type="radio" name="rating" id="rating-1" value="1" />
+                                                <label for="rating-1"><i class="fas fa-star"></i></label>
+                                            </div>
+                                        </div> 
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="comment" class="form-label">Nhận xét của bạn</label>
+                                        <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                                </form>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-info mt-4">
+                            <p>Vui lòng <a href="/auth/login">đăng nhập</a> để thêm đánh giá.</p>
+                        </div>
+                    <% } %>-->
+
                 </div>
-              </div>
+
+                <div class="col-lg-6">
+                    <h1 class="mb-3"><%= product.name %></h1>
+                    <p class="text-muted mb-2">
+                        Danh mục: <%= product.category.name %> | Thương hiệu: <%= product.brand %>
+                    </p>
+
+                    <!-- Giá và khuyến mãi -->
+                    <% if (product.discountPercentage > 0) { %>
+                        <div class="mb-3">
+                            <span class="text-decoration-line-through text-muted fs-5"><%= formatPrice(product.basePrice) %></span>
+                            <span class="badge bg-danger ms-2">-<%= product.discountPercentage %>%</span>
+                        </div>
+                        <h3 class="text-danger mb-4"><%= formatPrice(product.price) %></h3>
+                    <% } else { %>
+                        <h3 class="text-danger mb-4"><%= formatPrice(product.price) %></h3>
+                    <% } %>
+
+                    <!-- Trạng thái tồn kho -->
+                    <% if (product.quantity > 0) { %>
+                        <p class="text-success mb-4">
+                            <i class="fas fa-check-circle me-2"></i>Còn hàng (<%= product.quantity %> sản phẩm)
+                        </p>
+                    <% } else { %>
+                        <p class="text-danger mb-4">
+                            <i class="fas fa-times-circle me-2"></i>Hết hàng
+                        </p>
+                    <% } %>
+
+                    <!-- Variants -->
+                    <style>
+                        .variant-selector .btn {
+                            min-width: 80px;
+                            margin-right: 0.5rem;
+                            margin-bottom: 0.5rem;
+                            font-weight: 500;
+                            transition: all 0.2s;
+                        }
+                    
+                        .variant-selector .btn:hover {
+                            background-color: #e9ecef;
+                            color: #0d6efd;
+                            border-color: #0d6efd;
+                        }
+                    
+                        .variant-selector .btn-check:checked+.btn {
+                            background-color: #0d6efd;
+                            color: #fff;
+                            border-color: #0d6efd;
+                            font-weight: 600;
+                            box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.5);
+                        }
+                    
+                        .variant-selector {
+                            display: flex;
+                            flex-wrap: wrap;
+                        }
+                    
+                        .variant-label {
+                            font-weight: 600;
+                            font-size: 1rem;
+                            margin-bottom: 0.25rem;
+                            color: #333;
+                        }
+                    </style>
+
+                    <% if (product.variants && product.variants.length > 0) { %>
+                        <div class="mb-4">
+                            <h5 class="mb-3">Phiên bản sản phẩm:</h5>
+                            <form id="variant-form">
+                                <% Object.keys(variantAttributes).forEach(attrName => { %>
+                                    <% if (variantAttributes[attrName].length > 0) { %>
+                                        <div class="mb-3">
+                                            <label class="variant-label d-block">
+                                                <%= attrName === 'ram' ? 'RAM' : attrName.charAt(0).toUpperCase() + attrName.slice(1) %>
+                                            </label>
+                                            <div class="btn-group variant-selector" role="group" aria-label="<%= attrName %> selection">
+                                                <% variantAttributes[attrName].forEach(attrValue => { %>
+                                                    <input type="radio" class="btn-check" name="<%= attrName %>" id="<%= attrName %>_<%= attrValue %>" value="<%= attrValue %>" <%= defaultVariant && defaultVariant.attributes && defaultVariant.attributes[attrName] === attrValue ? 'checked' : '' %> >
+                                                    <label class="btn btn-outline-primary" for="<%= attrName %>_<%= attrValue %>">
+                                                        <%= attrValue %>
+                                                    </label>
+                                                <% }) %>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                <% }) %>
+                                <input type="hidden" id="selected-variant-sku" name="variantId" value="<%= product.defaultVariantSku %>" />
+                            </form>
+                        </div>
+                    <% } %>
+
+                    <div class="mb-4">
+                        <h5>Mô tả sản phẩm:</h5>
+                        <p><%= product.description %></p>
+                    </div>
+
+                    <!-- Thông số kỹ thuật chung -->
+                    <% if (product.commonSpecs) { %>
+                        <div class="mb-4">
+                            <h5>Thông số kỹ thuật chung:</h5>
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <% Object.entries(product.commonSpecs).forEach(([key, value]) => { if (typeof value !== 'object') { %>
+                                        <tr>
+                                            <td width="40%">
+                                                <strong><%= key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1') %></strong>
+                                            </td>
+                                            <td><%= value %></td>
+                                        </tr>
+                                    <% }}) %>
+
+                                    <!-- Thông tin bảo hành nếu có -->
+                                    <% if (product.commonSpecs.warrantyInfo) { %>
+                                        <tr>
+                                            <td width="40%"><strong>Bảo hành</strong></td>
+                                            <td><%= product.commonSpecs.warrantyInfo.durationInMonths %> tháng</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="40%"><strong>Loại bảo hành</strong></td>
+                                            <td><%= product.commonSpecs.warrantyInfo.type %></td>
+                                        </tr>
+                                        <% if (product.commonSpecs.warrantyInfo.coverage) { %>
+                                            <tr>
+                                                <td width="40%"><strong>Phạm vi bảo hành</strong></td>
+                                                <td><%= product.commonSpecs.warrantyInfo.coverage %></td>
+                                            </tr>
+                                        <% } %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+
+                    <!-- Thuộc tính sản phẩm -->
+                    <% if (product.attributeValues && product.attributeValues.length > 0) { %>
+                        <div class="mb-4">
+                            <h5>Thông số kỹ thuật:</h5>
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <% product.attributeValues.forEach(attr => { %>
+                                        <tr>
+                                            <td width="40%"><strong><%= attr.attribute.name %></strong></td>
+                                            <td><%= attr.value %></td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+
+                    <!-- Form thêm sản phẩm vào giỏ hàng -->
+                    <!-- <% if (product.quantity> 0) { %>
+                        <form action="/cart/add" method="POST" id="add-to-cart-form" class="d-flex flex-column flex-sm-row gap-2 mt-3">
+                            <input type="hidden" name="productId" value="<%= product._id %>">
+                            <input type="hidden" name="variantId" id="cart-form-variant-id" value="">
+                            <input type="hidden" name="name" id="cart-form-product-name" value="<%= product.name %>">
+                            <input type="hidden" name="price" id="cart-form-product-price" value="<%= product.price %>">
+                    
+                            <div class="input-group" style="max-width: 160px;">
+                                <button class="btn btn-outline-secondary" type="button" id="button-minus"
+                                    aria-label="Giảm số lượng">-</button>
+                                <input type="number" class="form-control text-center" name="quantity" value="1"
+                                    aria-label="Số lượng sản phẩm" min="1" max="<%= product.quantity %>" style="width: 60px;">
+                                <button class="btn btn-outline-secondary" type="button" id="button-plus"
+                                    aria-label="Tăng số lượng">+</button>
+                            </div>
+                    
+                            <button type="submit" id="add-to-cart-btn"
+                                class="btn btn-primary d-flex align-items-center justify-content-center flex-grow-1">
+                                <span id="btn-text">🛒 Thêm vào giỏ</span>
+                                <span id="btn-loading" class="spinner-border spinner-border-sm ms-2 d-none" role="status"
+                                    aria-hidden="true"></span>
+                            </button>
+                        </form>
+                    
+                        <script>
+                            const minusBtn = document.getElementById('button-minus');
+                            const plusBtn = document.getElementById('button-plus');
+                            const quantityInput = document.querySelector('input[name="quantity"]');
+                            const addToCartBtn = document.getElementById('add-to-cart-btn');
+                            const btnText = document.getElementById('btn-text');
+                            const btnLoading = document.getElementById('btn-loading');
+
+                            minusBtn.addEventListener('click', () => {
+                                let current = parseInt(quantityInput.value) || 1;
+                                if (current > 1) quantityInput.value = current - 1;
+                            });
+
+                            plusBtn.addEventListener('click', () => {
+                                let current = parseInt(quantityInput.value) || 1;
+                                let max = parseInt(quantityInput.max) || Infinity;
+                                if (current < max) quantityInput.value = current + 1;
+                            });
+
+                            // Optional: Disable button + show loading khi submit
+                            document.getElementById('add-to-cart-form').addEventListener('submit', (e) => {
+                                addToCartBtn.disabled = true;
+                                btnLoading.classList.remove('d-none');
+                            });
+                        </script>
+                    <% } else { %>
+                            <button class="btn btn-secondary w-100" disabled>
+                                <i class="fas fa-times-circle me-2"></i>Hết hàng
+                            </button>
+                    <% } %> -->
+                    
+
+                    <% if (product.quantity > 0) { %>
+                        <form action="/cart/add" method="POST" id="add-to-cart-form" class="d-flex mt-3">
+                            <input type="hidden" name="productId" value="<%= product._id %>">
+                            <input type="hidden" name="variantId" id="cart-form-variant-id" value="">
+                            <input type="hidden" name="name" id="cart-form-product-name" value="<%= product.name %>">
+                            <input type="hidden" name="price" id="cart-form-product-price" value="<%= product.price %>">
+
+                            <div class="input-group" style="width: 130px;">
+                                <button class="btn btn-outline-secondary" type="button" id="button-minus">-</button>
+                                <input type="text" class="form-control text-center" name="quantity" value="1" aria-label="Quantity" min="1">
+                                <button class="btn btn-outline-secondary" type="button" id="button-plus">+</button>
+                            </div>
+                            <button type="submit" id="add-to-cart-btn" class="btn btn-primary ms-3 flex-grow-1">Thêm vào giỏ hàng</button>
+                        </form>
+                    <% } else { %>
+                        <button class="btn btn-secondary" disabled>
+                            <i class="fas fa-times-circle me-2"></i>Hết hàng
+                        </button>
+                    <% } %>
+                </div>
             </div>
 
-            <div class="mb-3">
-              <label for="comment" class="form-label">Nhận xét của bạn</label>
-              <textarea
-                class="form-control"
-                id="comment"
-                name="comment"
-                rows="3"
-                required
-              ></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-          </form>
+            <!-- Sản phẩm tương tự -->
+            <% if (similarProducts && similarProducts.length > 0) { %>
+                <div class="mt-5">
+                    <h3 class="mb-4">Sản phẩm tương tự</h3>
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+                        <% similarProducts.forEach(prod => { %>
+                            <div class="col">
+                                <div class="card h-100 product-card">
+                                    <div class="position-relative">
+                                        <img src="<%= prod.imageURL %>" class="card-img-top" alt="<%= prod.name %>" />
+                                        <% if (prod.discountPercentage > 0) { %>
+                                            <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">
+                                                -<%= prod.discountPercentage %>%
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= prod.name %></h5>
+                                        <% if (prod.discountPercentage > 0) { %>
+                                            <p class="card-text mb-0">
+                                                <span class="text-decoration-line-through text-muted"><%= formatPrice(prod.basePrice) %></span>
+                                            </p>
+                                            <p class="card-text fw-bold text-danger">
+                                                <%= formatPrice(prod.price) %>
+                                            </p>
+                                        <% } else { %>
+                                            <p class="card-text fw-bold text-danger">
+                                                <%= formatPrice(prod.price) %>
+                                            </p>
+                                        <% } %>
+                                        <a href="/products/<%= prod._id %>" class="btn btn-outline-primary w-100">
+                                            Chi tiết
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
         </div>
-      </div>
-      <% } else { %>
-      <div class="alert alert-info mt-4">
-        <p>Vui lòng <a href="/auth/login">đăng nhập</a> để thêm đánh giá.</p>
-      </div>
-      <% } %>
-    </div>
-  </div>
+    </main>
 
-  <div class="col-lg-6">
-    <h1 class="mb-3"><%= product.name %></h1>
-    <p class="text-muted mb-2">
-      Danh mục: <%= product.category.name %> | Thương hiệu: <%= product.brand %>
-    </p>
+    <%- include('../../partials/footer') %>
+    <%- include('../../partials/scripts') %>
 
-    <!-- Giá và khuyến mãi -->
-    <% if (product.discountPercentage > 0) { %>
-    <div class="mb-3">
-      <span class="text-decoration-line-through text-muted fs-5"
-        ><%= formatPrice(product.basePrice) %></span
-      >
-      <span class="badge bg-danger ms-2"
-        >-<%= product.discountPercentage %>%</span
-      >
-    </div>
-    <h3 class="text-danger mb-4"><%= formatPrice(product.price) %></h3>
-    <% } else { %>
-    <h3 class="text-danger mb-4"><%= formatPrice(product.price) %></h3>
-    <% } %>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Dữ liệu tất cả variants
+            const allVariants = <%= JSON.stringify(product.variants || []) %>;
 
-    <!-- Trạng thái tồn kho -->
-    <% if (product.quantity > 0) { %>
-    <p class="text-success mb-4">
-      <i class="fas fa-check-circle me-2"></i>Còn hàng (<%= product.quantity %>
-      sản phẩm)
-    </p>
-    <% } else { %>
-    <p class="text-danger mb-4">
-      <i class="fas fa-times-circle me-2"></i>Hết hàng
-    </p>
-    <% } %>
+            // Lấy tất cả selector variants
+            const variantSelectors = document.querySelectorAll(".variant-selector input");
 
-    <!-- Variants -->
-    <% if (product.variants && product.variants.length > 0) { %>
-    <div class="mb-4">
-      <h5 class="mb-3">Phiên bản sản phẩm:</h5>
-      <form id="variant-form">
-        <% Object.keys(variantAttributes).forEach(attrName => { %> <% if
-        (variantAttributes[attrName].length > 0) { %>
-        <div class="mb-3">
-          <label class="form-label">
-            <%= attrName === 'ram' ? 'RAM' : attrName.charAt(0).toUpperCase() +
-            attrName.slice(1) %>
-          </label>
-          <div
-            class="btn-group variant-selector"
-            role="group"
-            aria-label="<%= attrName %> selection"
-          >
-            <% variantAttributes[attrName].forEach(attrValue => { %> <input
-            type="radio" class="btn-check" name="<%= attrName %>" id="<%=
-            attrName %>_<%= attrValue %>" value="<%= attrValue %>" <%=
-            defaultVariant && defaultVariant.attributes &&
-            defaultVariant.attributes[attrName] === attrValue ? 'checked' : ''
-            %> >
-            <label
-              class="btn btn-outline-primary"
-              for="<%= attrName %>_<%= attrValue %>"
-            >
-              <%= attrValue %>
-            </label>
-            <% }) %>
-          </div>
-        </div>
-        <% } %> <% }) %>
+            // Hàm cập nhật variant khi chọn
+            function updateSelectedVariant() {
+                const selectedAttrs = getSelectedAttributes();
+                const selectedVariant = findVariantByAttributes(selectedAttrs);
+                const cartPriceField = document.getElementById('cart-form-product-price');
 
-        <input
-          type="hidden"
-          id="selected-variant-sku"
-          name="variantId"
-          value="<%= product.defaultVariantSku %>"
-        />
-      </form>
-    </div>
-    <% } %>
+                if (selectedVariant) {
+                    variantPriceElement.textContent = formatPrice(selectedVariant.price);
+                    cartPriceField.value = selectedVariant.price; // Update hidden price field
 
-    <div class="mb-4">
-      <h5>Mô tả sản phẩm:</h5>
-      <p><%= product.description %></p>
-    </div>
+                    if (selectedVariant.stock > 0) {
+                        stockStatusElement.innerHTML = `<span class="badge bg-success">Còn hàng</span> (Còn lại: ${selectedVariant.stock} sản phẩm)`;
+                        addToCartButton.disabled = false;
+                    } else {
+                        stockStatusElement.innerHTML = `<span class="badge bg-danger">Hết hàng</span>`;
+                        addToCartButton.disabled = true;
+                    }
+                    cartFormVariantIdField.value = selectedVariant._id;
+                } else {
+                    const allRequiredSelected = areAllRequiredAttributesSelected();
+                    if (allRequiredSelected) {
+                        variantPriceElement.textContent = 'N/A';
+                        stockStatusElement.innerHTML = `<span class="badge bg-secondary">Không có sẵn</span>`;
+                        addToCartButton.disabled = true;
+                        cartPriceField.value = ''; // Clear price if variant is not available
+                    }
+                }
+            }
 
-    <!-- Thông số kỹ thuật chung -->
-    <% if (product.commonSpecs) { %>
-    <div class="mb-4">
-      <h5>Thông số kỹ thuật chung:</h5>
-      <table class="table table-bordered">
-        <tbody>
-          <% Object.entries(product.commonSpecs).forEach(([key, value]) => { if
-          (typeof value !== 'object') { %>
-          <tr>
-            <td width="40%">
-              <strong
-                ><%= key.charAt(0).toUpperCase() +
-                key.slice(1).replace(/([A-Z])/g, ' $1') %></strong
-              >
-            </td>
-            <td><%= value %></td>
-          </tr>
-          <% }}) %>
+            // Hàm cập nhật trạng thái tồn kho
+            function updateStockStatus(variant) {
+                const stockElements = document.querySelectorAll("p.mb-4");
+                let stockElement = null;
+                for (let i = 0; i < stockElements.length; i++) {
+                    if (stockElements[i].querySelector("i.fas")) {
+                        stockElement = stockElements[i];
+                        break;
+                    }
+                }
 
-          <!-- Thông tin bảo hành nếu có -->
-          <% if (product.commonSpecs.warrantyInfo) { %>
-          <tr>
-            <td width="40%"><strong>Bảo hành</strong></td>
-            <td>
-              <%= product.commonSpecs.warrantyInfo.durationInMonths %> tháng
-            </td>
-          </tr>
-          <tr>
-            <td width="40%"><strong>Loại bảo hành</strong></td>
-            <td><%= product.commonSpecs.warrantyInfo.type %></td>
-          </tr>
-          <% if (product.commonSpecs.warrantyInfo.coverage) { %>
-          <tr>
-            <td width="40%"><strong>Phạm vi bảo hành</strong></td>
-            <td><%= product.commonSpecs.warrantyInfo.coverage %></td>
-          </tr>
-          <% } %> <% } %>
-        </tbody>
-      </table>
-    </div>
-    <% } %>
+                if (stockElement) {
+                    if (variant.stock > 0) {
+                        stockElement.className = "text-success mb-4";
+                        stockElement.innerHTML = '<i class="fas fa-check-circle me-2"></i>Còn hàng (' + variant.stock + " sản phẩm)";
+                        enableAddToCartForm(variant.stock);
+                    } else {
+                        stockElement.className = "text-danger mb-4";
+                        stockElement.innerHTML = '<i class="fas fa-times-circle me-2"></i>Hết hàng';
+                        disableAddToCartForm();
+                    }
+                }
+            }
 
-    <!-- Thuộc tính sản phẩm -->
-    <% if (product.attributeValues && product.attributeValues.length > 0) { %>
-    <div class="mb-4">
-      <h5>Thông số kỹ thuật:</h5>
-      <table class="table table-bordered">
-        <tbody>
-          <% product.attributeValues.forEach(attr => { %>
-          <tr>
-            <td width="40%"><strong><%= attr.attribute.name %></strong></td>
-            <td><%= attr.value %></td>
-          </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    </div>
-    <% } %>
+            // Hàm bật form thêm vào giỏ hàng
+            function enableAddToCartForm(stock) {
+                const submitBtn = document.querySelector('form[action="/cart/add"] button[type="submit"]');
+                const quantityInput = document.querySelector('form[action="/cart/add"] input[name="quantity"]');
 
-    <!-- Form thêm sản phẩm vào giỏ hàng -->
-    <% if (product.quantity > 0) { %>
-    <form action="/cart/add" method="POST" class="d-flex align-items-center">
-      <input type="hidden" name="productId" value="<%= product._id %>" />
-      <input
-        type="hidden"
-        name="variantId"
-        id="cart-variant-id"
-        value="<%= product.variants?.find(v => v.isDefault)?.sku || '' %>"
-      />
+                if (submitBtn) {
+                    submitBtn.removeAttribute("disabled");
+                    submitBtn.className = "btn btn-primary";
+                }
 
-      <div class="input-group me-3" style="max-width: 150px">
-        <button
-          class="btn btn-outline-secondary"
-          type="button"
-          onclick="this.nextElementSibling.stepDown()"
-        >
-          -
-        </button>
-        <input
-          type="number"
-          class="form-control text-center"
-          name="quantity"
-          value="1"
-          min="1"
-          max="<%= product.quantity %>"
-        />
-        <button
-          class="btn btn-outline-secondary"
-          type="button"
-          onclick="this.previousElementSibling.stepUp()"
-        >
-          +
-        </button>
-      </div>
-      <button type="submit" class="btn btn-primary">
-        <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ
-      </button>
-    </form>
-    <% } else { %>
-    <button class="btn btn-secondary" disabled>
-      <i class="fas fa-times-circle me-2"></i>Hết hàng
-    </button>
-    <% } %>
-  </div>
-</div>
+                if (quantityInput) {
+                    quantityInput.max = stock;
+                }
+            }
 
-<!-- Sản phẩm tương tự -->
-<% if (similarProducts && similarProducts.length > 0) { %>
-<div class="mt-5">
-  <h3 class="mb-4">Sản phẩm tương tự</h3>
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
-    <% similarProducts.forEach(prod => { %>
-    <div class="col">
-      <div class="card h-100 product-card">
-        <div class="position-relative">
-          <img
-            src="<%= prod.imageURL %>"
-            class="card-img-top"
-            alt="<%= prod.name %>"
-          />
-          <% if (prod.discountPercentage > 0) { %>
-          <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">
-            -<%= prod.discountPercentage %>%
-          </span>
-          <% } %>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title"><%= prod.name %></h5>
-          <% if (prod.discountPercentage > 0) { %>
-          <p class="card-text mb-0">
-            <span class="text-decoration-line-through text-muted"
-              ><%= formatPrice(prod.basePrice) %></span
-            >
-          </p>
-          <p class="card-text fw-bold text-danger">
-            <%= formatPrice(prod.price) %>
-          </p>
-          <% } else { %>
-          <p class="card-text fw-bold text-danger">
-            <%= formatPrice(prod.price) %>
-          </p>
-          <% } %>
-          <a
-            href="/products/<%= prod._id %>"
-            class="btn btn-outline-primary w-100"
-            >Chi tiết</a
-          >
-        </div>
-      </div>
-    </div>
-    <% }) %>
-  </div>
-</div>
-<% } %>
+            // Hàm tắt form thêm vào giỏ hàng
+            function disableAddToCartForm() {
+                const submitBtn = document.querySelector('form[action="/cart/add"] button[type="submit"]');
 
-<!-- Script để xử lý variants -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Dữ liệu tất cả variants - Sửa lỗi ở đây
-    const allVariants = <%- JSON.stringify(product.variants || []) %>;
+                if (submitBtn) {
+                    submitBtn.setAttribute("disabled", true);
+                    submitBtn.className = "btn btn-secondary";
+                }
+            }
 
-    // Lấy tất cả selector variants
-    const variantSelectors = document.querySelectorAll(
-      ".variant-selector input"
-    );
+            // Hàm cập nhật form giỏ hàng
+            function updateCartForm(variant) {
+                document.getElementById("selected-variant-sku").value = variant.sku;
+                document.getElementById("cart-form-variant-id").value = variant.sku;
+            }
+    </script>        
+// <% if (similarProducts && similarProducts.length > 0) { %>
+// <div class="mt-5">
+//   <h3 class="mb-4">Sản phẩm tương tự</h3>
+//   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+//     <div>
+//   <% similarProducts.forEach(prod => { %>
+//     <div class="col">
+//       <div class="card h-100 product-card">
+//         <div class="position-relative">
+//           <img
+//             src="<%= prod.imageURL %>"
+//             class="card-img-top"
+//             alt="<%= prod.name %>"
+//           />
+//           <% if (prod.discountPercentage > 0) { %>
+//           <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2">
+//             -<%= prod.discountPercentage %>%
+//           </span>
+//           <% } %>
+//         </div>
+//         <div class="card-body">
+//           <h5 class="card-title"><%= prod.name %></h5>
+//           <% if (prod.discountPercentage > 0) { %>
+//           <p class="card-text mb-0">
+//             <span class="text-decoration-line-through text-muted"
+//               ><%= formatPrice(prod.basePrice) %></span
+//             >
+//           </p>
+//           <p class="card-text fw-bold text-danger">
+//             <%= formatPrice(prod.price) %>
+//           </p>
+//           <% } else { %>
+//           <p class="card-text fw-bold text-danger">
+//             <%= formatPrice(prod.price) %>
+//           </p>
+//           <% } %>
+//           <a
+//             href="/products/<%= prod._id %>"
+//             class="btn btn-outline-primary w-100"
+//             >Chi tiết</a
+//           >
+//         </div>
+//       </div>
+//     </div>
+//   <% }) %>
+// </div>
+//   </div>
+// </div>
+// <% } %>
 
-    // Hàm cập nhật variant khi chọn
-    function updateSelectedVariant() {
-      // Lấy giá trị hiện tại của tất cả selectors
-      const currentSelection = {};
-      document
-        .querySelectorAll(".variant-selector input:checked")
-        .forEach((input) => {
-          currentSelection[input.name] = input.value;
-        });
+// <!-- Script để xử lý variants -->
+// <script>
+//   document.addEventListener("DOMContentLoaded", function () {
+//     // Dữ liệu tất cả variants
+//     const allVariants = <%- JSON.stringify(product.variants || []) %>;
 
-      // Tìm variant phù hợp
-      const matchedVariant = allVariants.find((variant) => {
-        return Object.keys(currentSelection).every(
-          (key) =>
-            variant.attributes &&
-            variant.attributes[key] === currentSelection[key]
-        );
-      });
+//     // Lấy tất cả selector variants
+//     const variantSelectors = document.querySelectorAll(
+//       ".variant-selector input"
+//     );
 
-      if (matchedVariant) {
-        // Cập nhật giá
-        document.querySelector("h3.text-danger").innerText = formatPrice(
-          matchedVariant.price
-        );
+//     // Hàm cập nhật variant khi chọn
+//     function updateSelectedVariant() {
+//       // Lấy giá trị hiện tại của tất cả selectors
+//       const currentSelection = {};
+//       document
+//         .querySelectorAll(".variant-selector input:checked")
+//         .forEach((input) => {
+//           currentSelection[input.name] = input.value;
+//         });
 
-        // Cập nhật trạng thái tồn kho
-        updateStockStatus(matchedVariant);
+//       // Tìm variant phù hợp
+//       const matchedVariant = allVariants.find((variant) => {
+//         return Object.keys(currentSelection).every(
+//           (key) =>
+//             variant.attributes &&
+//             variant.attributes[key] === currentSelection[key]
+//         );
+//       });
 
-        // Cập nhật SKU cho cart form
-        updateCartForm(matchedVariant);
-      }
-    }
+//       if (matchedVariant) {
+//         // Cập nhật giá
+//         document.querySelector("h3.text-danger").innerText = formatPrice(
+//           matchedVariant.price
+//         );
 
-    // Hàm cập nhật trạng thái tồn kho
-    function updateStockStatus(variant) {
-      const stockElements = document.querySelectorAll("p.mb-4");
-      let stockElement = null;
-      for (let i = 0; i < stockElements.length; i++) {
-        if (stockElements[i].querySelector("i.fas")) {
-          stockElement = stockElements[i];
-          break;
-        }
-      }
+//         // Cập nhật trạng thái tồn kho
+//         updateStockStatus(matchedVariant);
 
-      if (stockElement) {
-        if (variant.stock > 0) {
-          stockElement.className = "text-success mb-4";
-          stockElement.innerHTML =
-            '<i class="fas fa-check-circle me-2"></i>Còn hàng (' +
-            variant.stock +
-            " sản phẩm)";
-          enableAddToCartForm(variant.stock);
-        } else {
-          stockElement.className = "text-danger mb-4";
-          stockElement.innerHTML =
-            '<i class="fas fa-times-circle me-2"></i>Hết hàng';
-          disableAddToCartForm();
-        }
-      }
-    }
+//         // Cập nhật SKU cho cart form
+//         updateCartForm(matchedVariant);
+//       }
+//     }
 
-    // Hàm bật form thêm vào giỏ hàng
-    function enableAddToCartForm(stock) {
-      const submitBtn = document.querySelector(
-        'form[action="/cart/add"] button[type="submit"]'
-      );
-      const quantityInput = document.querySelector(
-        'form[action="/cart/add"] input[name="quantity"]'
-      );
+//     // Hàm cập nhật trạng thái tồn kho
+//     function updateStockStatus(variant) {
+//       const stockElements = document.querySelectorAll("p.mb-4");
+//       let stockElement = null;
+//       for (let i = 0; i < stockElements.length; i++) {
+//         if (stockElements[i].querySelector("i.fas")) {
+//           stockElement = stockElements[i];
+//           break;
+//         }
+//       }
 
-      if (submitBtn) {
-        submitBtn.removeAttribute("disabled");
-        submitBtn.className = "btn btn-primary";
-      }
+//       if (stockElement) {
+//         if (variant.stock > 0) {
+//           stockElement.className = "text-success mb-4";
+//           stockElement.innerHTML =
+//             '<i class="fas fa-check-circle me-2"></i>Còn hàng (' +
+//             variant.stock +
+//             " sản phẩm)";
+//           enableAddToCartForm(variant.stock);
+//         } else {
+//           stockElement.className = "text-danger mb-4";
+//           stockElement.innerHTML =
+//             '<i class="fas fa-times-circle me-2"></i>Hết hàng';
+//           disableAddToCartForm();
+//         }
+//       }
+//     }
 
-      if (quantityInput) {
-        quantityInput.max = stock;
-      }
-    }
+//     // Hàm bật form thêm vào giỏ hàng
+//     function enableAddToCartForm(stock) {
+//       const submitBtn = document.querySelector(
+//         'form[action="/cart/add"] button[type="submit"]'
+//       );
+//       const quantityInput = document.querySelector(
+//         'form[action="/cart/add"] input[name="quantity"]'
+//       );
 
-    // Hàm tắt form thêm vào giỏ hàng
-    function disableAddToCartForm() {
-      const submitBtn = document.querySelector(
-        'form[action="/cart/add"] button[type="submit"]'
-      );
+//       if (submitBtn) {
+//         submitBtn.removeAttribute("disabled");
+//         submitBtn.className = "btn btn-primary";
+//       }
 
-      if (submitBtn) {
-        submitBtn.setAttribute("disabled", true);
-        submitBtn.className = "btn btn-secondary";
-      }
-    }
+//       if (quantityInput) {
+//         quantityInput.max = stock;
+//       }
+//     }
 
-    // Hàm cập nhật form giỏ hàng
-    function updateCartForm(variant) {
-      document.getElementById("selected-variant-sku").value = variant.sku;
-      document.getElementById("cart-variant-id").value = variant.sku;
-    }
+//     // Hàm tắt form thêm vào giỏ hàng
+//     function disableAddToCartForm() {
+//       const submitBtn = document.querySelector(
+//         'form[action="/cart/add"] button[type="submit"]'
+//       );
 
-    // Đăng ký sự kiện change cho mỗi selector
-    variantSelectors.forEach((input) => {
-      input.addEventListener("change", updateSelectedVariant);
-    });
+//       if (submitBtn) {
+//         submitBtn.setAttribute("disabled", true);
+//         submitBtn.className = "btn btn-secondary";
+//       }
+//     }
 
-    // Khởi tạo với variant mặc định
-    updateSelectedVariant();
-  });
+//     // Hàm cập nhật form giỏ hàng
+//     function updateCartForm(variant) {
+//       document.getElementById("selected-variant-sku").value = variant.sku;
+//       document.getElementById("cart-variant-id").value = variant.sku;
+//     }
 
-  // Hàm đổi ảnh chính
-  function changeMainImage(src) {
-    document.getElementById("mainImage").src = src;
-  }
+//     // Đăng ký sự kiện change cho mỗi selector
+//     variantSelectors.forEach((input) => {
+//       input.addEventListener("change", updateSelectedVariant);
+//     });
 
-  // Hàm format giá
-  function formatPrice(price) {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
-  }
-</script>
+//     // Khởi tạo với variant mặc định
+//     // updateSelectedVariant(); // Original call will be handled by the new logic integration
 
-<!-- Thêm CSS cho form đánh giá -->
-<style>
-  .rating-select .stars {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-  }
+//     // ===== START: Cascade - Ensure correct variantId for cart form submission =====
+//     const cartFormVariantIdField = document.getElementById('cart-form-variant-id');
+//     // const variantRadioButtons = document.querySelectorAll('.variant-selector input[type="radio"]'); // Already defined as variantSelectors
 
-  .rating-select .stars input {
-    display: none;
-  }
+//     function updateCartFormWithSelectedVariantId() {
+//       if (!cartFormVariantIdField) return; // No field to update
 
-  .rating-select .stars label {
-    cursor: pointer;
-    font-size: 1.5rem;
-    padding: 0 0.2rem;
-    color: #ddd;
-  }
+//       const variantFormExists = document.getElementById('variant-form'); // Assuming the form containing variant selectors has this ID
+      
+//       // If no variant selection UI, but there's a single variant (e.g. base product with no selectable attributes)
+//       if (!variantFormExists && allVariants && allVariants.length === 1 && (!allVariants[0].attributes || allVariants[0].attributes.length === 0)) {
+//           cartFormVariantIdField.value = allVariants[0]._id;
+//           return;
+//       } else if (!variantFormExists) { // No variant selection UI and not the single default variant case
+//           cartFormVariantIdField.value = ''; 
+//           return;
+//       }
 
-  .rating-select .stars label:hover,
-  .rating-select .stars label:hover ~ label,
-  .rating-select .stars input:checked ~ label {
-    color: #ffc107;
-  }
-</style>
+//       const selectedAttrs = {};
+//       let allRequiredAttrGroupsSelected = true;
+//       const attributeGroupsInForm = {}; // To track which attribute groups are actually present in the form
+
+//       // Iterate over each group of variant selectors (e.g., color group, size group)
+//       document.querySelectorAll('#variant-form .btn-group.variant-selector').forEach(group => {
+//           const radios = group.querySelectorAll('input[type="radio"]');
+//           if (radios.length > 0) {
+//               const attrName = radios[0].name; // e.g., 'color', 'storage'
+//               attributeGroupsInForm[attrName] = true; // Mark this attribute group as present in the form
+//               const checkedRadio = group.querySelector('input[type="radio"]:checked');
+//               if (checkedRadio) {
+//                   selectedAttrs[attrName] = checkedRadio.value;
+//               } else {
+//                   // If an attribute group is present in the form but no option is selected, then not all required attributes are chosen
+//                   allRequiredAttrGroupsSelected = false; 
+//               }
+//           }
+//       });
+      
+//       // If there are no attribute groups in the form (e.g. product has variants but no selectors are rendered)
+//       if (Object.keys(attributeGroupsInForm).length === 0) {
+//           if (allVariants && allVariants.length === 1) { // A single variant defined (could be the base product itself as a variant)
+//                cartFormVariantIdField.value = allVariants[0]._id;
+//           } else {
+//                cartFormVariantIdField.value = ''; // Ambiguous: multiple variants or no variants, and no way to select
+//           }
+//           return;
+//       }
+
+//       if (allRequiredAttrGroupsSelected && Object.keys(selectedAttrs).length > 0) {
+//           const currentSelectedVariant = allVariants.find(v => {
+//               if (!v.attributes || v.attributes.length === 0) { // Variant has no attributes
+//                 return Object.keys(selectedAttrs).length === 0; // Match if no attributes were selected in the form
+//               }
+//               // Variant has attributes, check if they match the selected ones
+//               if (v.attributes.length !== Object.keys(selectedAttrs).length) return false; // Number of attributes must match
+
+//               return Object.keys(selectedAttrs).every(key => {
+//                   const variantAttr = v.attributes.find(a => a.name === key);
+//                   return variantAttr && variantAttr.value === selectedAttrs[key];
+//               });
+//           });
+//           cartFormVariantIdField.value = currentSelectedVariant ? currentSelectedVariant._id : '';
+//           // The original updateCartForm(variant) was for SKU, let's ensure that still works if needed
+//           // However, the primary goal here is setting the _id for the cart submission.
+//       } else {
+//           cartFormVariantIdField.value = ''; // Not all attributes selected or no matching variant found
+//       }
+//     }
+
+//     // Modify existing event listener for variantSelectors
+//     variantSelectors.forEach((input) => {
+//       input.removeEventListener('change', updateSelectedVariant); // Remove old listener if it was just updateSelectedVariant
+//       input.addEventListener('change', () => {
+//         updateSelectedVariant(); // Call original function to update price, stock display, SKU in variant form etc.
+//         updateCartFormWithSelectedVariantId(); // Then update the cart form's hidden variantId for submission
+//       });
+//     });
+
+//     // Initial calls on page load
+//     updateSelectedVariant(); // Call original function to set initial price/stock/SKU display
+//     updateCartFormWithSelectedVariantId(); // Call new function to set initial cart-form-variant-id
+//     // ===== END: Cascade - Ensure correct variantId for cart form submission =====
+
+//   });
+
+//   // Hàm đổi ảnh chính
+//   function changeMainImage(src) {
+//     document.getElementById("mainImage").src = src;
+//   }
+
+//   // Hàm format giá
+//   function formatPrice(price) {
+//     return new Intl.NumberFormat("vi-VN", {
+//       style: "currency",
+//       currency: "VND",
+//     }).format(price);
+//   }
+//</script>
+

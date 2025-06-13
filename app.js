@@ -92,6 +92,9 @@ app.use("/", require("./routes/index"));
 app.use("/products", require("./routes/products"));
 app.use("/auth", require("./routes/auth"));
 app.use("/admin", require("./routes/admin"));
+app.use("/reviews", require("./routes/reviews"));
+app.use("/cart", require("./routes/cart"));
+app.use("/orders", require("./routes/orders"));
 
 // 404 handler
 app.use((req, res) => {

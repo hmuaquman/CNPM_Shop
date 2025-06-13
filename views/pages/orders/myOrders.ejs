@@ -1,0 +1,36 @@
+<%# views/pages/orders/myOrders.ejs %>
+
+<div class="container my-5">
+    <h1 class="mb-4"><%= title %></h1>
+
+    <% if (!orders || orders.length === 0) { %>
+        <div class="alert alert-info" role="alert">
+            Bạn chưa có đơn hàng nào. <a href="/products" class="alert-link">Bắt đầu mua sắm</a>!
+        </div>
+    <% } else { %>
+        <div class="list-group">
+            <% orders.forEach(order => { %>
+                <a href="/orders/<%= order._id %>" class="list-group-item list-group-item-action flex-column align-items-start mb-3 shadow-sm">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Đơn hàng #<%= order._id %></h5>
+                        <small class="text-muted"><%= new Date(order.createdAt).toLocaleDateString('vi-VN') %></small>
+                    </div>
+                    <p class="mb-1">Tổng tiền: <strong class="text-danger"><%- formatPrice(order.totalAmount) %></strong></p>
+                    <p class="mb-1">Trạng thái: 
+                        <span class="badge 
+                            <%= order.status === 'Pending' ? 'bg-warning text-dark' : '' %> 
+                            <%= order.status === 'Processing' ? 'bg-info text-dark' : '' %> 
+                            <%= order.status === 'Shipped' ? 'bg-primary' : '' %> 
+                            <%= order.status === 'Delivered' ? 'bg-success' : '' %> 
+                            <%= order.status === 'Cancelled' ? 'bg-danger' : '' %>
+                            <%= order.status === 'Returned' ? 'bg-secondary' : '' %>
+                        ">
+                            <%= order.status %>
+                        </span>
+                    </p>
+                    <small class="text-muted">Số lượng: <%= order.orderItems.reduce((acc, item) => acc + item.quantity, 0) %> sản phẩm</small>
+                </a>
+            <% }); %>
+        </div>
+    <% } %>
+</div>

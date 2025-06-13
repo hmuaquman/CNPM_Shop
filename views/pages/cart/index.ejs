@@ -1,0 +1,94 @@
+<%- include('../../partials/head') %>
+
+<body class="d-flex flex-column vh-100">
+
+    <main class="flex-shrink-0 mb-5">
+        <div class="container">
+            <h1 class="mt-5">Giỏ hàng của bạn</h1>
+
+            <%- include('../../partials/messages') %>
+
+            <% if (cart && cart.items.length > 0) { %>
+                <div class="row mt-4">
+                    <div class="col-lg-8">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 40%;">Sản phẩm</th>
+                                        <th scope="col" style="width: 15%;">Giá</th>
+                                        <th scope="col" style="width: 25%;">Số lượng</th>
+                                        <th scope="col" style="width: 15%;" class="text-end">Tổng cộng</th>
+                                        <th scope="col" style="width: 5%;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% cart.items.forEach(item => { %>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <a href="/products/<%= (item.product && item.product.slug) ? item.product.slug : '' %>">
+                                                        <img src="<%= (item.product && item.product.images && item.product.images[0]) ? item.product.images[0] : item.image %>" alt="<%= (item.product && item.product.name) ? item.product.name : item.name %>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.25rem;">
+                                                    </a>
+                                                    <a href="/products/<%= (item.product && item.product.slug) ? item.product.slug : '' %>" class="ms-3 text-dark text-decoration-none fw-bold"><%= (item.product && item.product.name) ? item.product.name : item.name %></a>
+                                                </div>
+                                            </td>
+                                            <td><%= formatPrice((item.product && item.product.price) ? item.product.price : item.price) %></td>
+                                            <td>
+                                                <form action="/cart/update/<%= item.product ? item.product._id : item.product %>" method="POST" class="d-flex align-items-center">
+                                                    <input type="number" name="quantity" value="<%= item.quantity %>" min="1" max="<%= (item.product && item.product.stock) ? item.product.stock : 99 %>" class="form-control form-control-sm" style="width: 70px;">
+                                                    <% if (item.variantId) { %>
+                                                        <input type="hidden" name="variantId" value="<%= item.variantId %>">
+                                                    <% } %>
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Cập nhật</button>
+                                                </form>
+                                            </td>
+                                            <td class="text-end"><%= formatPrice(item.quantity * ((item.product && item.product.price) ? item.product.price : item.price)) %></td>
+                                            <td class="text-center">
+                                                <form action="/cart/remove/<%= item.product ? item.product._id : item.product %>" method="POST">
+                                                    <% if (item.variantId) { %>
+                                                        <input type="hidden" name="variantId" value="<%= item.variantId %>">
+                                                    <% } %>
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa sản phẩm">&times;</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Tổng cộng giỏ hàng</h5>
+                                <ul class="list-group list-group-flush mt-3">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                        Tạm tính
+                                        <span><%= formatPrice(totalPrice) %></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 fw-bold">
+                                        Tổng cộng
+                                        <span><%= formatPrice(totalPrice) %></span>
+                                    </li>
+                                </ul>
+                                <a href="/orders/checkout" class="btn btn-primary w-100 mt-4">Tiến hành thanh toán</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <p class="lead">Giỏ hàng của bạn đang trống.</p>
+                    <a href="/products" class="btn btn-primary">Tiếp tục mua sắm</a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('../../partials/footer') %>
+    <%- include('../../partials/scripts') %>
+</body>
+
+</html>
+

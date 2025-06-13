@@ -28,7 +28,12 @@
         />
         <button class="btn btn-outline-light" type="submit">Tìm</button>
       </form>
-      <ul class="navbar-nav">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item">
+          <a class="nav-link position-relative" href="/cart">
+            <i class="fas fa-shopping-cart fa-lg"></i>
+          </a>
+        </li>
         <% if (locals.user) { %>
         <li class="nav-item dropdown">
           <a
