@@ -58,7 +58,7 @@ exports.getProducts = async (req, res) => {
 
     // Sorting
     let sortOptions = { createdAt: -1 }; // Default: newest first
-    if (sort) {
+    if (sort && sort !== "undefined") {
       switch (sort) {
         case "price_asc":
           sortOptions = { price: 1 };
