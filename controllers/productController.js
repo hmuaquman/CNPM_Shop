@@ -55,11 +55,25 @@ exports.getProducts = async (req, res) => {
     }
 
     // Sorting
-    let sortOption = { createdAt: -1 };
-    if (sort === "price_asc") sortOption = { price: 1 };
-    else if (sort === "price_desc") sortOption = { price: -1 };
-    else if (sort === "name_asc") sortOption = { name: 1 };
-    else if (sort === "name_desc") sortOption = { name: -1 };
+    let sortOptions = { createdAt: -1 }; // Default: newest first
+    if (sort && sort !== "undefined") {
+      switch (sort) {
+        case "price_asc":
+          sortOptions = { price: 1 };
+          break;
+        case "price_desc":
+          sortOptions = { price: -1 };
+          break;
+        case "name_asc":
+          sortOptions = { name: 1 };
+          break;
+        case "name_desc":
+          sortOptions = { name: -1 };
+          break;
+        default:
+          sortOptions = { createdAt: -1 };
+      }
+    }
 
     // Pagination
     const page = parseInt(req.query.page) || 1;
@@ -71,7 +85,7 @@ exports.getProducts = async (req, res) => {
 
     const products = await Product.find(query)
       .populate("category", "name")
-      .sort(sortOption)
+      .sort(sortOptions)
       .skip(skip)
       .limit(limit);
 

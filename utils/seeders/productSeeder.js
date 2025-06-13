@@ -14,20 +14,22 @@ const seedProducts = async (categoryMap, attributesMap) => {
     ) {
       categoryId = categoryMap.get("Laptop")._id;
     } else if (
-      product.name.toLowerCase().includes("iphone") ||
-      product.name.toLowerCase().includes("galaxy s")
-    ) {
-      categoryId = categoryMap.get("Điện thoại")._id;
-    } else if (
-      product.name.toLowerCase().includes("ipad") ||
-      product.name.toLowerCase().includes("tab")
-    ) {
-      categoryId = categoryMap.get("Máy tính bảng")._id;
-    } else if (
       product.name.toLowerCase().includes("ssd") ||
       product.name.toLowerCase().includes("ổ cứng")
     ) {
       categoryId = categoryMap.get("Thiết bị lưu trữ")._id;
+    } else if (
+      product.name.toLowerCase().includes("iphone") ||
+      product.name.toLowerCase().includes("samsung") ||
+      product.name.toLowerCase().includes("xiaomi")
+    ) {
+      categoryId = categoryMap.get("Điện thoại")._id;
+    } else if (
+      product.name.toLowerCase().includes("ipad") ||
+      product.name.toLowerCase().includes("matepad") ||
+      product.name.toLowerCase().includes("tab")
+    ) {
+      categoryId = categoryMap.get("Máy tính bảng")._id;
     } else if (product.name.toLowerCase().includes("màn hình")) {
       categoryId = categoryMap.get("Màn hình")._id;
     } else if (
