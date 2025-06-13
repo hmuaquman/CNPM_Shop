@@ -1,3 +1,4 @@
+<!-- views/pages/admin/dashboard.ejs -->
 <div class="dashboard-container">
   <div class="row mb-4">
     <div class="col-12">
@@ -8,26 +9,19 @@
     </div>
   </div>
 
-  <!-- Management Cards -->
+  <!-- Management Cards (giữ nguyên code cũ) -->
   <div class="row g-4 mb-5">
     <!-- Add Product -->
     <div class="col-lg-3 col-md-6">
-      <div
-        class="card h-100 border-0 shadow-sm"
-        style="background-color: #f8f9fa"
-      >
+      <div class="card h-100 border-0 shadow-sm" style="background-color: #f8f9fa">
         <div class="card-body text-center p-4">
           <div class="mb-3">
-            <i
-              class="fas fa-plus-circle"
-              style="font-size: 3rem; color: #6c757d"
-            ></i>
+            <i class="fas fa-plus-circle" style="font-size: 3rem; color: #6c757d"></i>
           </div>
           <h5 class="card-title">Add Product</h5>
           <p class="card-text text-muted">Create a new product listing</p>
           <p class="small text-muted">
-            Add new electronic products to your inventory with detailed
-            specifications.
+            Add new electronic products to your inventory with detailed specifications.
           </p>
           <button class="btn btn-dark mt-3">Create New</button>
         </div>
@@ -36,35 +30,24 @@
 
     <!-- Delete Product -->
     <div class="col-lg-3 col-md-6">
-      <div
-        class="card h-100 border-0 shadow-sm"
-        style="background-color: #fdf2f2"
-      >
+      <div class="card h-100 border-0 shadow-sm" style="background-color: #fdf2f2">
         <div class="card-body text-center p-4">
           <div class="mb-3">
-            <i
-              class="fas fa-trash-alt"
-              style="font-size: 3rem; color: #dc3545"
-            ></i>
+            <i class="fas fa-trash-alt" style="font-size: 3rem; color: #dc3545"></i>
           </div>
           <h5 class="card-title">Delete Product</h5>
           <p class="card-text text-muted">Remove products from inventory</p>
           <p class="small text-muted">
             Remove discontinued or out-of-stock products from your catalog.
           </p>
-          <button class="btn btn-outline-secondary mt-3">
-            Manage Deletions
-          </button>
+          <button class="btn btn-outline-secondary mt-3">Manage Deletions</button>
         </div>
       </div>
     </div>
 
     <!-- Edit Product -->
     <div class="col-lg-3 col-md-6">
-      <div
-        class="card h-100 border-0 shadow-sm"
-        style="background-color: #f0f8ff"
-      >
+      <div class="card h-100 border-0 shadow-sm" style="background-color: #f0f8ff">
         <div class="card-body text-center p-4">
           <div class="mb-3">
             <i class="fas fa-edit" style="font-size: 3rem; color: #0066cc"></i>
@@ -81,16 +64,10 @@
 
     <!-- Update Prices -->
     <div class="col-lg-3 col-md-6">
-      <div
-        class="card h-100 border-0 shadow-sm"
-        style="background-color: #f0fff4"
-      >
+      <div class="card h-100 border-0 shadow-sm" style="background-color: #f0fff4">
         <div class="card-body text-center p-4">
           <div class="mb-3">
-            <i
-              class="fas fa-chart-line"
-              style="font-size: 3rem; color: #28a745"
-            ></i>
+            <i class="fas fa-chart-line" style="font-size: 3rem; color: #28a745"></i>
           </div>
           <h5 class="card-title">Update Prices</h5>
           <p class="card-text text-muted">Manage product pricing</p>
@@ -103,52 +80,242 @@
     </div>
   </div>
 
+  <!-- Sales Statistics với dữ liệu thật -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 pb-0">
+          <h5 class="mb-1">Sales Statistics</h5>
+          <p class="text-muted small mb-0">Overview from your seeded data</p>
+        </div>
+        <div class="card-body">
+          <!-- Summary Cards -->
+          <div class="row g-4 mb-4">
+            <!-- Total Revenue -->
+            <div class="col-lg-4 col-md-6">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <p class="text-muted small mb-1">Total Revenue</p>
+                      <h4 class="mb-2">$<%= salesStats.totalRevenue.toLocaleString() %></h4>
+                      <% if (salesStats.revenueIncrease >= 0) { %>
+                        <div class="d-flex align-items-center text-success small">
+                          <i class="fas fa-arrow-up me-1"></i>
+                          <span><%= salesStats.revenueIncrease %>% increase from last month</span>
+                        </div>
+                      <% } else { %>
+                        <div class="d-flex align-items-center text-danger small">
+                          <i class="fas fa-arrow-down me-1"></i>
+                          <span><%= Math.abs(salesStats.revenueIncrease) %>% decrease from last month</span>
+                        </div>
+                      <% } %>
+                    </div>
+                    <div class="rounded-circle bg-light p-3">
+                      <i class="fas fa-dollar-sign text-success" style="font-size: 1.5rem;"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Total Orders -->
+            <div class="col-lg-4 col-md-6">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <p class="text-muted small mb-1">Total Orders</p>
+                      <h4 class="mb-2"><%= salesStats.totalOrders.toLocaleString() %></h4>
+                      <% if (salesStats.ordersIncrease >= 0) { %>
+                        <div class="d-flex align-items-center text-success small">
+                          <i class="fas fa-arrow-up me-1"></i>
+                          <span><%= salesStats.ordersIncrease %>% increase from last month</span>
+                        </div>
+                      <% } else { %>
+                        <div class="d-flex align-items-center text-danger small">
+                          <i class="fas fa-arrow-down me-1"></i>
+                          <span><%= Math.abs(salesStats.ordersIncrease) %>% decrease from last month</span>
+                        </div>
+                      <% } %>
+                    </div>
+                    <div class="rounded-circle bg-light p-3">
+                      <i class="fas fa-shopping-cart text-primary" style="font-size: 1.5rem;"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- New Customers -->
+            <div class="col-lg-4 col-md-6">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <p class="text-muted small mb-1">New Customers</p>
+                      <h4 class="mb-2"><%= salesStats.newCustomers %></h4>
+                      <% if (salesStats.customersIncrease >= 0) { %>
+                        <div class="d-flex align-items-center text-success small">
+                          <i class="fas fa-arrow-up me-1"></i>
+                          <span><%= salesStats.customersIncrease %>% increase from last month</span>
+                        </div>
+                      <% } else { %>
+                        <div class="d-flex align-items-center text-danger small">
+                          <i class="fas fa-arrow-down me-1"></i>
+                          <span><%= Math.abs(salesStats.customersIncrease) %>% decrease from last month</span>
+                        </div>
+                      <% } %>
+                    </div>
+                    <div class="rounded-circle bg-light p-3">
+                      <i class="fas fa-users text-info" style="font-size: 1.5rem;"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Monthly Sales Chart -->
+          <div class="row g-4">
+            <div class="col-lg-8">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                  <h6 class="mb-0">Monthly Sales</h6>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container" style="height: 300px;">
+                    <% if (monthlySales && monthlySales.length > 0) { %>
+                      <% monthlySales.forEach(function(sale, index) { %>
+                        <div class="d-flex align-items-center mb-2">
+                          <div style="width: 60px;" class="text-muted small"><%= sale.month %></div>
+                          <div class="flex-grow-1">
+                            <div class="progress" style="height: 24px;">
+                              <div class="progress-bar bg-primary" role="progressbar" 
+                                   style="width: <%= maxMonthlySales > 0 ? (sale.total / maxMonthlySales * 100) : 0 %>%;" 
+                                   aria-valuenow="<%= maxMonthlySales > 0 ? (sale.total / maxMonthlySales * 100) : 0 %>" 
+                                   aria-valuemin="0" aria-valuemax="100">
+                                $<%= sale.total.toLocaleString() %>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      <% }); %>
+                    <% } else { %>
+                      <div class="text-center py-4">
+                        <p class="text-muted">No sales data available. Please seed some orders!</p>
+                      </div>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Top Products -->
+            <div class="col-lg-4">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                  <h6 class="mb-0">Top Products</h6>
+                </div>
+                <div class="card-body">
+                  <% if (topProducts && topProducts.length > 0) { %>
+                    <% topProducts.forEach(function(product, index) { %>
+                      <div class="<%= index < topProducts.length - 1 ? 'mb-3' : '' %>">
+                        <div class="d-flex justify-content-between mb-1">
+                          <span class="small"><%= product.name %></span>
+                          <span class="small"><%= product.totalSold %> sold</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-success" role="progressbar" 
+                               style="width: <%= product.percentage %>%;" 
+                               aria-valuenow="<%= product.percentage %>" 
+                               aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                      </div>
+                    <% }); %>
+                  <% } else { %>
+                    <p class="text-muted text-center">No products available</p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Recent Activity -->
   <div class="row">
     <div class="col-12">
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 pb-0">
           <h5 class="mb-1">Recent Activity</h5>
-          <p class="text-muted small mb-0">Latest product management actions</p>
+          <p class="text-muted small mb-0">Latest products from your database</p>
         </div>
         <div class="card-body">
-          <!-- Activity Item 1 -->
-          <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
-            <div class="activity-icon me-3">
-              <i class="fas fa-plus-circle text-success"></i>
+          <% if (recentActivities && recentActivities.length > 0) { %>
+            <% recentActivities.forEach(function(activity, index) { %>
+              <div class="d-flex align-items-center <%= index < recentActivities.length - 1 ? 'mb-3 pb-3 border-bottom' : '' %>">
+                <div class="activity-icon me-3">
+                  <i class="fas fa-plus-circle text-success"></i>
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">Product: <%= activity.name %></h6>
+                  <p class="text-muted small mb-0">
+                    Category: <%= activity.category ? activity.category.name : 'Uncategorized' %>
+                  </p>
+                </div>
+                <span class="text-muted small">
+                  <%= new Date(activity.createdAt).toLocaleDateString('vi-VN') %>
+                </span>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div class="text-center py-4">
+              <div class="text-muted">
+                <i class="fas fa-clock mb-2" style="font-size: 2rem; opacity: 0.3"></i>
+                <p class="small mb-0">No recent activities</p>
+                <p class="small text-muted">Please seed some data first!</p>
+              </div>
             </div>
-            <div class="flex-grow-1">
-              <h6 class="mb-1">New product added</h6>
-              <p class="text-muted small mb-0">Ultra HD Smart TV - 65"</p>
-            </div>
-            <span class="text-muted small">2 hours ago</span>
-          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
 
-          <!-- Activity Item 2 -->
-          <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
-            <div class="activity-icon me-3">
-              <i class="fas fa-edit text-primary"></i>
-            </div>
-            <div class="flex-grow-1">
-              <h6 class="mb-1">Product updated</h6>
-              <p class="text-muted small mb-0">
-                Wireless Noise-Cancelling Headphones
-              </p>
-            </div>
-            <span class="text-muted small">Yesterday</span>
-          </div>
-
-          <!-- Placeholder for future activity -->
-          <div class="text-center py-4">
-            <div class="text-muted">
-              <i
-                class="fas fa-clock mb-2"
-                style="font-size: 2rem; opacity: 0.3"
-              ></i>
-              <p class="small mb-0">Activate Windows</p>
-              <p class="small text-muted">Go to Settings to activate Windows</p>
-            </div>
-          </div>
+  <!-- Basic Stats -->
+  <div class="row mt-4">
+    <div class="col-lg-3 col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <h4 class="text-primary"><%= basicStats.totalProducts %></h4>
+          <p class="text-muted small mb-0">Total Products</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <h4 class="text-success"><%= basicStats.totalUsers %></h4>
+          <p class="text-muted small mb-0">Total Users</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <h4 class="text-warning"><%= basicStats.totalCategories %></h4>
+          <p class="text-muted small mb-0">Categories</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <h4 class="text-info"><%= basicStats.totalReviews %></h4>
+          <p class="text-muted small mb-0">Reviews</p>
         </div>
       </div>
     </div>

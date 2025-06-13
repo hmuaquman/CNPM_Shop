@@ -1,49 +1,61 @@
-const mongoose = require("mongoose");
+// models/Statistics.js
+const mongoose = require('mongoose');
 
-const StatisticSchema = new mongoose.Schema({
-  type: {
-    type: String,
-    required: true,
-    enum: [
-      "daily_sales",
-      "monthly_revenue",
-      "product_performance",
-      "user_activity",
-      "category_stats",
-    ],
-  },
-  data: {
-    type: mongoose.Schema.Types.Mixed,
-    required: true,
-  },
-  period: {
-    type: String,
-  },
-  createdAt: {
+const statisticsSchema = new mongoose.Schema({
+  date: {
     type: Date,
-    default: Date.now,
+    required: true,
+    default: Date.now
   },
+  totalRevenue: {
+    type: Number,
+    default: 0
+  },
+  totalOrders: {
+    type: Number,
+    default: 0
+  },
+  totalCustomers: {
+    type: Number,
+    default: 0
+  },
+  totalProducts: {
+    type: Number,
+    default: 0
+  },
+  // Thống kê theo tháng
+  month: {
+    type: Number,
+    required: true
+  },
+  year: {
+    type: Number,
+    required: true
+  },
+  // Thống kê chi tiết
+  categoryStats: [{
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category'
+    },
+    categoryName: String,
+    revenue: Number,
+    orderCount: Number
+  }],
+  topProducts: [{
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product'
+    },
+    productName: String,
+    soldQuantity: Number,
+    revenue: Number
+  }]
+}, {
+  timestamps: true
 });
 
-// Tạo các phương thức tĩnh để thu thập thống kê
-StatisticSchema.statics.getDailySales = async function (date) {
-  // Implement logic to get daily sales statistics
-};
+// Index để tìm kiếm nhanh theo tháng/năm
+statisticsSchema.index({ year: 1, month: 1 });
 
-StatisticSchema.statics.getMonthlyRevenue = async function (year, month) {
-  // Implement logic to get monthly revenue statistics
-};
-
-StatisticSchema.statics.getProductPerformance = async function (
-  productId,
-  startDate,
-  endDate
-) {
-  // Implement logic to get product performance statistics
-};
-
-StatisticSchema.statics.getCategoryStats = async function () {
-  // Implement logic to get category statistics
-};
-
-module.exports = mongoose.model("Statistic", StatisticSchema);
+module.exports = mongoose.model('Statistics', statisticsSchema);
