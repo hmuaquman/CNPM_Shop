@@ -1,0 +1,218 @@
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <!-- Thông tin cá nhân -->
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">
+          <i class="fas fa-user me-2"></i>Thông tin tài khoản
+        </h4>
+      </div>
+      <div class="card-body">
+        <form action="/user/profile" method="POST">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="fullName" class="form-label">Họ và tên *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="fullName"
+                name="fullName"
+                value="<%= user.fullName || '' %>"
+                required
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="userName" class="form-label">Tên đăng nhập</label>
+              <input
+                type="text"
+                class="form-control"
+                id="userName"
+                value="<%= user.userName %>"
+                readonly
+                style="background-color: #f8f9fa"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="email" class="form-label">Email *</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                value="<%= user.email || '' %>"
+                required
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="phone" class="form-label">Số điện thoại *</label>
+              <input
+                type="tel"
+                class="form-control"
+                id="phone"
+                name="phone"
+                value="<%= user.phone || '' %>"
+                placeholder="VD: 0912345678"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Vai trò</label>
+              <input
+                type="text"
+                class="form-control"
+                value="<%= user.role === 'admin' ? 'Quản trị viên' : 'Khách hàng' %>"
+                readonly
+                style="background-color: #f8f9fa"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Ngày tham gia</label>
+              <input
+                type="text"
+                class="form-control"
+                value="<%= new Date(user.createdAt).toLocaleDateString('vi-VN') %>"
+                readonly
+                style="background-color: #f8f9fa"
+              />
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <a href="/" class="btn btn-outline-secondary">
+              <i class="fas fa-arrow-left me-2"></i>Quay lại
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i>Cập nhật thông tin
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Địa chỉ giao hàng -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-map-marker-alt me-2"></i>Địa chỉ giao hàng
+        </h5>
+      </div>
+      <div class="card-body">
+        <%# Định nghĩa biến address %> <% const address = (user.addresses &&
+        user.addresses.length > 0) ? user.addresses[0] : { recipientName:
+        user.fullName || '', recipientPhone: user.phone || '', streetAndNumber:
+        '', ward: '', district: '', city: '' }; %>
+
+        <form action="/user/address/update" method="POST">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="recipientName" class="form-label"
+                >Tên người nhận <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="recipientName"
+                name="recipientName"
+                value="<%= address.recipientName %>"
+                required
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="recipientPhone" class="form-label"
+                >Số điện thoại người nhận
+                <span class="text-danger">*</span></label
+              >
+              <input
+                type="tel"
+                class="form-control"
+                id="recipientPhone"
+                name="recipientPhone"
+                value="<%= address.recipientPhone %>"
+                placeholder="VD: 0912345678"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="streetAndNumber" class="form-label"
+              >Địa chỉ đường & số nhà <span class="text-danger">*</span></label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="streetAndNumber"
+              name="streetAndNumber"
+              value="<%= address.streetAndNumber %>"
+              placeholder="VD: 123 Lê Lợi"
+              required
+            />
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="ward" class="form-label"
+                >Phường/Xã <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="ward"
+                name="ward"
+                value="<%= address.ward %>"
+                placeholder="VD: Phường Bến Nghé"
+                required
+              />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="district" class="form-label"
+                >Quận/Huyện <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="district"
+                name="district"
+                value="<%= address.district %>"
+                placeholder="VD: Quận 1"
+                required
+              />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="city" class="form-label"
+                >Tỉnh/Thành phố <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="city"
+                name="city"
+                value="<%= address.city %>"
+                placeholder="VD: TP. Hồ Chí Minh"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="alert alert-info mb-3">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Lưu ý:</strong> Đây là địa chỉ giao hàng được thiết lập từ
+            khi đăng ký tài khoản. Bạn có thể cập nhật thông tin này.
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-save me-2"></i>Cập nhật địa chỉ
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

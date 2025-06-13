@@ -1,0 +1,17 @@
+{
+  "files.associations": {
+    "*.ejs": "html"
+  },
+  "emmet.includeLanguages": {
+    "ejs": "html"
+  },
+  "beautify.ignore": ["**/*.ejs"],
+  "[ejs]": {
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false
+  },
+  "[html]": {
+    "editor.formatOnSave": false
+  }
+}
