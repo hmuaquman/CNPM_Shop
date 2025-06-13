@@ -652,6 +652,266 @@ const productsData = () => [
     imageURL:
       "https://cdn.tgdd.vn/Products/Images/44/304539/msi-modern-14-c11m-i3-011vn-040523-124356-600x600.jpg",
   },
+  // SẢN PHẨM MẪU NGƯỜI DÙNG YÊU CẦU
+  {
+    name: "MacBook Air M2",
+    description:
+      "MacBook Air M2 2022 với thiết kế siêu mỏng, hiệu năng vượt trội nhờ chip Apple M2, màn hình Liquid Retina 13.6 inch, pin lâu, phù hợp học tập, làm việc và sáng tạo.",
+    brand: "Apple",
+    basePrice: 28000000,
+    price: 28000000,
+    quantity: 10,
+    commonSpecs: {
+      processor: "Apple M2",
+      operatingSystem: "macOS Monterey",
+      screenSize: "13.6 inch",
+      weight: "1.24 kg",
+      origin: "Chính hãng",
+      warrantyInfo: {
+        durationInMonths: 12,
+        type: "Bảo hành tại hãng",
+        coverage: "Bảo hành phần cứng 1 năm",
+      },
+    },
+    variants: [
+      {
+        sku: "APPLE-MBAIR-M2-8-256",
+        price: 28000000,
+        stock: 10,
+        attributes: {
+          ram: "8GB",
+          storage: "256GB SSD",
+          color: "Bạc",
+        },
+        isDefault: true,
+        status: "active",
+      },
+    ],
+    status: "active",
+    featured: true,
+    tags: ["laptop", "apple", "macbook", "air", "m2"],
+    images: {
+      main: ["https://mediamart.vn/images/uploads/data-2022/1-osxI2J.jpg"],
+      gallery: [],
+    },
+    imageURL: "https://mediamart.vn/images/uploads/data-2022/1-osxI2J.jpg",
+  },
+  {
+    name: "MacBook Pro 13 inch 2020",
+    description:
+      "MacBook Pro 13 inch 2020 trang bị chip Intel/M1, màn hình Retina sắc nét, thời lượng pin lâu, thiết kế nhôm nguyên khối sang trọng.",
+    brand: "Apple",
+    basePrice: 26000000,
+    price: 26000000,
+    quantity: 8,
+    commonSpecs: {
+      processor: "Apple M1 / Intel Core i5",
+      operatingSystem: "macOS Big Sur",
+      screenSize: "13.3 inch",
+      weight: "1.4 kg",
+      origin: "Chính hãng",
+      warrantyInfo: {
+        durationInMonths: 12,
+        type: "Bảo hành tại hãng",
+        coverage: "Bảo hành phần cứng 1 năm",
+      },
+    },
+    variants: [
+      {
+        sku: "APPLE-MBPRO13-8-256",
+        price: 26000000,
+        stock: 8,
+        attributes: {
+          ram: "8GB",
+          storage: "256GB SSD",
+          color: "Xám",
+        },
+        isDefault: true,
+        status: "active",
+      },
+    ],
+    status: "active",
+    featured: true,
+    tags: ["laptop", "apple", "macbook", "pro", "m1", "2020"],
+    images: {
+      main: ["https://mac24h.vn/images/detailed/94/macbook_pro_13_inch_intel_m1.jpg"],
+      gallery: [],
+    },
+    imageURL: "https://mac24h.vn/images/detailed/94/macbook_pro_13_inch_intel_m1.jpg",
+  },
+  {
+    name: "ThinkPad X1 Yoga Gen 6 14inch - 2021 - New Outlet / Refurbised Core I7 1165G7 16 GB 512GB FHD+",
+    description:
+      "Laptop doanh nhân cao cấp, xoay gập 360 độ, màn hình cảm ứng 14 inch FHD+, CPU Intel Core i7-1165G7, RAM 16GB, SSD 512GB, trọng lượng nhẹ, bảo mật cao.",
+    brand: "Lenovo",
+    basePrice: 24500000,
+    price: 24500000,
+    quantity: 7,
+    commonSpecs: {
+      processor: "Intel Core i7-1165G7",
+      operatingSystem: "Windows 11 Pro",
+      screenSize: "14 inch",
+      weight: "1.39 kg",
+      origin: "Chính hãng",
+      warrantyInfo: {
+        durationInMonths: 12,
+        type: "Bảo hành tại hãng",
+        coverage: "Bảo hành phần cứng 1 năm",
+      },
+    },
+    variants: [
+      {
+        sku: "LENOVO-X1YOGA-G6-I7-16-512",
+        price: 24500000,
+        stock: 7,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Xám",
+        },
+        isDefault: true,
+        status: "active",
+      },
+    ],
+    status: "active",
+    featured: true,
+    tags: ["laptop", "lenovo", "thinkpad", "x1 yoga", "14inch", "2021"],
+    images: {
+      main: ["https://5.imimg.com/data5/SELLER/Default/2023/5/305487983/CN/HU/WN/3137124/lenovo-yoga-slim-7pro-intel-evo-i7-500x500.jpg"],
+      gallery: [],
+    },
+    imageURL: "https://5.imimg.com/data5/SELLER/Default/2023/5/305487983/CN/HU/WN/3137124/lenovo-yoga-slim-7pro-intel-evo-i7-500x500.jpg",
+  },
+  {
+    name: "Lenovo ThinkPad P15 Gen 1 (Core i7-10750H, RAM 16GB, SSD 512GB, Quadro T1000, Màn 15,6'' FHD)",
+    description:
+      "Laptop workstation mạnh mẽ, màn hình 15.6 inch FHD, CPU Intel Core i7-10750H, RAM 16GB, SSD 512GB, card đồ họa Quadro T1000, phù hợp đồ họa kỹ thuật.",
+    brand: "Lenovo",
+    basePrice: 35500000,
+    price: 35500000,
+    quantity: 5,
+    commonSpecs: {
+      processor: "Intel Core i7-10750H",
+      operatingSystem: "Windows 10 Pro",
+      screenSize: "15.6 inch",
+      weight: "2.87 kg",
+      origin: "Chính hãng",
+      warrantyInfo: {
+        durationInMonths: 12,
+        type: "Bảo hành tại hãng",
+        coverage: "Bảo hành phần cứng 1 năm",
+      },
+    },
+    variants: [
+      {
+        sku: "LENOVO-P15-G1-I7-16-512",
+        price: 35500000,
+        stock: 5,
+        attributes: {
+          ram: "16GB",
+          storage: "512GB SSD",
+          color: "Đen",
+        },
+        isDefault: true,
+        status: "active",
+      },
+    ],
+    status: "active",
+    featured: true,
+    tags: ["laptop", "lenovo", "thinkpad", "p15", "quadro", "workstation"],
+    images: {
+      main: ["https://laptopkhanhtran.vn/pic/product/Thinkpad__638544811261910117_HasThumb.JPG"],
+      gallery: [],
+    },
+    imageURL: "https://laptopkhanhtran.vn/pic/product/Thinkpad__638544811261910117_HasThumb.JPG",
+  },
+  {
+    name: "Laptop MSI Titan 18 HX AI A2XWJG 622VN | CPU Ultra 9-285HX | RAM 64GB DDR5 | SSD 6TB PCIe | VGA RTX 5090 24GB | 18.0 UHD 4K MiniLED IPS, 100% DCI-P3 & 120Hz | Win11 ",
+    description:
+      "Laptop gaming cao cấp nhất của MSI, màn hình 18 inch UHD 4K MiniLED, CPU Ultra 9-285HX, RAM 64GB, SSD 6TB, VGA RTX 5090 24GB, tần số quét 120Hz, chuẩn màu 100% DCI-P3.",
+    brand: "MSI",
+    basePrice: 180000000,
+    price: 180000000,
+    quantity: 2,
+    commonSpecs: {
+      processor: "Intel Ultra 9-285HX",
+      operatingSystem: "Windows 11 Pro",
+      screenSize: "18.0 inch UHD 4K MiniLED",
+      weight: "3.6 kg",
+      origin: "Chính hãng",
+      warrantyInfo: {
+        durationInMonths: 24,
+        type: "Bảo hành tại hãng",
+        coverage: "Bảo hành phần cứng 2 năm",
+      },
+    },
+    variants: [
+      {
+        sku: "MSI-TITAN18HX-U9-64-6TB",
+        price: 180000000,
+        stock: 2,
+        attributes: {
+          ram: "64GB",
+          storage: "6TB SSD",
+          color: "Đen",
+        },
+        isDefault: true,
+        status: "active",
+      },
+    ],
+    status: "active",
+    featured: true,
+    tags: ["laptop", "msi", "titan", "gaming", "rtx5090", "18inch"],
+    images: {
+      main: ["https://bizweb.dktcdn.net/thumb/large/100/386/607/products/msi-titan-18-hx-man-hinh-8170297d-6352-42f7-b57d-01c4870a88b4-ae5f8fac-fa78-458b-8e9c-cd6c1f742afc.jpg?v=1741838175607"],
+      gallery: [],
+    },
+    imageURL: "https://bizweb.dktcdn.net/thumb/large/100/386/607/products/msi-titan-18-hx-man-hinh-8170297d-6352-42f7-b57d-01c4870a88b4-ae5f8fac-fa78-458b-8e9c-cd6c1f742afc.jpg?v=1741838175607",
+  },
+  {
+    name: "Laptop Asus ROG Zephyrus G16 GU605MI U9.4070 | CPU Ultra 9-185H | RAM 16GB LPDDR5x | SSD 1TB PCIe | VGA RTX 4070 8GB | 16.0 QHD 2K5 OLED, 100% DCI-P3 & 240Hz | Win11 ",
+    description:
+      "Laptop gaming mỏng nhẹ, màn hình 16 inch QHD OLED 2K5, CPU Ultra 9-185H, RAM 16GB, SSD 1TB, VGA RTX 4070 8GB, tần số quét 240Hz, chuẩn màu 100% DCI-P3.",
+    brand: "Asus",
+    basePrice: 62000000,
+    price: 62000000,
+    quantity: 4,
+    commonSpecs: {
+      processor: "Intel Ultra 9-185H",
+      operatingSystem: "Windows 11 Home",
+      screenSize: "16.0 inch QHD 2K5 OLED",
+      weight: "1.85 kg",
+      origin: "Chính hãng",
+      warrantyInfo: {
+        durationInMonths: 24,
+        type: "Bảo hành tại hãng",
+        coverage: "Bảo hành phần cứng 2 năm",
+      },
+    },
+    variants: [
+      {
+        sku: "ASUS-G16-U9-16-1TB",
+        price: 62000000,
+        stock: 4,
+        attributes: {
+          ram: "16GB",
+          storage: "1TB SSD",
+          color: "Xám",
+        },
+        isDefault: true,
+        status: "active",
+      },
+    ],
+    status: "active",
+    featured: true,
+    tags: ["laptop", "asus", "rog", "zephyrus", "g16", "rtx4070", "oled"],
+    images: {
+      main: ["https://bizweb.dktcdn.net/thumb/large/100/372/934/products/asus-rog-zephyrus-g16-gu605-man-hinh-d8052896-688e-4c72-9107-374cdebcf937.jpg?v=1748017176580"],
+      gallery: [],
+    },
+    imageURL: "https://bizweb.dktcdn.net/thumb/large/100/372/934/products/asus-rog-zephyrus-g16-gu605-man-hinh-d8052896-688e-4c72-9107-374cdebcf937.jpg?v=1748017176580",
+  },
+
   // ĐIỆN THOẠI
   {
     name: "iPhone 15 Pro Max",

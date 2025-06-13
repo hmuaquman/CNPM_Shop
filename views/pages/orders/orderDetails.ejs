@@ -1,0 +1,131 @@
+<%# views/pages/orders/orderDetails.ejs %>
+
+<div class="container my-5">
+    <h1 class="mb-4"><%= title %></h1>
+
+    <% if (!order) { %>
+        <div class="alert alert-danger" role="alert">
+            Không tìm thấy thông tin đơn hàng.
+        </div>
+        <a href="/orders/myorders" class="btn btn-primary">Quay lại danh sách đơn hàng</a>
+    <% } else { %>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Thông tin đơn hàng</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Mã đơn hàng:</strong> #<%= order._id %></p>
+                        <p><strong>Ngày đặt:</strong> <%= new Date(order.createdAt).toLocaleString('vi-VN') %></p>
+                        <p><strong>Trạng thái:</strong> 
+                            <span class="badge 
+                                <%= order.status === 'Pending' ? 'bg-warning text-dark' : '' %> 
+                                <%= order.status === 'Processing' ? 'bg-info text-dark' : '' %> 
+                                <%= order.status === 'Shipped' ? 'bg-primary' : '' %> 
+                                <%= order.status === 'Delivered' ? 'bg-success' : '' %> 
+                                <%= order.status === 'Cancelled' ? 'bg-danger' : '' %>
+                                <%= order.status === 'Returned' ? 'bg-secondary' : '' %>
+                            ">
+                                <%= order.status %>
+                            </span>
+                        </p>
+                        <p><strong>Tổng tiền:</strong> <strong class="text-danger"><%- formatPrice(order.totalAmount) %></strong></p>
+                        <p><strong>Phương thức thanh toán:</strong> <%= order.paymentMethod %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Địa chỉ giao hàng:</h6>
+                        <p>
+                            <%= order.shippingAddress.fullName %><br>
+                            <%= order.shippingAddress.street %><br>
+                            <%= order.shippingAddress.city %>, <%= order.shippingAddress.country %><br>
+                            <%= order.shippingAddress.postalCode ? 'Mã bưu điện: ' + order.shippingAddress.postalCode + '<br>' : '' %>
+                            Điện thoại: <%= order.shippingAddress.phone %>
+                        </p>
+                        <% if (order.user) { %>
+                            <h6>Thông tin người đặt:</h6>
+                            <p>
+                                <%= order.user.fullName %><br>
+                                Email: <%= order.user.email %>
+                            </p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">Chi tiết sản phẩm</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 10%;">Ảnh</th>
+                                <th scope="col" style="width: 40%;">Sản phẩm</th>
+                                <th scope="col" class="text-end" style="width: 15%;">Đơn giá</th>
+                                <th scope="col" class="text-center" style="width: 10%;">Số lượng</th>
+                                <th scope="col" class="text-end" style="width: 15%;">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.orderItems.forEach(item => { %>
+                                <tr>
+                                    <td>
+                                        <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="img-fluid" style="max-height: 50px; object-fit: contain;">
+                                    </td>
+                                    <td>
+                                        <a href="/products/<%= item.product ? item.product.slug : '' %>"><%= item.name %></a>
+                                        <% if (item.variant) { %>
+                                            <br><small class="text-muted">
+                                                <% 
+                                                let variantDesc = [];
+                                                if(item.variant.attributes) {
+                                                    item.variant.attributes.forEach(attr => variantDesc.push(attr.name + ': ' + attr.value));
+                                                }
+                                                %>
+                                                <%= variantDesc.join(' | ') %>
+                                            </small>
+                                        <% } %>
+                                    </td>
+                                    <td class="text-end"><%- formatPrice(item.price) %></td>
+                                    <td class="text-center"><%= item.quantity %></td>
+                                    <td class="text-end"><%- formatPrice(item.price * item.quantity) %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-end fw-bold">Tổng tiền hàng:</td>
+                                <td class="text-end fw-bold"><%- formatPrice(order.orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0)) %></td>
+                            </tr>
+                            <% if (order.shippingPrice && order.shippingPrice > 0) { %>
+                            <tr>
+                                <td colspan="4" class="text-end">Phí vận chuyển:</td>
+                                <td class="text-end"><%- formatPrice(order.shippingPrice) %></td>
+                            </tr>
+                            <% } %>
+                            <% if (order.taxPrice && order.taxPrice > 0) { %>
+                            <tr>
+                                <td colspan="4" class="text-end">Thuế:</td>
+                                <td class="text-end"><%- formatPrice(order.taxPrice) %></td>
+                            </tr>
+                            <% } %>
+                            <tr>
+                                <td colspan="4" class="text-end h5">Tổng cộng:</td>
+                                <td class="text-end h5 text-danger"><%- formatPrice(order.totalAmount) %></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="/orders/myorders" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i> Quay lại danh sách đơn hàng</a>
+            <!-- Add re-order or print invoice buttons if needed -->
+        </div>
+    <% } %>
+</div>
