@@ -14,37 +14,77 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
-    <!-- Sử dụng file CSS riêng cho auth thay vì style chung -->
     <link rel="stylesheet" href="/css/auth.css" />
   </head>
   <body>
-    <div class="container-fluid auth-container p-0">
-      <div class="auth-form">
-        <div class="form-container">
-          <div class="logo-container">
-            <a href="/">
-              <div class="d-flex align-items-center">
-                <i
-                  class="fas fa-laptop text-primary me-2"
-                  style="font-size: 1.8rem"
-                ></i>
-                <span class="h3 mb-0 text-primary fw-bold">Tech4U</span>
+    <div class="container-fluid p-0">
+      <div class="row no-gutters">
+        <div class="col-md-6">
+          <div class="auth-form">
+            <div class="form-container">
+              <div class="logo-container">
+                <a href="/">
+                  <div class="d-flex align-items-center">
+                    <i
+                      class="fas fa-laptop text-primary me-2"
+                      style="font-size: 1.8rem"
+                    ></i>
+                    <span class="h3 mb-0 text-primary fw-bold">Tech4U</span>
+                  </div>
+                </a>
               </div>
-            </a>
-          </div>
 
-          <%- include('../partials/messages') %> <%- body %>
+              <%- include('../partials/messages') %> <%- body %>
 
-          <div class="text-center mt-4">
-            <p class="text-muted small">
-              &copy; <%= new Date().getFullYear() %> Tech4U. Tất cả quyền được
-              bảo lưu.
-            </p>
+              <div class="text-center mt-4">
+                <p class="text-muted small">
+                  &copy; <%= new Date().getFullYear() %> Tech4U. Tất cả quyền được bảo lưu.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="auth-banner">
-        <!-- Banner content can be added here -->
+
+        <div class="col-md-6 bg-primary">
+          <div class="text-center text-white py-4">
+            <h3>Tech4U, Công nghệ trong tầm tay bạn</h3>
+          </div>
+
+          <div class="row g-3 p-3">
+            <div class="col-6 col-sm-6 col-md-6">
+              <img
+                src="https://mediamart.vn/images/uploads/data-2022/1-osxI2J.jpg"
+                alt="Image 1"
+                class="img-fluid rounded"
+                style="height: 300px; width: 300px;"
+              />
+            </div>
+            <div class="col-6 col-sm-6 col-md-6">
+              <img
+                src="https://cdn2.cellphones.com.vn/insecure/rs:fill:0:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/t/e/text_ng_n_4__6_104_1_1.png"
+                alt="Image 2"
+                class="img-fluid rounded"
+                style="height: 300px; width: 300px;"
+              />
+            </div>
+            <div class="col-6 col-sm-6 col-md-6">
+              <img
+                src="https://cdn2.cellphones.com.vn/insecure/rs:fill:0:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/m/a/may-tinh-bang-huawei-matepad-11-5-s_42_.png"
+                alt="Image 3"
+                class="img-fluid rounded"
+                style="height: 300px; width: 300px;"
+              />
+            </div>
+            <div class="col-6 col-sm-6 col-md-6">
+              <img
+                src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTJoIdsOT417kmu5gZu2nZz6zdNTiEXRr0iaheN_mJqbq_3VTgDo-A0UL7x1aIS563umE_xZDzOqXgV69Vjz4sEELUDwr61N2BbxEAr7flgN3l6Dpiyv02yr0prZi26GvY26SJ1NA&usqp=CAc"
+                alt="Image 4"
+                class="img-fluid rounded"
+                style="height: 300px; width: 300px;"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

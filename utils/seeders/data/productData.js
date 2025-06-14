@@ -740,7 +740,7 @@ const productsData = () => [
     imageURL: "https://mac24h.vn/images/detailed/94/macbook_pro_13_inch_intel_m1.jpg",
   },
   {
-    name: "ThinkPad X1 Yoga Gen 6 14inch - 2021 - New Outlet / Refurbised Core I7 1165G7 16 GB 512GB FHD+",
+    name: "Laptop ThinkPad X1 Yoga Gen 6 2021",
     description:
       "Laptop doanh nhân cao cấp, xoay gập 360 độ, màn hình cảm ứng 14 inch FHD+, CPU Intel Core i7-1165G7, RAM 16GB, SSD 512GB, trọng lượng nhẹ, bảo mật cao.",
     brand: "Lenovo",
@@ -783,7 +783,7 @@ const productsData = () => [
     imageURL: "https://5.imimg.com/data5/SELLER/Default/2023/5/305487983/CN/HU/WN/3137124/lenovo-yoga-slim-7pro-intel-evo-i7-500x500.jpg",
   },
   {
-    name: "Lenovo ThinkPad P15 Gen 1 (Core i7-10750H, RAM 16GB, SSD 512GB, Quadro T1000, Màn 15,6'' FHD)",
+    name: "Laptop enovo ThinkPad P15 Gen 1",
     description:
       "Laptop workstation mạnh mẽ, màn hình 15.6 inch FHD, CPU Intel Core i7-10750H, RAM 16GB, SSD 512GB, card đồ họa Quadro T1000, phù hợp đồ họa kỹ thuật.",
     brand: "Lenovo",
@@ -1163,7 +1163,7 @@ const productsData = () => [
         price: 16990000,
         stock: 7,
         attributes: {
-          storage: "512TB",
+          storage: "512GB",
           color: "Xanh",
           ram: "12GB",
         },
@@ -1380,7 +1380,7 @@ const productsData = () => [
     featured: false,
     tags: ["ssd", "nvme", "lưu trữ", "thiết bị", "nhanh"],
     imageURL:
-      "https://images.samsung.com/is/image/samsung/p6pim/vn/mz-v9p2t0bw/gallery/vn-990-pro-with-heatsink-mz-v9p2t0bw-533188584?$684_547_PNG$",
+      "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/ssd-samsung-990-pro-pcie-gen-4-0-x4-nvme-v-nand-m-2-2280-2tb-mz-v9p2t0bw.jpg?v=1661577087873",
   },
   {
     name: "Ổ cứng di động SSD ADATA SC750 USB 3.2 Gen 2",
