@@ -1,0 +1,282 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1">
+          <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="/admin/users">Users</a></li>
+          <li class="breadcrumb-item active" aria-current="page">User Details</li>
+        </ol>
+      </nav>
+      <h2 class="mb-0"><%= user.name %></h2>
+    </div>
+    <div>
+      <a href="/admin/users/edit/<%= user._id %>" class="btn btn-primary me-2">
+        <i class="fas fa-edit me-2"></i> Edit User
+      </a>
+      <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+        <i class="fas fa-trash-alt me-2"></i> Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- User Profile -->
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body text-center p-4">
+          <div class="avatar-circle bg-primary text-white mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+            <%= user.name.charAt(0).toUpperCase() %>
+          </div>
+          <h4 class="mb-1"><%= user.name %></h4>
+          <p class="text-muted mb-3"><%= user.email %></p>
+          
+          <div class="d-flex justify-content-center mb-3">
+            <% if (user.role === 'admin') { %>
+              <span class="badge bg-danger px-3 py-2">Administrator</span>
+            <% } else { %>
+              <span class="badge bg-success px-3 py-2">Customer</span>
+            <% } %>
+          </div>
+          
+          <div class="border-top pt-3">
+            <div class="row text-center">
+              <div class="col-4">
+                <h5 class="mb-0"><%= stats.totalOrders %></h5>
+                <small class="text-muted">Orders</small>
+              </div>
+              <div class="col-4">
+                <h5 class="mb-0">$<%= stats.totalSpent.toLocaleString() %></h5>
+                <small class="text-muted">Spent</small>
+              </div>
+              <div class="col-4">
+                <h5 class="mb-0"><%= Math.floor((new Date() - new Date(stats.memberSince)) / (1000 * 60 * 60 * 24)) %></h5>
+                <small class="text-muted">Days</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Contact Information -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-0">
+          <h5 class="mb-0">Contact Information</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="text-muted small d-block">Email Address</label>
+            <div><%= user.email %></div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="text-muted small d-block">Phone Number</label>
+            <div><%= user.phone || 'Not provided' %></div>
+          </div>
+          
+          <div>
+            <label class="text-muted small d-block">Address</label>
+            <div><%= user.address || 'Not provided' %></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Account Details -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+          <h5 class="mb-0">Account Details</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="text-muted small d-block">Member Since</label>
+            <div><%= new Date(stats.memberSince).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="text-muted small d-block">Last Login</label>
+            <div><%= new Date(stats.lastLogin).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+          </div>
+          
+          <div>
+            <label class="text-muted small d-block">Status</label>
+            <div>
+              <% if (!user.status || user.status === 'active') { %>
+                <span class="badge bg-success">Active</span>
+              <% } else { %>
+                <span class="badge bg-secondary">Inactive</span>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-8">
+      <!-- Recent Orders -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Orders</h5>
+          <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light">
+                <tr>
+                  <th class="border-0 ps-4">Order ID</th>
+                  <th class="border-0">Date</th>
+                  <th class="border-0">Items</th>
+                  <th class="border-0">Status</th>
+                  <th class="border-0 text-end pe-4">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (orders && orders.length > 0) { %>
+                  <% orders.forEach(function(order) { %>
+                    <tr>
+                      <td class="ps-4">
+                        <a href="#" class="text-decoration-none">#<%= order._id.toString().slice(-6).toUpperCase() %></a>
+                      </td>
+                      <td><%= new Date(order.createdAt).toLocaleDateString('vi-VN') %></td>
+                      <td><%= order.items ? order.items.length : 0 %> items</td>
+                      <td>
+                        <% if (order.status === 'completed') { %>
+                          <span class="badge bg-success">Completed</span>
+                        <% } else if (order.status === 'processing') { %>
+                          <span class="badge bg-primary">Processing</span>
+                        <% } else if (order.status === 'cancelled') { %>
+                          <span class="badge bg-danger">Cancelled</span>
+                        <% } else { %>
+                          <span class="badge bg-secondary"><%= order.status %></span>
+                        <% } %>
+                      </td>
+                      <td class="text-end pe-4">$<%= (order.totalAmount || 0).toLocaleString() %></td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="5" class="text-center py-4">
+                      <p class="mb-0 text-muted">No orders found</p>
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Activity Log -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+          <h5 class="mb-0">Activity Log</h5>
+        </div>
+        <div class="card-body">
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-point bg-primary"></div>
+              <div class="timeline-content">
+                <h6 class="mb-1">Account Created</h6>
+                <p class="text-muted small mb-0">
+                  <%= new Date(user.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                </p>
+              </div>
+            </div>
+            
+            <% if (orders && orders.length > 0) { %>
+              <% orders.forEach(function(order) { %>
+                <div class="timeline-item">
+                  <div class="timeline-point bg-success"></div>
+                  <div class="timeline-content">
+                    <h6 class="mb-1">Placed Order #<%= order._id.toString().slice(-6).toUpperCase() %></h6>
+                    <p class="text-muted small mb-0">
+                      <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                    </p>
+                  </div>
+                </div>
+              <% }); %>
+            <% } %>
+            
+            <div class="timeline-item">
+              <div class="timeline-point bg-info"></div>
+              <div class="timeline-content">
+                <h6 class="mb-1">Last Login</h6>
+                <p class="text-muted small mb-0">
+                  <%= new Date(stats.lastLogin).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete user <strong><%= user.name %></strong>?</p>
+        <p class="text-danger">This action cannot be undone and will remove all user data.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="/admin/users/delete/<%= user._id %>" class="btn btn-danger">Delete User</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .avatar-circle {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+  }
+  
+  .timeline-item {
+    position: relative;
+    padding-bottom: 25px;
+  }
+  
+  .timeline-item:last-child {
+    padding-bottom: 0;
+  }
+  
+  .timeline-item:before {
+    content: '';
+    position: absolute;
+    left: -30px;
+    top: 12px;
+    bottom: -12px;
+    width: 2px;
+    background-color: #e9ecef;
+  }
+  
+  .timeline-item:last-child:before {
+    display: none;
+  }
+  
+  .timeline-point {
+    position: absolute;
+    left: -38px;
+    top: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    z-index: 1;
+  }
+</style>

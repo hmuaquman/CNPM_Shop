@@ -203,3 +203,298 @@ exports.requireAdmin = (req, res, next) => {
   }
   next();
 };
+
+// User Management
+exports.userManagement = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    
+    // Lấy query parameters cho filtering và pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || '';
+    const role = req.query.role || '';
+    const sort = req.query.sort || 'createdAt';
+    const order = req.query.order || 'desc';
+    
+    // Tạo query object
+    const query = {};
+    
+    // Thêm search nếu có
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    // Thêm filter theo role nếu có
+    if (role) {
+      query.role = role;
+    }
+    
+    // Tính toán skip cho pagination
+    const skip = (page - 1) * limit;
+    
+    // Lấy tổng số users theo query
+    const totalUsers = await User.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / limit);
+    
+    // Lấy danh sách users với pagination và sorting
+    const users = await User.find(query)
+      .sort({ [sort]: order === 'asc' ? 1 : -1 })
+      .skip(skip)
+      .limit(limit);
+    
+    // Lấy thống kê users
+    const totalAdmins = await User.countDocuments({ role: 'admin' });
+    const totalCustomers = await User.countDocuments({ role: 'customer' });
+    const newUsersToday = await User.countDocuments({
+      createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) }
+    });
+    
+    // Lấy 5 user mới nhất
+    const recentUsers = await User.find()
+      .sort({ createdAt: -1 })
+      .limit(5);
+    
+    // Render template với dữ liệu
+    res.render('pages/admin/user-management', {
+      title: 'User Management - Admin Dashboard',
+      layout: 'layouts/admin',
+      users: users,
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        totalUsers
+      },
+      filters: {
+        search,
+        role,
+        sort,
+        order
+      },
+      stats: {
+        totalUsers,
+        totalAdmins,
+        totalCustomers,
+        newUsersToday
+      },
+      recentUsers
+    });
+    
+  } catch (error) {
+    console.error('User Management Error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Không thể tải trang quản lý người dùng',
+      error: error
+    });
+  }
+};
+
+// User Details
+exports.userDetails = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const Order = require('../models/Order');
+    
+    const userId = req.params.id;
+    
+    // Lấy thông tin user
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      req.flash('error_msg', 'Không tìm thấy người dùng');
+      return res.redirect('/admin/users');
+    }
+    
+    // Lấy đơn hàng của user
+    const orders = await Order.find({ user: userId })
+      .sort({ createdAt: -1 })
+      .limit(5);
+    
+    // Tính tổng chi tiêu
+    const totalSpent = await Order.aggregate([
+      { $match: { user: mongoose.Types.ObjectId(userId) } },
+      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+    ]);
+    
+    const userStats = {
+      totalOrders: await Order.countDocuments({ user: userId }),
+      totalSpent: totalSpent.length > 0 ? totalSpent[0].total : 0,
+      memberSince: user.createdAt,
+      lastLogin: user.lastLogin || user.updatedAt
+    };
+    
+    res.render('pages/admin/user-details', {
+      title: `User Details: ${user.name} - Admin Dashboard`,
+      layout: 'layouts/admin',
+      user: user,
+      orders: orders,
+      stats: userStats
+    });
+    
+  } catch (error) {
+    console.error('User Details Error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Không thể tải thông tin người dùng',
+      error: error
+    });
+  }
+};
+
+// Create User Form
+exports.createUserForm = (req, res) => {
+  res.render('pages/admin/user-form', {
+    title: 'Create User - Admin Dashboard',
+    layout: 'layouts/admin',
+    user: {},
+    isNew: true
+  });
+};
+
+// Edit User Form
+exports.editUserForm = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const userId = req.params.id;
+    
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      req.flash('error_msg', 'Không tìm thấy người dùng');
+      return res.redirect('/admin/users');
+    }
+    
+    res.render('pages/admin/user-form', {
+      title: `Edit User: ${user.name} - Admin Dashboard`,
+      layout: 'layouts/admin',
+      user: user,
+      isNew: false
+    });
+    
+  } catch (error) {
+    console.error('Edit User Form Error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Không thể tải form chỉnh sửa người dùng',
+      error: error
+    });
+  }
+};
+
+// Create User
+exports.createUser = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const bcrypt = require('bcryptjs');
+    
+    const { name, email, password, role, phone, address } = req.body;
+    
+    // Kiểm tra email đã tồn tại chưa
+    const existingUser = await User.findOne({ email });
+    
+    if (existingUser) {
+      req.flash('error_msg', 'Email đã được sử dụng');
+      return res.redirect('/admin/users/create');
+    }
+    
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    // Tạo user mới
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: role || 'customer',
+      phone,
+      address
+    });
+    
+    await newUser.save();
+    
+    req.flash('success_msg', 'Tạo người dùng thành công');
+    res.redirect('/admin/users');
+    
+  } catch (error) {
+    console.error('Create User Error:', error);
+    req.flash('error_msg', 'Không thể tạo người dùng');
+    res.redirect('/admin/users/create');
+  }
+};
+
+// Update User
+exports.updateUser = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const bcrypt = require('bcryptjs');
+    
+    const userId = req.params.id;
+    const { name, email, password, role, phone, address, status } = req.body;
+    
+    // Kiểm tra user tồn tại
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      req.flash('error_msg', 'Không tìm thấy người dùng');
+      return res.redirect('/admin/users');
+    }
+    
+    // Kiểm tra email đã tồn tại chưa (nếu thay đổi email)
+    if (email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      
+      if (existingUser) {
+        req.flash('error_msg', 'Email đã được sử dụng');
+        return res.redirect(`/admin/users/edit/${userId}`);
+      }
+    }
+    
+    // Cập nhật thông tin
+    user.name = name;
+    user.email = email;
+    user.role = role;
+    user.phone = phone;
+    user.address = address;
+    user.status = status || 'active';
+    
+    // Cập nhật password nếu có
+    if (password && password.trim() !== '') {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+    
+    await user.save();
+    
+    req.flash('success_msg', 'Cập nhật người dùng thành công');
+    res.redirect('/admin/users');
+    
+  } catch (error) {
+    console.error('Update User Error:', error);
+    req.flash('error_msg', 'Không thể cập nhật người dùng');
+    res.redirect(`/admin/users/edit/${req.params.id}`);
+  }
+};
+
+// Delete User
+exports.deleteUser = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const userId = req.params.id;
+    
+    await User.findByIdAndDelete(userId);
+    
+    req.flash('success_msg', 'Xóa người dùng thành công');
+    res.redirect('/admin/users');
+    
+  } catch (error) {
+    console.error('Delete User Error:', error);
+    req.flash('error_msg', 'Không thể xóa người dùng');
+    res.redirect('/admin/users');
+  }
+};
