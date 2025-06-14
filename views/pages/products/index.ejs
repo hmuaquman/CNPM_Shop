@@ -5,22 +5,23 @@
       <div class="card-header">
         <h5 class="mb-0">Danh mục</h5>
       </div>
-      <div class="list-group list-group-flush">
-        <a
-          href="/products"
-          class="list-group-item list-group-item-action <%= !query.category ? 'active' : '' %>"
+      <div class="card-body">
+        <select
+          class="form-select"
+          onchange="if (this.value) window.location.href = this.value"
         >
-          Tất cả sản phẩm
-        </a>
-        <% if (categories && categories.length > 0) { %> <%
-        categories.forEach(category => { %>
-        <a
-          href="/products?category=<%= category._id %>"
-          class="list-group-item list-group-item-action <%= query && query.category === category._id.toString() ? 'active' : '' %>"
-        >
-          <%= category.name %>
-        </a>
-        <% }) %> <% } %>
+          <option value="/products" <%= !query.category ? 'selected' : '' %>>Tất cả sản phẩm</option>
+          <% if (categories && categories.length > 0) { %>
+            <% categories.forEach(category => { %>
+              <option
+                value="/products?category=<%= category._id %>"
+                <%= query && query.category === category._id.toString() ? 'selected' : '' %>
+              >
+                <%= category.name %>
+              </option>
+            <% }) %>
+          <% } %>
+        </select>
       </div>
     </div>
 
@@ -29,15 +30,25 @@
       <div class="card-header">
         <h5 class="mb-0">Thương hiệu</h5>
       </div>
-      <div class="list-group list-group-flush">
-        <% if (brands && brands.length > 0) { %> <% brands.forEach(brand => { %>
-        <a
-          href="/products?<%= query.category ? 'category=' + query.category + '&' : '' %>brand=<%= brand %>"
-          class="list-group-item list-group-item-action <%= query && query.brand === brand ? 'active' : '' %>"
+      <div class="card-body">
+        <select
+          class="form-select"
+          onchange="if (this.value) window.location.href = this.value"
         >
-          <%= brand %>
-        </a>
-        <% }) %> <% } %>
+          <option value="/products<%= query.category ? '?category=' + query.category : '' %>" <%= !query.brand ? 'selected' : '' %>>
+            Tất cả thương hiệu
+          </option>
+          <% if (brands && brands.length > 0) { %>
+            <% brands.forEach(brand => { %>
+              <option
+                value="/products?<%= query.category ? 'category=' + query.category + '&' : '' %>brand=<%= brand %>"
+                <%= query && query.brand === brand ? 'selected' : '' %>
+              >
+                <%= brand %>
+              </option>
+            <% }) %>
+          <% } %>
+        </select>
       </div>
     </div>
 

@@ -174,7 +174,6 @@
                     <% } %>
 
                     <!-- Variants -->
-                     <!--
                     <style>
                         .variant-selector .btn {
                             min-width: 80px;
@@ -210,7 +209,6 @@
                             color: #333;
                         }
                     </style>
-                    -->
 
                     <% if (product.variants && product.variants.length > 0) { %>
                         <div class="mb-4">
@@ -219,7 +217,6 @@
                                 <% Object.keys(variantAttributes).forEach(attrName => { %>
                                     <% if (variantAttributes[attrName].length > 0) { %>
                                         <div class="mb-3">
-                                            <!--
                                             <label class="variant-label d-block">
                                                 <% 
                                                 // Chuyển đổi tên thuộc tính sang tiếng Việt
@@ -240,8 +237,11 @@
                                                 %>
                                                 <%= displayName %>
                                             </label>
-                                            -->
-                                            <div class="btn-group variant-selector" role="group" aria-label="<%= attrName %> selection">
+                                            <div 
+                                              class="btn-group variant-selector"
+                                              role="group" 
+                                              aria-label="<%= attrName %> selection"
+                                              >
                                                 <% variantAttributes[attrName].forEach(attrValue => { %>
                                                     <input type="radio" class="btn-check" name="<%= attrName %>" id="<%= attrName %>_<%= attrValue %>" value="<%= attrValue %>" <%= defaultVariant && defaultVariant.attributes && defaultVariant.attributes[attrName] === attrValue ? 'checked' : '' %> >
                                                     <label class="btn btn-outline-primary" for="<%= attrName %>_<%= attrValue %>">
