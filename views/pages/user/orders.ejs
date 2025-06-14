@@ -56,7 +56,7 @@
                                             Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
                                         </span>
                                         <span class="order-id">
-                                            Mã đơn hàng: #<%= order._id %>
+                                            Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
                                         </span>
                                     </div>
                                     <div class="card-body">
@@ -201,7 +201,7 @@
                                             Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
                                         </span>
                                         <span class="order-id">
-                                            Mã đơn hàng: #<%= order._id %>
+                                            Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
                                         </span>
                                     </div>
                                     <div class="card-body">
@@ -292,7 +292,7 @@
                                             Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
                                         </span>
                                         <span class="order-id">
-                                            Mã đơn hàng: #<%= order._id %>
+                                           Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
                                         </span>
                                     </div>
                                     <div class="card-body">
@@ -383,7 +383,7 @@
                                             Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
                                         </span>
                                         <span class="order-id">
-                                            Mã đơn hàng: #<%= order._id %>
+                                            Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
                                         </span>
                                     </div>
                                     <div class="card-body">
@@ -474,7 +474,7 @@
                                             Đặt ngày: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
                                         </span>
                                         <span class="order-id">
-                                            Mã đơn hàng: #<%= order._id %>
+                                            Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
                                         </span>
                                     </div>
                                     <div class="card-body">

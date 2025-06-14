@@ -1,0 +1,672 @@
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Tiêu đề trang -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Quản lý đơn hàng</h2>
+            </div>
+
+            <!-- Thanh tìm kiếm đơn giản hóa -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form action="/admin/orders" method="GET" class="row g-3">
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchQuery" name="q" 
+                                    placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng, số điện thoại..." 
+                                    value="<%= searchQuery || '' %>">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-1"></i> Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab xem đơn hàng theo trạng thái -->
+            <ul class="nav nav-tabs mb-4" id="orderStatusTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="processing-tab" data-bs-toggle="tab" data-bs-target="#processing" type="button" role="tab" aria-controls="processing" aria-selected="true">
+                        Đang xử lý
+                        <% const processingCount = orders.filter(o => o.status.toLowerCase() === 'processing').length; %>
+                        <% if (processingCount > 0) { %>
+                            <span class="badge bg-warning text-dark ms-1"><%= processingCount %></span>
+                        <% } %>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="delivering-tab" data-bs-toggle="tab" data-bs-target="#delivering" type="button" role="tab" aria-controls="delivering" aria-selected="false">
+                        Đang giao
+                        <% const deliveringCount = orders.filter(o => o.status.toLowerCase() === 'delivering').length; %>
+                        <% if (deliveringCount > 0) { %>
+                            <span class="badge bg-primary ms-1"><%= deliveringCount %></span>
+                        <% } %>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="delivered-tab" data-bs-toggle="tab" data-bs-target="#delivered" type="button" role="tab" aria-controls="delivered" aria-selected="false">
+                        Đã giao hàng
+                        <% const deliveredCount = orders.filter(o => o.status.toLowerCase() === 'delivered').length; %>
+                        <% if (deliveredCount > 0) { %>
+                            <span class="badge bg-success ms-1"><%= deliveredCount %></span>
+                        <% } %>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="canceled-tab" data-bs-toggle="tab" data-bs-target="#canceled" type="button" role="tab" aria-controls="canceled" aria-selected="false">
+                        Đã hủy
+                        <% const canceledCount = orders.filter(o => o.status.toLowerCase() === 'canceled').length; %>
+                        <% if (canceledCount > 0) { %>
+                            <span class="badge bg-danger ms-1"><%= canceledCount %></span>
+                        <% } %>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="orderStatusTabContent">
+
+                <!-- Tab đơn hàng đang xử lý -->
+                <div class="tab-pane fade show active" id="processing" role="tabpanel" aria-labelledby="processing-tab">
+                    <% const processingOrders = orders && orders.filter(o => o.status.toLowerCase() === 'processing') || []; %>
+                    
+                    <% if (!processingOrders.length) { %>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Không có đơn hàng đang xử lý.
+                        </div>
+                    <% } else { %>
+                        <div class="order-list">
+                            <% processingOrders.forEach(order => { %>
+                                <div class="card mb-4 order-card">
+                                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                                        <div>
+                                            <span class="order-id fw-bold">
+                                                Mã đơn hàng: #<%= order.orderNumber || `#${order._id}` %>
+                                            </span>
+                                            <span class="mx-3">|</span>
+                                            <span class="order-date">
+                                                <i class="far fa-calendar-alt me-1"></i>
+                                                <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Thông tin khách hàng -->
+                                        <div class="row mb-3 pb-3 border-bottom">
+                                            <div class="col-md-6">
+                                                <h5 class="mb-2">Thông tin khách hàng</h5>
+                                                <p class="mb-1"><strong>Họ tên:</strong> <%= order.user ? order.user.fullName : 'Không có thông tin' %></p>
+                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'Không có thông tin' %></p>
+                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone || 'Không có thông tin' %></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5 class="mb-2">Địa chỉ giao hàng</h5>
+                                                <p class="mb-1"><strong>Người nhận:</strong> <%= order.shippingAddress.recipientName %></p>
+                                                <p class="mb-1"><strong>Địa chỉ:</strong> 
+                                                    <%= order.shippingAddress.streetAndNumber %>, 
+                                                    <%= order.shippingAddress.ward %>, 
+                                                    <%= order.shippingAddress.district %>, 
+                                                    <%= order.shippingAddress.city %>
+                                                </p>
+                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone %></p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Danh sách sản phẩm trong đơn hàng - giống như tab tất cả -->
+                                        <h5 class="mb-3">Sản phẩm</h5>
+                                        <% const itemsToShow = order.items || []; %>
+                                        <% itemsToShow.slice(0, 3).forEach(item => { %>
+                                            <!-- Giống như code trong tab tất cả -->
+                                            <div class="d-flex mb-3 order-item">
+                                                <!-- Hiển thị thông tin sản phẩm -->
+                                                <div class="flex-shrink-0">
+                                                    <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="rounded order-item-img" width="60" height="60" onerror="this.src='/images/default-product.jpg'">
+                                                </div>
+                                                <div class="ms-3 flex-grow-1">
+                                                    <div class="fw-bold"><%= item.name %></div>
+                                                    <!-- Hiển thị variant info và giá -->
+                                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                                        <div class="text-muted small">
+                                                            <% 
+                                                            const translations = {
+                                                                'color': 'màu',
+                                                                'storage': 'bộ nhớ',
+                                                                'ram': 'RAM',
+                                                                'size': 'kích thước',
+                                                                'material': 'chất liệu'
+                                                            };
+                                                            
+                                                            const translatedInfo = [];
+                                                            Object.entries(item.variantInfo).forEach(([key, value]) => {
+                                                                const translatedKey = translations[key.toLowerCase()] || key;
+                                                                translatedInfo.push(`${translatedKey}: ${value}`);
+                                                            });
+                                                            %>
+                                                            <%= translatedInfo.join(', ') %>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="text-muted">
+                                                        <span><%= formatPrice(item.price) %></span>
+                                                        <span class="mx-1">x</span>
+                                                        <span><%= item.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <% if (itemsToShow.length > 3) { %>
+                                            <div class="text-muted mb-3">
+                                                và <%= itemsToShow.length - 3 %> sản phẩm khác
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Hiển thị trạng thái và action buttons -->
+                                        <div class="row mt-3 pt-3 border-top">
+                                            <div class="col-md-8">
+                                                <div class="mb-2">
+                                                    <span class="me-3"><strong>Trạng thái:</strong> <span class="badge bg-warning text-dark">Đang xử lý</span></span>
+                                                    <span><strong>Thanh toán:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
+                                                        <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                    </span></span>
+                                                </div>
+                                                
+                                                <!-- Action buttons cho đơn hàng đang xử lý -->
+                                                <div>
+                                                    <form action="/admin/orders/<%= order._id %>/change-status" method="POST" class="d-inline">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <input type="hidden" name="status" value="Delivering">
+                                                        <button type="submit" class="btn btn-sm btn-success me-2">
+                                                            <i class="fas fa-check me-1"></i> Xác nhận & giao hàng
+                                                        </button>
+                                                    </form>
+                                                    <form action="/admin/orders/<%= order._id %>/change-status" method="POST" class="d-inline">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <input type="hidden" name="status" value="Canceled">
+                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                            <i class="fas fa-times me-1"></i> Hủy đơn hàng
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <p class="mb-1"><strong>Tổng tiền hàng:</strong> <%= formatPrice(order.itemsAmount) %></p>
+                                                <p class="mb-1"><strong>Phí vận chuyển:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
+                                                <p class="fs-5 fw-bold text-danger mb-0">Thành tiền: <%= formatPrice(order.totalAmount) %></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Tab đơn hàng đang giao -->
+                <div class="tab-pane fade" id="delivering" role="tabpanel" aria-labelledby="delivering-tab">
+                    <% const deliveringOrders = orders && orders.filter(o => o.status.toLowerCase() === 'delivering') || []; %>
+                    
+                    <% if (!deliveringOrders.length) { %>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Không có đơn hàng đang giao.
+                        </div>
+                    <% } else { %>
+                        <div class="order-list">
+                            <% deliveringOrders.forEach(order => { %>
+                                <div class="card mb-4 order-card">
+                                    <!-- Card header - tương tự như trên -->
+                                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                                        <div>
+                                            <span class="order-id fw-bold">
+                                                Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
+                                            </span>
+                                            <span class="mx-3">|</span>
+                                            <span class="order-date">
+                                                <i class="far fa-calendar-alt me-1"></i>
+                                                <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                            </span>
+                                        </div>
+                                        <a href="/admin/orders/<%= order._id %>" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-eye me-1"></i> Chi tiết
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Thông tin khách hàng và địa chỉ -->
+                                        <div class="row mb-3 pb-3 border-bottom">
+                                            <div class="col-md-6">
+                                                <h5 class="mb-2">Thông tin khách hàng</h5>
+                                                <p class="mb-1"><strong>Họ tên:</strong> <%= order.user ? order.user.fullName : 'Không có thông tin' %></p>
+                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'Không có thông tin' %></p>
+                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone || 'Không có thông tin' %></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5 class="mb-2">Địa chỉ giao hàng</h5>
+                                                <p class="mb-1"><strong>Người nhận:</strong> <%= order.shippingAddress.recipientName %></p>
+                                                <p class="mb-1"><strong>Địa chỉ:</strong> 
+                                                    <%= order.shippingAddress.streetAndNumber %>, 
+                                                    <%= order.shippingAddress.ward %>, 
+                                                    <%= order.shippingAddress.district %>, 
+                                                    <%= order.shippingAddress.city %>
+                                                </p>
+                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone %></p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Danh sách sản phẩm trong đơn hàng - giống như trên -->
+                                        <h5 class="mb-3">Sản phẩm</h5>
+                                        <% const itemsToShow = order.items || []; %>
+                                        <% itemsToShow.slice(0, 3).forEach(item => { %>
+                                            <!-- Hiển thị thông tin sản phẩm - giống như trên -->
+                                            <div class="d-flex mb-3 order-item">
+                                                <div class="flex-shrink-0">
+                                                    <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="rounded order-item-img" width="60" height="60" onerror="this.src='/images/default-product.jpg'">
+                                                </div>
+                                                <div class="ms-3 flex-grow-1">
+                                                    <div class="fw-bold"><%= item.name %></div>
+                                                    <!-- Hiển thị variant info và giá - giống như trên -->
+                                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                                        <div class="text-muted small">
+                                                            <% 
+                                                            const translations = {
+                                                                'color': 'màu',
+                                                                'storage': 'bộ nhớ',
+                                                                'ram': 'RAM',
+                                                                'size': 'kích thước',
+                                                                'material': 'chất liệu'
+                                                            };
+                                                            
+                                                            const translatedInfo = [];
+                                                            Object.entries(item.variantInfo).forEach(([key, value]) => {
+                                                                const translatedKey = translations[key.toLowerCase()] || key;
+                                                                translatedInfo.push(`${translatedKey}: ${value}`);
+                                                            });
+                                                            %>
+                                                            <%= translatedInfo.join(', ') %>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="text-muted">
+                                                        <span><%= formatPrice(item.price) %></span>
+                                                        <span class="mx-1">x</span>
+                                                        <span><%= item.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <% if (itemsToShow.length > 3) { %>
+                                            <div class="text-muted mb-3">
+                                                và <%= itemsToShow.length - 3 %> sản phẩm khác
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Hiển thị trạng thái và action buttons cho đơn hàng đang giao -->
+                                        <div class="row mt-3 pt-3 border-top">
+                                            <div class="col-md-8">
+                                                <div class="mb-2">
+                                                    <span class="me-3"><strong>Trạng thái:</strong> <span class="badge bg-primary">Đang giao hàng</span></span>
+                                                    <span><strong>Thanh toán:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
+                                                        <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                    </span></span>
+                                                </div>
+                                                
+                                                <!-- Action button xác nhận đã giao hàng -->
+                                                <div>
+                                                    <form action="/admin/orders/<%= order._id %>/change-status" method="POST" class="d-inline">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <input type="hidden" name="status" value="Delivered">
+                                                        <button type="submit" class="btn btn-sm btn-success">
+                                                            <i class="fas fa-check me-1"></i> Xác nhận đã giao hàng
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <p class="mb-1"><strong>Tổng tiền hàng:</strong> <%= formatPrice(order.itemsAmount) %></p>
+                                                <p class="mb-1"><strong>Phí vận chuyển:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
+                                                <p class="fs-5 fw-bold text-danger mb-0">Thành tiền: <%= formatPrice(order.totalAmount) %></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Tab đơn hàng đã giao -->
+                <div class="tab-pane fade" id="delivered" role="tabpanel" aria-labelledby="delivered-tab">
+                    <% const deliveredOrders = orders && orders.filter(o => o.status.toLowerCase() === 'delivered') || []; %>
+                    
+                    <% if (!deliveredOrders.length) { %>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Không có đơn hàng đã giao.
+                        </div>
+                    <% } else { %>
+                        <div class="order-list">
+                            <% deliveredOrders.forEach(order => { %>
+                                <!-- Hiển thị đơn hàng - giống như các tab trước, nhưng không có action button -->
+                                <div class="card mb-4 order-card">
+                                    <!-- Card header -->
+                                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                                        <div>
+                                            <span class="order-id fw-bold">
+                                                Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
+                                            </span>
+                                            <span class="mx-3">|</span>
+                                            <span class="order-date">
+                                                <i class="far fa-calendar-alt me-1"></i>
+                                                <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                            </span>
+                                        </div>
+                                        <a href="/admin/orders/<%= order._id %>" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-eye me-1"></i> Chi tiết
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Thông tin khách hàng -->
+                                        <div class="row mb-3 pb-3 border-bottom">
+                                            <div class="col-md-6">
+                                                <h5 class="mb-2">Thông tin khách hàng</h5>
+                                                <p class="mb-1"><strong>Họ tên:</strong> <%= order.user ? order.user.fullName : 'Không có thông tin' %></p>
+                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'Không có thông tin' %></p>
+                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone || 'Không có thông tin' %></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5 class="mb-2">Địa chỉ giao hàng</h5>
+                                                <p class="mb-1"><strong>Người nhận:</strong> <%= order.shippingAddress.recipientName %></p>
+                                                <p class="mb-1"><strong>Địa chỉ:</strong> 
+                                                    <%= order.shippingAddress.streetAndNumber %>, 
+                                                    <%= order.shippingAddress.ward %>, 
+                                                    <%= order.shippingAddress.district %>, 
+                                                    <%= order.shippingAddress.city %>
+                                                </p>
+                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone %></p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Danh sách sản phẩm trong đơn hàng -->
+                                        <h5 class="mb-3">Sản phẩm</h5>
+                                        <% const itemsToShow = order.items || []; %>
+                                        <% itemsToShow.slice(0, 3).forEach(item => { %>
+                                            <div class="d-flex mb-3 order-item">
+                                                <div class="flex-shrink-0">
+                                                    <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="rounded order-item-img" width="60" height="60" onerror="this.src='/images/default-product.jpg'">
+                                                </div>
+                                                <div class="ms-3 flex-grow-1">
+                                                    <div class="fw-bold"><%= item.name %></div>
+                                                    <!-- Hiển thị variant và giá -->
+                                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                                        <div class="text-muted small">
+                                                            <% 
+                                                            const translations = {
+                                                                'color': 'màu',
+                                                                'storage': 'bộ nhớ',
+                                                                'ram': 'RAM',
+                                                                'size': 'kích thước',
+                                                                'material': 'chất liệu'
+                                                            };
+                                                            
+                                                            const translatedInfo = [];
+                                                            Object.entries(item.variantInfo).forEach(([key, value]) => {
+                                                                const translatedKey = translations[key.toLowerCase()] || key;
+                                                                translatedInfo.push(`${translatedKey}: ${value}`);
+                                                            });
+                                                            %>
+                                                            <%= translatedInfo.join(', ') %>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="text-muted">
+                                                        <span><%= formatPrice(item.price) %></span>
+                                                        <span class="mx-1">x</span>
+                                                        <span><%= item.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <% if (itemsToShow.length > 3) { %>
+                                            <div class="text-muted mb-3">
+                                                và <%= itemsToShow.length - 3 %> sản phẩm khác
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Hiển thị trạng thái - không có action button -->
+                                        <div class="row mt-3 pt-3 border-top">
+                                            <div class="col-md-8">
+                                                <div class="mb-2">
+                                                    <span class="me-3"><strong>Trạng thái:</strong> <span class="badge bg-success">Đã giao hàng</span></span>
+                                                    <span><strong>Thanh toán:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
+                                                        <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                    </span></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <p class="mb-1"><strong>Tổng tiền hàng:</strong> <%= formatPrice(order.itemsAmount) %></p>
+                                                <p class="mb-1"><strong>Phí vận chuyển:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
+                                                <p class="fs-5 fw-bold text-danger mb-0">Thành tiền: <%= formatPrice(order.totalAmount) %></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Tab đơn hàng đã hủy -->
+                <div class="tab-pane fade" id="canceled" role="tabpanel" aria-labelledby="canceled-tab">
+                    <% const canceledOrders = orders && orders.filter(o => o.status.toLowerCase() === 'canceled') || []; %>
+                    
+                    <% if (!canceledOrders.length) { %>
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Không có đơn hàng đã hủy.
+                        </div>
+                    <% } else { %>
+                        <div class="order-list">
+                            <% canceledOrders.forEach(order => { %>
+                                <!-- Hiển thị đơn hàng đã hủy - giống như đã giao, không có action button -->
+                                <div class="card mb-4 order-card">
+                                    <!-- Card header -->
+                                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                                        <div>
+                                            <span class="order-id fw-bold">
+                                               Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
+                                            </span>
+                                            <span class="mx-3">|</span>
+                                            <span class="order-date">
+                                                <i class="far fa-calendar-alt me-1"></i>
+                                                <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                            </span>
+                                        </div>
+                                        <a href="/admin/orders/<%= order._id %>" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-eye me-1"></i> Chi tiết
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Thông tin khách hàng -->
+                                        <div class="row mb-3 pb-3 border-bottom">
+                                            <div class="col-md-6">
+                                                <h5 class="mb-2">Thông tin khách hàng</h5>
+                                                <p class="mb-1"><strong>Họ tên:</strong> <%= order.user ? order.user.fullName : 'Không có thông tin' %></p>
+                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'Không có thông tin' %></p>
+                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone || 'Không có thông tin' %></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5 class="mb-2">Địa chỉ giao hàng</h5>
+                                                <p class="mb-1"><strong>Người nhận:</strong> <%= order.shippingAddress.recipientName %></p>
+                                                <p class="mb-1"><strong>Địa chỉ:</strong> 
+                                                    <%= order.shippingAddress.streetAndNumber %>, 
+                                                    <%= order.shippingAddress.ward %>, 
+                                                    <%= order.shippingAddress.district %>, 
+                                                    <%= order.shippingAddress.city %>
+                                                </p>
+                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone %></p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Danh sách sản phẩm trong đơn hàng -->
+                                        <h5 class="mb-3">Sản phẩm</h5>
+                                        <% const itemsToShow = order.items || []; %>
+                                        <% itemsToShow.slice(0, 3).forEach(item => { %>
+                                            <!-- Hiển thị sản phẩm -->
+                                            <div class="d-flex mb-3 order-item">
+                                                <div class="flex-shrink-0">
+                                                    <img src="<%= item.image || '/images/default-product.jpg' %>" alt="<%= item.name %>" class="rounded order-item-img" width="60" height="60" onerror="this.src='/images/default-product.jpg'">
+                                                </div>
+                                                <div class="ms-3 flex-grow-1">
+                                                    <div class="fw-bold"><%= item.name %></div>
+                                                    <% if (item.variantInfo && Object.keys(item.variantInfo).length > 0) { %>
+                                                        <div class="text-muted small">
+                                                            <% 
+                                                            const translations = {
+                                                                'color': 'màu',
+                                                                'storage': 'bộ nhớ',
+                                                                'ram': 'RAM',
+                                                                'size': 'kích thước',
+                                                                'material': 'chất liệu'
+                                                            };
+                                                            
+                                                            const translatedInfo = [];
+                                                            Object.entries(item.variantInfo).forEach(([key, value]) => {
+                                                                const translatedKey = translations[key.toLowerCase()] || key;
+                                                                translatedInfo.push(`${translatedKey}: ${value}`);
+                                                            });
+                                                            %>
+                                                            <%= translatedInfo.join(', ') %>
+                                                        </div>
+                                                    <% } %>
+                                                    <div class="text-muted">
+                                                        <span><%= formatPrice(item.price) %></span>
+                                                        <span class="mx-1">x</span>
+                                                        <span><%= item.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+
+                                        <% if (itemsToShow.length > 3) { %>
+                                            <div class="text-muted mb-3">
+                                                và <%= itemsToShow.length - 3 %> sản phẩm khác
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Hiển thị trạng thái - không có action button -->
+                                        <div class="row mt-3 pt-3 border-top">
+                                            <div class="col-md-8">
+                                                <div class="mb-2">
+                                                    <span class="me-3"><strong>Trạng thái:</strong> <span class="badge bg-danger">Đã hủy</span></span>
+                                                    <span><strong>Thanh toán:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
+                                                        <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                    </span></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <p class="mb-1"><strong>Tổng tiền hàng:</strong> <%= formatPrice(order.itemsAmount) %></p>
+                                                <p class="mb-1"><strong>Phí vận chuyển:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
+                                                <p class="fs-5 fw-bold text-danger mb-0">Thành tiền: <%= formatPrice(order.totalAmount) %></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .order-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .order-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .order-item-img {
+        object-fit: contain;
+        background-color: #f8f9fa;
+        width: 60px;
+        height: 60px;
+    }
+    
+    .nav-tabs .nav-link {
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Lấy trạng thái từ URL (nếu có)
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    
+    // Kích hoạt tab tương ứng dựa trên tham số URL
+    if (status) {
+        const tabEl = document.getElementById(`${status.toLowerCase()}-tab`);
+        if (tabEl) {
+            const tab = new bootstrap.Tab(tabEl);
+            tab.show();
+        }
+    } else {
+        // Nếu không có status, mặc định hiển thị tab Processing
+        const processingTab = new bootstrap.Tab(document.getElementById('processing-tab'));
+        processingTab.show();
+    }
+    
+    // Cập nhật URL khi chuyển tab
+    const tabs = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', event => {
+            const targetId = event.target.id.replace('-tab', '');
+            
+            // Giữ lại các tham số tìm kiếm khác
+            const currentParams = new URLSearchParams(window.location.search);
+            currentParams.set('status', targetId);
+            
+            if (targetId === 'all') {
+                currentParams.delete('status');
+            }
+            
+            const newUrl = window.location.pathname + 
+                (currentParams.toString() ? '?' + currentParams.toString() : '');
+            history.replaceState(null, null, newUrl);
+        });
+    });
+
+    // Xác nhận trước khi thay đổi trạng thái
+    const actionForms = document.querySelectorAll('form[action*="/change-status"]');
+    actionForms.forEach(form => {
+        form.addEventListener('submit', function(event) {
+            const status = form.querySelector('input[name="status"]').value;
+            let message = '';
+            
+            if (status === 'Delivering') {
+                message = 'Xác nhận chuyển đơn hàng sang trạng thái đang giao hàng?';
+            } else if (status === 'Delivered') {
+                message = 'Xác nhận đơn hàng đã được giao thành công?';
+            } else if (status === 'Canceled') {
+                message = 'Xác nhận hủy đơn hàng này?';
+            }
+            
+            if (!confirm(message)) {
+                event.preventDefault();
+            }
+        });
+    });
+});
+</script>
