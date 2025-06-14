@@ -75,6 +75,7 @@ const OrderSchema = new mongoose.Schema(
           required: true,
           min: 1,
         },
+        image: String,
         variantInfo: {
           color: String,
           storage: String,
@@ -82,6 +83,10 @@ const OrderSchema = new mongoose.Schema(
         },
       },
     ],
+    orderNumber: {
+      type: String,
+      unique: true,
+    },
     shippingAddress: {
       type: ShippingAddressSchema,
       required: true,
@@ -103,7 +108,7 @@ const OrderSchema = new mongoose.Schema(
       enum: [
         "cod",
         "bank_transfer",
-        "vnpay_qr",
+        "vnpay",
         "momo",
         "zalo_pay",
         "shopee_pay",
@@ -113,7 +118,7 @@ const OrderSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
+      enum: ["Pending", "Processing", "Delivering", "Delivered", "Canceled"],
       default: "Pending",
     },
     paymentStatus: {
@@ -128,27 +133,50 @@ const OrderSchema = new mongoose.Schema(
   }
 );
 
-// Tính toán giá trị trước khi lưu
-OrderSchema.pre("save", function (next) {
-  if (this.isNew) {
-    // Tính tổng tiền sản phẩm
-    this.itemsAmount = this.items.reduce((total, item) => {
-      return total + item.price * item.quantity;
-    }, 0);
+OrderSchema.pre("save", async function (next) {
+  try {
+    // Nếu là đơn hàng mới và chưa có orderNumber
+    if (this.isNew && !this.orderNumber) {
+      // Tạo mã đơn hàng với format: TYX + năm + tháng + ngày + số thứ tự
+      const date = new Date();
+      const year = date.getFullYear().toString().slice(-2);
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
 
-    // Nếu có phí vận chuyển, thêm vào tổng
-    const shippingFee =
-      this.shippingInfo && this.shippingInfo.shippingFee
-        ? this.shippingInfo.shippingFee
-        : 0;
-    this.totalAmount = this.itemsAmount + shippingFee;
+      // Lấy số thứ tự đơn hàng trong ngày
+      const todayStart = new Date(date.setHours(0, 0, 0, 0));
+      const todayEnd = new Date(date.setHours(23, 59, 59, 999));
+      const todayOrdersCount = await this.constructor.countDocuments({
+        createdAt: { $gte: todayStart, $lte: todayEnd },
+      });
 
-    // Tạo địa chỉ đầy đủ
-    if (this.shippingAddress) {
-      this.shippingAddress.fullAddress = `${this.shippingAddress.streetAndNumber}, ${this.shippingAddress.ward}, ${this.shippingAddress.district}, ${this.shippingAddress.city}`;
+      const orderCount = String(todayOrdersCount + 1).padStart(3, "0");
+      this.orderNumber = `TYX${year}${month}${day}${orderCount}`;
     }
+
+    // Logic tính toán hiện tại
+    if (this.isNew) {
+      // Tính tổng tiền sản phẩm
+      this.itemsAmount = this.items.reduce((total, item) => {
+        return total + item.price * item.quantity;
+      }, 0);
+
+      // Nếu có phí vận chuyển, thêm vào tổng
+      const shippingFee =
+        this.shippingInfo && this.shippingInfo.shippingFee
+          ? this.shippingInfo.shippingFee
+          : 0;
+      this.totalAmount = this.itemsAmount + shippingFee;
+
+      // Tạo địa chỉ đầy đủ
+      if (this.shippingAddress) {
+        this.shippingAddress.fullAddress = `${this.shippingAddress.streetAndNumber}, ${this.shippingAddress.ward}, ${this.shippingAddress.district}, ${this.shippingAddress.city}`;
+      }
+    }
+    next();
+  } catch (error) {
+    next(error);
   }
-  next();
 });
 
 module.exports = mongoose.model("Order", OrderSchema);
