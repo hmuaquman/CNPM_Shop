@@ -1,0 +1,100 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+  <h4 class="fw-bold py-3 mb-4">
+    <span class="text-muted fw-light">Admin /</span> User Management
+  </h4>
+
+  <!-- Basic Bootstrap Table -->
+  <div class="card">
+    <h5 class="card-header">User List</h5>
+    <div class="table-responsive text-nowrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          <% if (users && users.length > 0) { %>
+            <% users.forEach(user => { %>
+              <tr>
+                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong><%= user.id %></strong></td>
+                <td><h6 class="mb-0"><%= user && user.fullName ? user.fullName : 'Unknown User' %></h6></td>
+                <td><small class="text-muted"><%= user && user.email ? user.email : 'No email' %></small></td>
+                <td>
+                  <% if (user && user.phone) { %>
+                    <small class="text-muted"><%= user.phone %></small>
+                  <% } %>
+                </td>
+                <td>
+                  <% if (user && user.role === 'admin') { %>
+                    <span class="badge bg-danger">Admin</span>
+                  <% } else { %>
+                    <span class="badge bg-success">Customer</span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if (!user || !user.status || user.status === 'active') { %>
+                    <span class="badge bg-success">Active</span>
+                  <% } else { %>
+                    <span class="badge bg-secondary">Inactive</span>
+                  <% } %>
+                </td>
+                <td><%= user && user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : 'Unknown' %></td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                      <i class="bx bx-dots-vertical"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="/admin/users/edit/<%= user.id %>"
+                        ><i class="bx bx-edit-alt me-1"></i> Edit</a
+                      >
+                      <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal<%= user.id %>"
+                        ><i class="bx bx-trash me-1"></i> Delete</a
+                      >
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Delete Confirmation Modal -->
+              <div class="modal fade" id="deleteConfirmationModal<%= user.id %>" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Are you sure you want to delete user <strong><%= user && user.name ? user.name : 'Unknown User' %></strong>?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <a href="/admin/users/delete/<%= user.id %>" class="btn btn-danger">Delete</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Delete Confirmation Modal -->
+
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="9">No users found.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!--/ Basic Bootstrap Table -->
+
+  <hr class="my-5" />
+</div>
