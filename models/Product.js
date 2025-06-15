@@ -52,6 +52,7 @@ const ProductSchema = new mongoose.Schema(
           "Sản xuất tại Việt Nam",
           "Nhập khẩu",
         ],
+        default: "Chính hãng",
       },
       warrantyInfo: {
         durationInMonths: {
@@ -65,7 +66,9 @@ const ProductSchema = new mongoose.Schema(
             "Bảo hành tại hãng",
             "Bảo hành tại cửa hàng",
             "Bảo hành quốc tế",
+            "Không bảo hành",
           ],
+          default: "Không bảo hành",
         },
         coverage: String,
       },

@@ -2,9 +2,9 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Batch Price Update</h2>
+                <h2>Điều chỉnh giá - Áp khuyến mãi</h2>
                 <a href="/admin/products" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Products
+                    <i class="fas fa-arrow-left"></i> Quay lại
                 </a>
             </div>
 
@@ -53,9 +53,15 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="basePriceBrand" class="form-label">Brand</label>
-                                        <input type="text" class="form-control" id="basePriceBrand" name="brand" placeholder="Enter brand name">
-                                        <div class="form-text">Leave empty to include all brands</div>
-                                    </div>
+                                        <select class="form-select" id="basePriceBrand" name="brand">
+                                            <option value="">All Brands</option>
+                                            <% brands.forEach(brand => { %>
+                                                <option value="<%= brand %>"><%= brand %></option>
+                                            <% }); %>
+                                        </select>
+                                        <div class="form-text">Select a brand to filter products</div>
+                                    </div>                                    
+
                                     <div class="col-md-4 mb-3">
                                         <label for="basePriceMinQuantity" class="form-label">Minimum Stock Quantity</label>
                                         <input type="number" class="form-control" id="basePriceMinQuantity" name="minQuantity" min="0" placeholder="0">
@@ -100,9 +106,6 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="resetForm('basePriceForm')">
-                                        <i class="fas fa-undo"></i> Reset
-                                    </button>
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-save"></i> Update Base Prices
                                     </button>
@@ -135,9 +138,14 @@
                                         <div class="form-text">Select a category to filter products</div>
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <label for="discountBrand" class="form-label">Brand</label>
-                                        <input type="text" class="form-control" id="discountBrand" name="brand" placeholder="Enter brand name">
-                                        <div class="form-text">Leave empty to include all brands</div>
+                                        <label for="basePriceBrand" class="form-label">Brand</label>
+                                        <select class="form-select" id="basePriceBrand" name="brand">
+                                            <option value="">All Brands</option>
+                                            <% brands.forEach(brand => { %>
+                                                <option value="<%= brand %>"><%= brand %></option>
+                                            <% }); %>
+                                        </select>
+                                        <div class="form-text">Select a brand to filter products</div>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="discountMinQuantity" class="form-label">Minimum Stock Quantity</label>
@@ -174,33 +182,12 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="resetForm('discountForm')">
-                                        <i class="fas fa-undo"></i> Reset
-                                    </button>
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-percentage"></i> Update Discounts
                                     </button>
                                 </div>
                             </form>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Preview Section -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-eye"></i> Preview Changes
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <strong>Important:</strong> Please review your settings carefully before submitting. Batch updates will affect multiple products at once and cannot be easily undone.
-                    </div>
-                    <div id="previewContent">
-                        <p class="text-muted">Configure your update settings above to see a preview of the changes.</p>
                     </div>
                 </div>
             </div>

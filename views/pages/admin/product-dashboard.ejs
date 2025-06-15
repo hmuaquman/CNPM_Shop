@@ -1,82 +1,130 @@
 <!-- views/pages/admin/product_management.ejs -->
 <div class="dashboard-container">
-    <div class="row mb-4">
-      <div class="col-12">
-        <h2>Product Management</h2>
-        <p class="text-muted">
-          Manage your electronic products inventory and details.
-        </p>
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="fw-semibold text-dark mb-2">Quản lý sản phẩm</h2>
+      <p class="text-muted">
+        Quản lý kho hàng và thông tin chi tiết sản phẩm điện tử của bạn.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <!-- Thêm sản phẩm -->
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100 border-0 shadow-sm product-card" style="background-color: #f8f9fa;">
+        <div class="card-body text-center p-4">
+          <div class="mb-3">
+            <div class="icon-wrapper d-inline-flex align-items-center justify-content-center rounded-circle mb-2" 
+                 style="width: 70px; height: 70px; background-color: #e9ecef;">
+              <i class="fas fa-plus-circle" style="font-size: 2.2rem; color: #495057;"></i>
+            </div>
+          </div>
+          <h5 class="card-title fw-semibold text-dark mb-3">Thêm sản phẩm</h5>
+          <p class="small text-muted mb-4">
+            Thêm sản phẩm điện tử mới vào kho hàng với thông số kỹ thuật chi tiết.
+          </p>
+          <a href="/admin/products/add-product" class="btn btn-dark px-4 py-2">
+            <i class="fas fa-plus me-2"></i>Tạo mới
+          </a>
+        </div>
       </div>
     </div>
-  
-    <div class="row g-4 mb-5">
-      <!-- Add Product -->
-      <div class="col-lg-3 col-md-6">
-        <div class="card h-100 border-0 shadow-sm" style="background-color: #f8f9fa">
-          <div class="card-body text-center p-4">
-            <div class="mb-3">
-              <i class="fas fa-plus-circle" style="font-size: 3rem; color: #6c757d"></i>
+
+    <!-- Xóa sản phẩm -->
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100 border-0 shadow-sm product-card" style="background-color: #fdf2f2;">
+        <div class="card-body text-center p-4">
+          <div class="mb-3">
+            <div class="icon-wrapper d-inline-flex align-items-center justify-content-center rounded-circle mb-2" 
+                 style="width: 70px; height: 70px; background-color: #f8d7da;">
+              <i class="fas fa-trash-alt" style="font-size: 2.2rem; color: #dc3545;"></i>
             </div>
-            <h5 class="card-title">Add Product</h5>
-            <p class="card-text text-muted">Create a new product listing</p>
-            <p class="small text-muted">
-              Add new electronic products to your inventory with detailed specifications.
-            </p>
-            <a href="/admin/products/add-product" class="btn btn-dark mt-3">Create New</a>
           </div>
+          <h5 class="card-title fw-semibold text-dark mb-3">Xóa sản phẩm</h5>
+          <p class="small text-muted mb-4">
+            Xóa các sản phẩm đã ngừng kinh doanh hoặc hết hàng khỏi danh mục.
+          </p>
+          <a href="/admin/products/delete-product" class="btn btn-outline-secondary px-4 py-2">
+            <i class="fas fa-trash me-2"></i>Quản lý xóa
+          </a>
         </div>
       </div>
-  
-      <!-- Delete Product -->
-      <div class="col-lg-3 col-md-6">
-        <div class="card h-100 border-0 shadow-sm" style="background-color: #fdf2f2">
-          <div class="card-body text-center p-4">
-            <div class="mb-3">
-              <i class="fas fa-trash-alt" style="font-size: 3rem; color: #dc3545"></i>
+    </div>
+
+    <!-- Chỉnh sửa sản phẩm -->
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100 border-0 shadow-sm product-card" style="background-color: #f0f8ff;">
+        <div class="card-body text-center p-4">
+          <div class="mb-3">
+            <div class="icon-wrapper d-inline-flex align-items-center justify-content-center rounded-circle mb-2" 
+                 style="width: 70px; height: 70px; background-color: #cce7ff;">
+              <i class="fas fa-edit" style="font-size: 2.2rem; color: #0066cc;"></i>
             </div>
-            <h5 class="card-title">Delete Product</h5>
-            <p class="card-text text-muted">Remove products from inventory</p>
-            <p class="small text-muted">
-              Remove discontinued or out-of-stock products from your catalog.
-            </p>
-            <a href="/admin/products/delete-product" class="btn btn-outline-secondary mt-3">Manage Deletions</a>
           </div>
+          <h5 class="card-title fw-semibold text-dark mb-3">Chỉnh sửa sản phẩm</h5>
+          <p class="small text-muted mb-4">
+            Chỉnh sửa chi tiết, thông số kỹ thuật và hình ảnh sản phẩm khi cần.
+          </p>
+          <a href="/admin/products/edit-product" class="btn btn-outline-secondary px-4 py-2">
+            <i class="fas fa-edit me-2"></i>Chỉnh sửa
+          </a>
         </div>
       </div>
-  
-      <!-- Edit Product -->
-      <div class="col-lg-3 col-md-6">
-        <div class="card h-100 border-0 shadow-sm" style="background-color: #f0f8ff">
-          <div class="card-body text-center p-4">
-            <div class="mb-3">
-              <i class="fas fa-edit" style="font-size: 3rem; color: #0066cc"></i>
+    </div>
+
+    <!-- Điều chỉnh giá -->
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100 border-0 shadow-sm product-card" style="background-color: #f0fff4;">
+        <div class="card-body text-center p-4">
+          <div class="mb-3">
+            <div class="icon-wrapper d-inline-flex align-items-center justify-content-center rounded-circle mb-2" 
+                 style="width: 70px; height: 70px; background-color: #d4edda;">
+              <i class="fas fa-chart-line" style="font-size: 2.2rem; color: #28a745;"></i>
             </div>
-            <h5 class="card-title">Edit Product</h5>
-            <p class="card-text text-muted">Update product information</p>
-            <p class="small text-muted">
-              Modify product details, specifications, and images as needed.
-            </p>
-            <a href="/admin/products/edit-product" class="btn btn-outline-secondary mt-3">Edit Products</a>
           </div>
-        </div>
-      </div>
-  
-      <!-- Update Prices -->
-      <div class="col-lg-3 col-md-6">
-        <div class="card h-100 border-0 shadow-sm" style="background-color: #f0fff4">
-          <div class="card-body text-center p-4">
-            <div class="mb-3">
-              <i class="fas fa-chart-line" style="font-size: 3rem; color: #28a745"></i>
-            </div>
-            <h5 class="card-title">Update Prices</h5>
-            <p class="card-text text-muted">Manage product pricing</p>
-            <p class="small text-muted">
-              Update prices, discounts, and special offers for your products.
-            </p>
-            <a href="/admin/products/update-price" class="btn btn-outline-secondary mt-3">Adjust Pricing</a>
-          </div>
+          <h5 class="card-title fw-semibold text-dark mb-3">Điều chỉnh giá</h5>
+          <p class="small text-muted mb-4">
+            Cập nhật giá, giảm giá và ưu đãi đặc biệt cho sản phẩm của bạn.
+          </p>
+          <a href="/admin/products/update-price" class="btn btn-outline-secondary px-4 py-2">
+            <i class="fas fa-dollar-sign me-2"></i>Điều chỉnh giá
+          </a>
         </div>
       </div>
     </div>
   </div>
+</div>
+
+<style>
+  .product-card {
+    transition: all 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+  }
   
+  .product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+  }
+  
+  .icon-wrapper {
+    transition: all 0.2s ease;
+  }
+  
+  .product-card:hover .icon-wrapper {
+    transform: scale(1.05);
+  }
+  
+  .btn {
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+  
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+  
+  .card-title {
+    color: #2c3e50 !important;
+  }
+</style>

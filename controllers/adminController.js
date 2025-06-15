@@ -521,7 +521,6 @@ exports.addProductForm = async (req, res) => {
   });
 };
 
-// Note: price = basePrice for now
 exports.addProduct = async (req, res) => {
   try {
     console.log('Received product data:', req.body);
@@ -542,7 +541,7 @@ exports.addProduct = async (req, res) => {
 
     const parsedBasePrice = parseFloat(basePrice);
     const parsedPrice = parseFloat(basePrice);
-    const parsedDiscountPercentage = parseFloat(discountPercentage);
+    const parsedDiscountPercentage = discountPercentage ? parseFloat(discountPercentage) : 0; // default 0;
     const parsedQuantity = parseInt(quantity);
     const isFeatured = featured === 'true';
     const parsedTags = tags ? tags.replace(/"/g, '').split(',').map(t => t.trim()) : [];
@@ -730,10 +729,13 @@ exports.editOneProduct = async (req, res) => {
 exports.priceUpdateForm = async (req, res) => {
   try {
     const categories = await Category.find();
+    const brands = await Product.distinct('brand');
+
     res.render('pages/admin/update-price', {
       title: 'Batch Price Update',
       layout: 'layouts/admin',
-      categories
+      categories,
+      brands,
     });
   } catch (error) {
     console.error('Error loading batch price update form:', error);
