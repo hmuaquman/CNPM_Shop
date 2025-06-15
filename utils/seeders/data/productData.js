@@ -28,7 +28,7 @@ const productsData = () => [
       {
         sku: "DELL-XPS13-I7-16-512",
         price: 32000000,
-        stock: 5,
+        stock: 40,
         attributes: {
           ram: "16GB",
           storage: "512GB SSD",
@@ -37,87 +37,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "DELL-XPS13-I7-32-512",
-        price: 33500000,
-        stock: 5,
-        attributes: {
-          ram: "32GB",
-          storage: "512GB SSD",
-          color: "Bạc",
-        },
-        isDefault: true,
-        status: "active",
-      },
-      {
-        sku: "DELL-XPS13-I7-32-512",
-        price: 33000000,
-        stock: 5,
-        attributes: {
-          ram: "16GB",
-          storage: "1TB SSD",
-          color: "Bạc",
-        },
-        isDefault: true,
-        status: "active",
-      },
-      {
-        sku: "DELL-XPS13-I7-32-1TB",
-        price: 34500000,
-        stock: 5,
-        attributes: {
-          ram: "32GB",
-          storage: "1TB SSD",
-          color: "Bạc",
-        },
-        status: "active",
-      },
-      {
-        sku: "DELL-XPS13-I7-16-512-BLACK",
-        price: 32000000,
-        stock: 5,
-        attributes: {
-          ram: "16GB",
-          storage: "512GB SSD",
-          color: "Đen",
-        },
-        status: "active",
-      },
-      {
-        sku: "DELL-XPS13-I7-32-512",
-        price: 33500000,
-        stock: 5,
-        attributes: {
-          ram: "32GB",
-          storage: "512GB SSD",
-          color: "Đen",
-        },
-        isDefault: true,
-        status: "active",
-      },
-      {
-        sku: "DELL-XPS13-I7-32-512",
-        price: 33000000,
-        stock: 5,
-        attributes: {
-          ram: "16GB",
-          storage: "1TB SSD",
-          color: "Đen",
-        },
-        isDefault: true,
-        status: "active",
-      },
-      {
-        sku: "DELL-XPS13-I7-32-1TB",
-        price: 34500000,
-        stock: 5,
-        attributes: {
-          ram: "32GB",
-          storage: "1TB SSD",
-          color: "Đen",
-        },
-        status: "active",
-      },
+      
     ],
     status: "active",
     featured: true,
@@ -149,7 +69,7 @@ const productsData = () => [
       {
         sku: "ASUS ROG Strix G15 G513QR-HQ264T",
         price: 39590000,
-        stock: 5,
+        stock: 23,
         attributes: {
           ram: "16GB",
           storage: "512GB SSD",
@@ -158,39 +78,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "ASUS ROG Strix G15 G513QR-HQ264T",
-        price: 40590000,
-        stock: 6,
-        attributes: {
-          ram: "16GB",
-          storage: "1TB SSD",
-          color: "Xám",
-        },
-        status: "active",
-      },
-      {
-        sku: "ASUS ROG Strix G15 G513QR-HQ264T",
-        price: 41090000,
-        stock: 6,
-        attributes: {
-          ram: "32GB",
-          storage: "512GB SSD",
-          color: "Xám",
-        },
-        status: "active",
-      },
-      {
-        sku: "ASUS ROG Strix G15 G513QR-HQ264T",
-        price: 42090000,
-        stock: 6,
-        attributes: {
-          ram: "32GB",
-          storage: "1TB SSD",
-          color: "Xám",
-        },
-        status: "active",
-      },
+      
     ],
     status: "active",
     featured: true,
@@ -222,7 +110,7 @@ const productsData = () => [
       {
         sku: "ASUS Gaming Rog Strix G15 G513IH HN015W",
         price: 17890000,
-        stock: 7,
+        stock: 26,
         attributes: {
           ram: "16GB",
           storage: "512GB SSD",
@@ -231,39 +119,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "ASUS Gaming Rog Strix G15 G513IH HN015W",
-        price: 18890000,
-        stock: 6,
-        attributes: {
-          ram: "16GB",
-          storage: "1TB SSD",
-          color: "Xám",
-        },
-        status: "active",
-      },
-      {
-        sku: "ASUS Gaming Rog Strix G15 G513IH HN015W",
-        price: 19390000,
-        stock: 6,
-        attributes: {
-          ram: "32GB",
-          storage: "512GB SSD",
-          color: "Xám",
-        },
-        status: "active",
-      },
-      {
-        sku: "ASUS Gaming Rog Strix G15 G513IH HN015W",
-        price: 20390000,
-        stock: 7,
-        attributes: {
-          ram: "32GB",
-          storage: "1TB SSD",
-          color: "Xám",
-        },
-        status: "active",
-      },
+      
     ],
     status: "active",
     featured: true,
@@ -295,7 +151,7 @@ const productsData = () => [
       {
         sku: "Acer Nitro V ANV15-51-58AN",
         price: 17890000,
-        stock: 6,
+        stock: 25,
         attributes: {
           ram: "16GB",
           storage: "512GB SSD",
@@ -304,39 +160,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "Acer Nitro V ANV15-51-58AN",
-        price: 18890000,
-        stock: 6,
-        attributes: {
-          ram: "16GB",
-          storage: "1TB SSD",
-          color: "Xám",
-        },
-        status: "active",
-      },
-      {
-        sku: "Acer Nitro V ANV15-51-58AN",
-        price: 19390000,
-        stock: 6,
-        attributes: {
-          ram: "32GB",
-          storage: "512GB SSD",
-          color: "Xám",
-        },
-        status: "active",
-      },
-      {
-        sku: "Acer Nitro V ANV15-51-58AN",
-        price: 20390000,
-        stock: 7,
-        attributes: {
-          ram: "32GB",
-          storage: "1TB SSD",
-          color: "Xám",
-        },
-        status: "active",
-      },
+      
     ],
     status: "active",
     featured: true,
@@ -368,7 +192,7 @@ const productsData = () => [
       {
         sku: "Laptop Acer Gaming Nitro Lite 16 NL16-71G-71UJ",
         price: 23490000,
-        stock: 5,
+        stock: 24,
         attributes: {
           ram: "16GB",
           storage: "512GB SSD",
@@ -377,39 +201,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "Laptop Acer Gaming Nitro Lite 16 NL16-71G-71UJ",
-        price: 24490000,
-        stock: 6,
-        attributes: {
-          ram: "16GB",
-          storage: "1TB SSD",
-          color: "Trắng",
-        },
-        status: "active",
-      },
-      {
-        sku: "Laptop Acer Gaming Nitro Lite 16 NL16-71G-71UJ",
-        price: 24990000,
-        stock: 6,
-        attributes: {
-          ram: "32GB",
-          storage: "512GB SSD",
-          color: "Trắng",
-        },
-        status: "active",
-      },
-      {
-        sku: "Laptop Acer Gaming Nitro Lite 16 NL16-71G-71UJ",
-        price: 25990000,
-        stock: 7,
-        attributes: {
-          ram: "32GB",
-          storage: "1TB SSD",
-          color: "Trắng",
-        },
-        status: "active",
-      },
+      
     ],
     status: "active",
     featured: true,
@@ -441,7 +233,7 @@ const productsData = () => [
       {
         sku: "Laptop Lenovo LOQ 15IAX9E 83LK0036VN",
         price: 17990000,
-        stock: 5,
+        stock: 10,
         attributes: {
           ram: "12GB",
           storage: "512GB SSD",
@@ -450,18 +242,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "Laptop Lenovo LOQ 15IAX9E 83LK0036VN",
-        price: 18990000,
-        stock: 5,
-        attributes: {
-          ram: "12GB",
-          storage: "1TB SSD",
-          color: "Xám",
-        },
-        isDefault: true,
-        status: "active",
-      },
+      
     ],
     status: "active",
     featured: true,
@@ -493,7 +274,7 @@ const productsData = () => [
       {
         sku: "Laptop Lenovo LOQ 15ARP9 83JC007JVN",
         price: 20490000,
-        stock: 5,
+        stock: 10,
         attributes: {
           ram: "24GB",
           storage: "512GB SSD",
@@ -502,19 +283,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "Laptop Lenovo LOQ 15ARP9 83JC007JVN",
-        price: 21490000,
-        stock: 5,
-        attributes: {
-          ram: "24GB",
-          storage: "1TB SSD",
-          color: "Xám",
-        },
-        isDefault: true,
-        status: "active",
-      },
-
+      
     ],
     status: "active",
     featured: true,
@@ -546,7 +315,7 @@ const productsData = () => [
       {
         sku: "Laptop MSI Modern 14 C12MO-660VN",
         price: 11590000,
-        stock: 6,
+        stock: 23,
         attributes: {
           ram: "16GB",
           storage: "512GB SSD",
@@ -555,43 +324,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "Laptop MSI Modern 14 C12MO-660VN",
-        price: 12590000,
-        stock: 5,
-        attributes: {
-          ram: "16GB",
-          storage: "1TB SSD",
-          color: "Đen",
-        },
-        isDefault: true,
-        status: "active",
-      },
-      {
-        sku: "Laptop MSI Modern 14 C12MO-660VN",
-        price: 13090000,
-        stock: 6,
-        attributes: {
-          ram: "32GB",
-          storage: "512GB SSD",
-          color: "Đen",
-        },
-        isDefault: true,
-        status: "active",
-      },
-      {
-        sku: "Laptop MSI Modern 14 C12MO-660VN",
-        price: 14090000,
-        stock: 6,
-        attributes: {
-          ram: "32GB",
-          storage: "1TB SSD",
-          color: "Đen",
-        },
-        isDefault: true,
-        status: "active",
-      },
-
+      
     ],
     status: "active",
     featured: true,
@@ -623,7 +356,7 @@ const productsData = () => [
       {
         sku: "Laptop MSI Prestige 14 AI Studio C1UDXG-058VN",
         price: 26190000,
-        stock: 6,
+        stock: 11,
         attributes: {
           ram: "16GB",
           storage: "1TB SSD",
@@ -632,18 +365,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "Laptop MSI Prestige 14 AI Studio C1UDXG-058VN",
-        price: 27690000,
-        stock: 5,
-        attributes: {
-          ram: "32GB",
-          storage: "1TB SSD",
-          color: "Xám",
-        },
-        isDefault: true,
-        status: "active",
-      },
+    
 
     ],
     status: "active",
@@ -940,7 +662,7 @@ const productsData = () => [
       {
         sku: "IP15PM-256-TITAN",
         price: 33240500,
-        stock: 10,
+        stock: 25,
         attributes: {
           storage: "256GB",
           color: "Titan Đen",
@@ -949,28 +671,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "IP15PM-512-TITAN",
-        price: 38240500,
-        stock: 8,
-        attributes: {
-          storage: "512GB",
-          color: "Titan Đen",
-          ram: "8GB",
-        },
-        status: "active",
-      },
-      {
-        sku: "IP15PM-256-BLUE",
-        price: 33240500,
-        stock: 7,
-        attributes: {
-          storage: "256GB",
-          color: "Xanh Titan",
-          ram: "8GB",
-        },
-        status: "active",
-      },
+      
     ],
     status: "active",
     featured: true,
@@ -988,7 +689,7 @@ const productsData = () => [
     price: 23990000,
     //discountStartDate: new Date("2025-06-01"),
     //discountEndDate: new Date("2025-06-30"),
-    quantity: 45,
+    quantity: 15,
     commonSpecs: {
       processor: "Snapdragon 8 Gen 3 For Galaxy",
       operatingSystem: "Android 14, One UI 6.1",
@@ -1005,7 +706,7 @@ const productsData = () => [
       {
         sku: "Samsung Galaxy S24 Ultra",
         price: 23990000,
-        stock: 5,
+        stock: 15,
         attributes: {
           storage: "256GB",
           color: "Đen",
@@ -1014,96 +715,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "Samsung Galaxy S24 Ultra",
-        price: 25990000,
-        stock: 5,
-        attributes: {
-          storage: "512GB",
-          color: "Đen",
-          ram: "12GB",
-        },
-        status: "active",
-      },
-      {
-        sku: "Samsung Galaxy S24 Ultra",
-        price: 44490000,
-        stock: 5,
-        attributes: {
-          storage: "1TB",
-          color: "Đen",
-          ram: "12GB",
-        },
-        status: "active",
-      },
-      {
-        sku: "Samsung Galaxy S24 Ultra",
-        price: 23990000,
-        stock: 5,
-        attributes: {
-          storage: "256GB",
-          color: "Xám",
-          ram: "12GB",
-        },
-        isDefault: true,
-        status: "active",
-      },
-      {
-        sku: "Samsung Galaxy S24 Ultra",
-        price: 25990000,
-        stock: 5,
-        attributes: {
-          storage: "512GB",
-          color: "Xám",
-          ram: "12GB",
-        },
-        status: "active",
-      },
-      {
-        sku: "Samsung Galaxy S24 Ultra",
-        price: 44490000,
-        stock: 5,
-        attributes: {
-          storage: "1TB",
-          color: "Xám",
-          ram: "12GB",
-        },
-        status: "active",
-      },
-      {
-        sku: "Samsung Galaxy S24 Ultra",
-        price: 23990000,
-        stock: 5,
-        attributes: {
-          storage: "256GB",
-          color: "Tím",
-          ram: "12GB",
-        },
-        isDefault: true,
-        status: "active",
-      },
-      {
-        sku: "Samsung Galaxy S24 Ultra",
-        price: 25990000,
-        stock: 5,
-        attributes: {
-          storage: "512GB",
-          color: "Tím",
-          ram: "12GB",
-        },
-        status: "active",
-      },
-      {
-        sku: "Samsung Galaxy S24 Ultra",
-        price: 44490000,
-        stock: 5,
-        attributes: {
-          storage: "1TB",
-          color: "Tím",
-          ram: "12GB",
-        },
-        status: "active",
-      },
+      
     ],
     status: "active",
     featured: true,
@@ -1121,7 +733,7 @@ const productsData = () => [
     price: 16990000,
     //discountStartDate: new Date("2025-06-01"),
     //discountEndDate: new Date("2025-06-30"),
-    quantity: 25,
+    quantity: 10,
     commonSpecs: {
       processor: "MediaTek Dimensity 9300+",
       operatingSystem: "Xiaomi HyperOS (Android 14)",
@@ -1147,28 +759,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "Xiaomi 14T Pro",
-        price: 16990000,
-        stock: 8,
-        attributes: {
-          storage: "512GB",
-          color: "Xám",
-          ram: "12GB",
-        },
-        status: "active",
-      },
-      {
-        sku: "Xiaomi 14T Pro",
-        price: 16990000,
-        stock: 7,
-        attributes: {
-          storage: "512GB",
-          color: "Xanh",
-          ram: "12GB",
-        },
-        status: "active",
-      },
+    
       
     ],
     status: "active",
@@ -1201,7 +792,7 @@ const productsData = () => [
       {
         sku: "IPAD-PRO-M3-8-256-WIFI",
         price: 34990000,
-        stock: 5,
+        stock: 12,
         attributes: {
           ram: "8GB",
           storage: "256GB",
@@ -1211,30 +802,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "IPAD-PRO-M3-8-512-WIFI",
-        price: 38990000,
-        stock: 4,
-        attributes: {
-          ram: "8GB",
-          storage: "512GB",
-          connectivity: "WiFi",
-          color: "Space Gray",
-        },
-        status: "active",
-      },
-      {
-        sku: "IPAD-PRO-M3-8-256-CELL",
-        price: 39990000,
-        stock: 3,
-        attributes: {
-          ram: "8GB",
-          storage: "256GB",
-          connectivity: "WiFi + Cellular",
-          color: "Space Gray",
-        },
-        status: "active",
-      },
+      
     ],
     status: "active",
     featured: true,
@@ -1249,7 +817,7 @@ const productsData = () => [
     brand: "Huawei",
     basePrice: 8990000,
     price: 8990000,
-    quantity: 25,
+    quantity: 9,
     commonSpecs: {
       processor: "KirinT80, Octa-core",
       operatingSystem: "HarmonyOS 4.2",
@@ -1265,7 +833,7 @@ const productsData = () => [
       {
         sku: "MatePad",
         price: 8990000,
-        stock: 14,
+        stock: 9,
         attributes: {
           ram: "8GB",
           storage: "256GB",
@@ -1275,18 +843,7 @@ const productsData = () => [
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "MatePad S",
-        price: 11990000,
-        stock: 11,
-        attributes: {
-          ram: "8GB",
-          storage: "256GB",
-          version: "MatePad S",
-          color: "Xám",
-        },
-        status: "active",
-      },
+      
 
     ],
     status: "active",
@@ -1302,7 +859,7 @@ const productsData = () => [
     brand: "Lenovo",
     basePrice: 11490000,
     price: 11490000,
-    quantity: 17,
+    quantity: 10,
     commonSpecs: {
       processor: "MediaTek Dimensity 8300",
       operatingSystem: "Android 14",
@@ -1318,7 +875,7 @@ const productsData = () => [
       {
         sku: "Lenovo Idea Tab Pro ZAE40190VN",
         price: 11490000,
-        stock: 17,
+        stock: 10,
         attributes: {
           ram: "8GB",
           storage: "256GB",
@@ -1343,7 +900,7 @@ const productsData = () => [
     brand: "Samsung",
     basePrice: 5990000,
     price: 5990000,
-    quantity: 30,
+    quantity: 10,
     commonSpecs: {
       interfaceType: "PCIe 4.0 x4, NVMe 2.0",
       readSpeed: "7450 MB/s",
@@ -1359,22 +916,14 @@ const productsData = () => [
       {
         sku: "SS-990PRO-2TB",
         price: 5990000,
-        stock: 15,
+        stock: 10,
         attributes: {
           storage: "2TB",
         },
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "SS-990PRO-1TB",
-        price: 3690000,
-        stock: 15,
-        attributes: {
-          storage: "1TB",
-        },
-        status: "active",
-      },
+
     ],
     status: "active",
     featured: false,
@@ -1389,7 +938,7 @@ const productsData = () => [
     brand: "ADATA",
     basePrice: 1190000,
     price: 1190000,
-    quantity: 30,
+    quantity: 0,
     commonSpecs: {
       readSpeed: "1050 MB/s",
       writeSpeed: "1000 MB/s",
@@ -1403,31 +952,14 @@ const productsData = () => [
       {
         sku: "SSD ADATA SC750 USB 3.2 Gen 2",
         price: 1190000,
-        stock: 15,
+        stock: 0,
         attributes: {
           storage: "500B",
         },
         isDefault: true,
         status: "active",
       },
-      {
-        sku: "SSD ADATA SC750 USB 3.2 Gen 2",
-        price: 1990000,
-        stock: 15,
-        attributes: {
-          storage: "1TB",
-        },
-        status: "active",
-      },
-      {
-        sku: "SSD ADATA SC750 USB 3.2 Gen 2",
-        price: 3790000,
-        stock: 15,
-        attributes: {
-          storage: "2TB",
-        },
-        status: "active",
-      },
+
     ],
     status: "active",
     featured: false,
