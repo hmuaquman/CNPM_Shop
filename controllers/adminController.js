@@ -498,3 +498,315 @@ exports.deleteUser = async (req, res) => {
     res.redirect('/admin/users');
   }
 };
+
+
+exports.productDashboard = async (req, res) => {
+  res.render('pages/admin/product-dashboard', {
+    title: 'Product Dashboard - Admin',
+    layout: 'layouts/admin',
+    user: req.user,
+  });
+};
+
+// Create Product Form
+exports.addProductForm = async (req, res) => {
+  console.log("SOMEONE SEND GET REQUEST TO /admin/products/add-product");
+  const categories = await Category.find().populate('attributes');
+  res.render('pages/admin/add-product', {
+    title: 'Add Product - Admin Dashboard',
+    categories,
+    layout: 'layouts/admin',
+    product: {},
+    isNew: true
+  });
+};
+
+// Note: price = basePrice for now
+exports.addProduct = async (req, res) => {
+  try {
+    console.log('Received product data:', req.body);
+
+    const {
+      name,
+      brand,
+      description,
+      category,
+      basePrice,
+      discountPercentage,
+      quantity,
+      status,
+      featured,
+      imageUrl,
+      tags
+    } = req.body;
+
+    const parsedBasePrice = parseFloat(basePrice);
+    const parsedPrice = parseFloat(basePrice);
+    const parsedDiscountPercentage = parseFloat(discountPercentage);
+    const parsedQuantity = parseInt(quantity);
+    const isFeatured = featured === 'true';
+    const parsedTags = tags ? tags.replace(/"/g, '').split(',').map(t => t.trim()) : [];
+
+    const commonSpecs = {
+      processor: req.body['commonSpecs[processor]'] || '',
+      operatingSystem: req.body['commonSpecs[operatingSystem]'] || '',
+      screenSize: req.body['commonSpecs[screenSize]'] || '',
+      weight: req.body['commonSpecs[weight]'] || '',
+      origin: req.body['commonSpecs[origin]'] || '',
+      warrantyInfo: {
+        durationInMonths: parseInt(req.body['commonSpecs[warrantyInfo][durationInMonths]']) || 0,
+        type: req.body['commonSpecs[warrantyInfo][type]'] || '',
+        coverage: req.body['commonSpecs[warrantyInfo][coverage]'] || ''
+      }
+    };
+
+    const variants = req.body.variants ? JSON.parse(req.body.variants) : [];
+
+    const discountPrice = parsedDiscountPercentage > 0
+      ? parsedPrice - (parsedPrice * (parsedDiscountPercentage / 100))
+      : parsedPrice;
+
+    const image = imageUrl && imageUrl.trim() !== '' ? imageUrl : '/images/default-product.jpg';
+
+    const newProduct = new Product({
+      name,
+      description,
+      brand,
+      category,
+      basePrice: parsedBasePrice,
+      price: parsedPrice,
+      discountPercentage: parsedDiscountPercentage,
+      discountPrice,
+      commonSpecs,
+      variants,
+      quantity: parsedQuantity,
+      status,
+      featured: isFeatured,
+      tags: parsedTags,
+      imageURL: image
+    });
+
+    await newProduct.save();
+    req.flash('success_msg', 'Product added successfully!');
+    res.redirect('/admin/dashboard');
+
+  } catch (error) {
+    console.error('Error adding product:', error);
+    req.flash('error_msg', 'Error adding product');
+    res.redirect('/admin/dashboard');
+  }
+};
+
+exports.deleteProductForm = async (req, res) => {
+  try {
+    const products = await Product.find().populate('category');
+    res.render('pages/admin/delete-product', {
+      title: 'Delete Product',
+      layout: 'layouts/admin',
+      products
+    });
+  } catch (error) {
+    console.error('Error loading delete form:', error);
+    req.flash('error_msg', 'Could not load products for deletion');
+    res.redirect('/admin/dashboard');
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    await Product.findByIdAndDelete(req.params.id);
+
+    console.log('Deleting product with ID:', req.params.id);
+    req.flash('success_msg', 'Product deleted successfully!');
+    res.redirect('/admin/products/delete-product');
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    req.flash('error_msg', 'Could not delete product');
+    res.redirect('/admin/delete_product');
+  }
+};
+
+exports.editProductForm = async (req, res) => {
+  try {
+    const products = await Product.find().populate('category');
+    res.render('pages/admin/edit-product', {
+      title: 'Edit Product',
+      layout: 'layouts/admin',
+      products
+    });
+  } catch (error) {
+    console.error('Error loading edit form:', error);
+    req.flash('error_msg', 'Could not load products for edit');
+    res.redirect('/admin/dashboard');
+  }
+};
+
+exports.editOneProductForm = async (req, res) => {
+  const product = await Product.findById(req.params.id).populate('category');
+  const categories = await Category.find(); // for category dropdown
+
+  res.render('pages/admin/edit-one-product', {
+    title: 'Edit Product',
+    layout: 'layouts/admin',
+    product,
+    categories
+  });
+};
+
+exports.editOneProduct = async (req, res) => {
+  try {
+    const {
+      name,
+      brand,
+      description,
+      category,
+      basePrice,
+      discountPercentage,
+      quantity,
+      status,
+      featured,
+      imageURL,
+      tags
+    } = req.body;
+
+    const parsedBasePrice = parseFloat(basePrice);
+    const parsedPrice = parseFloat(basePrice);
+    const parsedDiscountPercentage = parseFloat(discountPercentage);
+    const parsedQuantity = parseInt(quantity);
+    const isFeatured = featured === 'true';
+    const parsedTags = tags ? tags.replace(/"/g, '').split(',').map(t => t.trim()) : [];
+
+    const commonSpecs = {
+      processor: req.body['commonSpecs[processor]'] || '',
+      operatingSystem: req.body['commonSpecs[operatingSystem]'] || '',
+      screenSize: req.body['commonSpecs[screenSize]'] || '',
+      weight: req.body['commonSpecs[weight]'] || '',
+      origin: req.body['commonSpecs[origin]'] || '',
+      warrantyInfo: {
+        durationInMonths: parseInt(req.body['commonSpecs[warrantyInfo][durationInMonths]']) || 0,
+        type: req.body['commonSpecs[warrantyInfo][type]'] || '',
+        coverage: req.body['commonSpecs[warrantyInfo][coverage]'] || ''
+      }
+    };
+
+    const variants = req.body.variants ? JSON.parse(req.body.variants) : [];
+
+    const discountPrice = parsedDiscountPercentage > 0
+      ? parsedPrice - (parsedPrice * (parsedDiscountPercentage / 100))
+      : parsedPrice;
+
+    const image = imageURL && imageURL.trim() !== '' ? imageURL : '/images/default-product.jpg';
+
+    const updatedProductData = {
+      name,
+      description,
+      brand,
+      category,
+      basePrice: parsedBasePrice,
+      price: parsedPrice,
+      discountPercentage: parsedDiscountPercentage,
+      discountPrice,
+      commonSpecs,
+      variants,
+      quantity: parsedQuantity,
+      status,
+      featured: isFeatured,
+      tags: parsedTags,
+      imageURL: image
+    };
+
+    await Product.findByIdAndUpdate(req.params.id, updatedProductData, { new: true });
+
+    req.flash('success_msg', 'Product updated successfully!');
+    res.redirect('/admin/products/edit-product');
+
+  } catch (error) {
+    console.error('Error adding product:', error);
+    req.flash('error_msg', 'Error adding product');
+    res.redirect('/admin/products/edit-product');
+  }
+};
+
+exports.priceUpdateForm = async (req, res) => {
+  try {
+    const categories = await Category.find();
+    res.render('pages/admin/update-price', {
+      title: 'Batch Price Update',
+      layout: 'layouts/admin',
+      categories
+    });
+  } catch (error) {
+    console.error('Error loading batch price update form:', error);
+    req.flash('error_msg', 'Cannot load price update form');
+    res.redirect('/admin/dashboard');
+  }
+};
+
+exports.priceUpdate = async (req, res) => {
+  try {
+      const { mode, category, brand, minQuantity } = req.body;
+      const filter = {};
+
+      // Build dynamic filter:
+      if (category) filter.category = category;
+      if (brand && brand.trim() !== '') filter.brand = brand.trim();
+      if (minQuantity && !isNaN(minQuantity)) filter.quantity = { $gte: parseInt(minQuantity) };
+
+      // --- Mode 1: Update Base Price ---
+      if (mode === 'basePriceUpdate') {
+          const { actionType, adjustValue } = req.body;
+
+          const value = parseFloat(adjustValue);
+          if (isNaN(value)) throw new Error('Invalid adjustment value');
+
+          const products = await Product.find(filter);
+
+          // Perform update per document
+          const updatePromises = products.map(async (product) => {
+              if (actionType === 'increasePercentage') {
+                  product.basePrice += product.basePrice * (value / 100);
+                  product.price = product.basePrice; // Keep price in sync if no discount
+              } else if (actionType === 'decreasePercentage') {
+                  product.basePrice -= product.basePrice * (value / 100);
+                  product.price = product.basePrice;
+              }
+              return product.save();
+          });
+
+          await Promise.all(updatePromises);
+
+          req.flash('success_msg', 'Base prices updated successfully!');
+          return res.redirect('/admin/products/update-price');
+      }
+
+      // --- Mode 2: Set Discount Percentage ---
+      else if (mode === 'discountUpdate') {
+          const { discountPercentage } = req.body;
+          const discountValue = parseFloat(discountPercentage);
+          if (isNaN(discountValue) || discountValue < 0 || discountValue > 100) {
+              throw new Error('Invalid discount percentage');
+          }
+
+          const products = await Product.find(filter);
+
+          const updatePromises = products.map(async (product) => {
+              product.discountPercentage = discountValue;
+              // Recalculate discountPrice field:
+              product.discountPrice = product.basePrice - (product.basePrice * (discountValue / 100));
+              return product.save();
+          });
+
+          await Promise.all(updatePromises);
+
+          req.flash('success_msg', 'Discount percentages updated successfully!');
+          return res.redirect('/admin/products/update-price');
+      } else {
+          throw new Error('Invalid mode selected');
+      }
+
+  } catch (error) {
+      console.error('Error during batch price update:', error);
+      req.flash('error_msg', 'Error performing batch price update');
+      return res.redirect('/admin/dashboard');
+  }
+};

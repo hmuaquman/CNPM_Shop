@@ -1,0 +1,82 @@
+<!-- views/pages/admin/product_management.ejs -->
+<div class="dashboard-container">
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2>Product Management</h2>
+        <p class="text-muted">
+          Manage your electronic products inventory and details.
+        </p>
+      </div>
+    </div>
+  
+    <div class="row g-4 mb-5">
+      <!-- Add Product -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm" style="background-color: #f8f9fa">
+          <div class="card-body text-center p-4">
+            <div class="mb-3">
+              <i class="fas fa-plus-circle" style="font-size: 3rem; color: #6c757d"></i>
+            </div>
+            <h5 class="card-title">Add Product</h5>
+            <p class="card-text text-muted">Create a new product listing</p>
+            <p class="small text-muted">
+              Add new electronic products to your inventory with detailed specifications.
+            </p>
+            <a href="/admin/products/add-product" class="btn btn-dark mt-3">Create New</a>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Delete Product -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm" style="background-color: #fdf2f2">
+          <div class="card-body text-center p-4">
+            <div class="mb-3">
+              <i class="fas fa-trash-alt" style="font-size: 3rem; color: #dc3545"></i>
+            </div>
+            <h5 class="card-title">Delete Product</h5>
+            <p class="card-text text-muted">Remove products from inventory</p>
+            <p class="small text-muted">
+              Remove discontinued or out-of-stock products from your catalog.
+            </p>
+            <a href="/admin/products/delete-product" class="btn btn-outline-secondary mt-3">Manage Deletions</a>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Edit Product -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm" style="background-color: #f0f8ff">
+          <div class="card-body text-center p-4">
+            <div class="mb-3">
+              <i class="fas fa-edit" style="font-size: 3rem; color: #0066cc"></i>
+            </div>
+            <h5 class="card-title">Edit Product</h5>
+            <p class="card-text text-muted">Update product information</p>
+            <p class="small text-muted">
+              Modify product details, specifications, and images as needed.
+            </p>
+            <a href="/admin/products/edit-product" class="btn btn-outline-secondary mt-3">Edit Products</a>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Update Prices -->
+      <div class="col-lg-3 col-md-6">
+        <div class="card h-100 border-0 shadow-sm" style="background-color: #f0fff4">
+          <div class="card-body text-center p-4">
+            <div class="mb-3">
+              <i class="fas fa-chart-line" style="font-size: 3rem; color: #28a745"></i>
+            </div>
+            <h5 class="card-title">Update Prices</h5>
+            <p class="card-text text-muted">Manage product pricing</p>
+            <p class="small text-muted">
+              Update prices, discounts, and special offers for your products.
+            </p>
+            <a href="/admin/products/update-price" class="btn btn-outline-secondary mt-3">Adjust Pricing</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
