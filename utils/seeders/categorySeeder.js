@@ -18,14 +18,6 @@ const categoriesData = [
     name: "Thiết bị lưu trữ",
     description: "Ổ cứng SSD, HDD, thẻ nhớ và USB",
   },
-  {
-    name: "Màn hình",
-    description: "Màn hình máy tính các loại",
-  },
-  {
-    name: "Linh kiện PC",
-    description: "Linh kiện máy tính như CPU, Mainboard, VGA",
-  },
 ];
 
 const categoryAttributes = {

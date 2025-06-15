@@ -1,3 +1,70 @@
+<style>
+  /* Fix for dropdown styling */
+  .form-select {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .form-select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  .form-select:hover:not(:focus) {
+    border-color: #adb5bd;
+  }
+
+  /* Fix for dropdown menu items */
+  .dropdown-menu {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+    overflow: hidden;
+  }
+
+  .dropdown-item {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .dropdown-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Specifically fix the category dropdown */
+  #category-select option,
+  select.form-select option {
+    border-bottom: 1px solid #dee2e6;
+    padding: 8px;
+  }
+
+  select.form-select option:last-child {
+    border-bottom: none;
+  }
+
+  /* Highlighted dropdown items */
+  select.form-select option:hover,
+  select.form-select option:focus {
+    background-color: #f8f9fa;
+  }
+
+  select.form-select option:checked,
+  select.form-select option:selected {
+    background-color: #0d6efd;
+    color: white;
+  }
+</style>
+
 <div class="row">
   <!-- Sidebar với bộ lọc -->
   <div class="col-lg-3 mb-4">
@@ -6,23 +73,33 @@
         <h5 class="mb-0">Danh mục</h5>
       </div>
       <div class="card-body">
-        <select
-          class="form-select"
-          onchange="if (this.value) window.location.href = this.value"
-        >
-          <option value="/products" <%= !query.category ? 'selected' : '' %>>Tất cả sản phẩm</option>
-          <% if (categories && categories.length > 0) { %>
-            <% categories.forEach(category => { %>
-              <option
-                value="/products?category=<%= category._id %>"
-                <%= query && query.category === category._id.toString() ? 'selected' : '' %>
-              >
-                <%= category.name %>
-              </option>
-            <% }) %>
-          <% } %>
-        </select>
-      </div>
+      <select
+        class="form-select"
+        id="category-select"
+        onchange="if (this.value) window.location.href = this.value"
+      >
+        <option value="/products?<%= new URLSearchParams(Object.fromEntries(
+          Object.entries(query).filter(([key]) => key !== 'category' && key !== 'page')
+        )).toString() %>" <%= !query.category ? 'selected' : '' %>>
+          Tất cả sản phẩm
+        </option>
+        <% if (categories && categories.length > 0) { %>
+          <% categories.forEach(category => { %>
+            <option
+              value="/products?<%= new URLSearchParams({
+                ...Object.fromEntries(
+                  Object.entries(query).filter(([key]) => key !== 'page')
+                ),
+                category: category._id
+              }).toString() %>"
+              <%= query && query.category === category._id.toString() ? 'selected' : '' %>
+            >
+              <%= category.name %>
+            </option>
+          <% }) %>
+        <% } %>
+      </select>
+    </div>
     </div>
 
     <!-- Lọc theo thương hiệu -->
@@ -35,13 +112,20 @@
           class="form-select"
           onchange="if (this.value) window.location.href = this.value"
         >
-          <option value="/products<%= query.category ? '?category=' + query.category : '' %>" <%= !query.brand ? 'selected' : '' %>>
+          <option value="/products?<%= new URLSearchParams(Object.fromEntries(
+            Object.entries(query).filter(([key]) => key !== 'brand' && key !== 'page')
+          )).toString() %>" <%= !query.brand ? 'selected' : '' %>>
             Tất cả thương hiệu
           </option>
           <% if (brands && brands.length > 0) { %>
             <% brands.forEach(brand => { %>
               <option
-                value="/products?<%= query.category ? 'category=' + query.category + '&' : '' %>brand=<%= brand %>"
+                value="/products?<%= new URLSearchParams({
+                  ...Object.fromEntries(
+                    Object.entries(query).filter(([key]) => key !== 'page')
+                  ),
+                  brand
+                }).toString() %>"
                 <%= query && query.brand === brand ? 'selected' : '' %>
               >
                 <%= brand %>
@@ -59,13 +143,12 @@
       </div>
       <div class="card-body">
         <form action="/products" method="GET">
-          <% if (query.category) { %>
-          <input type="hidden" name="category" value="<%= query.category %>" />
-          <% } %> <% if (query.search) { %>
-          <input type="hidden" name="search" value="<%= query.search %>" />
-          <% } %> <% if (query.brand) { %>
-          <input type="hidden" name="brand" value="<%= query.brand %>" />
-          <% } %>
+          <% Object.entries(query).forEach(([key, value]) => { %>
+            <% if (key !== 'minPrice' && key !== 'maxPrice' && key !== 'page') { %>
+              <input type="hidden" name="<%= key %>" value="<%= value %>" />
+            <% } %>
+          <% }) %>
+          
           <div class="mb-3">
             <label for="minPrice" class="form-label">Giá từ</label>
             <input
@@ -100,13 +183,23 @@
       </div>
       <div class="list-group list-group-flush">
         <a
-          href="/products?discount=true<%= query.category ? '&category=' + query.category : '' %>"
+          href="/products?<%= new URLSearchParams({
+            ...Object.fromEntries(
+              Object.entries(query).filter(([key]) => key !== 'discount' && key !== 'featured' && key !== 'page')
+            ),
+            discount: 'true'
+          }).toString() %>"
           class="list-group-item list-group-item-action <%= query && query.discount === 'true' ? 'active' : '' %>"
         >
           Đang giảm giá
         </a>
         <a
-          href="/products?featured=true<%= query.category ? '&category=' + query.category : '' %>"
+          href="/products?<%= new URLSearchParams({
+            ...Object.fromEntries(
+              Object.entries(query).filter(([key]) => key !== 'discount' && key !== 'featured' && key !== 'page')
+            ),
+            featured: 'true'
+          }).toString() %>"
           class="list-group-item list-group-item-action <%= query && query.featured === 'true' ? 'active' : '' %>"
         >
           Sản phẩm nổi bật
@@ -147,23 +240,47 @@
         >
           <li>
             <a class="dropdown-item <%= query.sort === 'price_asc' ? 'active' : '' %>"
-                href="/products?<%= new URLSearchParams({...query, sort: 'price_asc'}).toString() %>">Giá tăng dần</a>
+                href="/products?<%= new URLSearchParams({
+                  ...Object.fromEntries(
+                    Object.entries(query).filter(([key]) => key !== 'sort' && key !== 'page')
+                  ),
+                  sort: 'price_asc'
+                }).toString() %>">Giá tăng dần</a>
           </li>
           <li>
             <a class="dropdown-item <%= query.sort === 'price_desc' ? 'active' : '' %>"
-                href="/products?<%= new URLSearchParams({...query, sort: 'price_desc'}).toString() %>">Giá giảm dần</a>
+                href="/products?<%= new URLSearchParams({
+                  ...Object.fromEntries(
+                    Object.entries(query).filter(([key]) => key !== 'sort' && key !== 'page')
+                  ),
+                  sort: 'price_desc'
+                }).toString() %>">Giá giảm dần</a>
           </li>
           <li>
             <a class="dropdown-item <%= query.sort === 'name_asc' ? 'active' : '' %>"
-                href="/products?<%= new URLSearchParams({...query, sort: 'name_asc'}).toString() %>">Tên A-Z</a>
+                href="/products?<%= new URLSearchParams({
+                  ...Object.fromEntries(
+                    Object.entries(query).filter(([key]) => key !== 'sort' && key !== 'page')
+                  ),
+                  sort: 'name_asc'
+                }).toString() %>">Tên A-Z</a>
           </li>
           <li>
             <a class="dropdown-item <%= query.sort === 'name_desc' ? 'active' : '' %>"
-                href="/products?<%= new URLSearchParams({...query, sort: 'name_desc'}).toString() %>">Tên Z-A</a>
+                href="/products?<%= new URLSearchParams({
+                  ...Object.fromEntries(
+                    Object.entries(query).filter(([key]) => key !== 'sort' && key !== 'page')
+                  ),
+                  sort: 'name_desc'
+                }).toString() %>">Tên Z-A</a>
           </li>
           <li>
             <a class="dropdown-item <%= !query.sort ? 'active' : '' %>"
-                href="/products?<%= new URLSearchParams({...query, sort: undefined}).toString() %>">Mới nhất</a>
+                href="/products?<%= new URLSearchParams(
+                  Object.fromEntries(
+                    Object.entries(query).filter(([key]) => key !== 'sort' && key !== 'page')
+                  )
+                ).toString() %>">Mới nhất</a>
           </li>
         </ul>
       </div>
@@ -224,19 +341,28 @@
       <ul class="pagination justify-content-center">
         <% if (currentPage > 1) { %>
         <li class="page-item">
-          <a class="page-link" href="/products?page=<%= currentPage - 1 %>">Trước</a>
+          <a class="page-link" href="/products?<%= new URLSearchParams({
+            ...Object.fromEntries(Object.entries(query).filter(([key]) => key !== 'page')),
+            page: currentPage - 1
+          }).toString() %>">Trước</a>
         </li>
         <% } %>
         
         <% for (let i = 1; i <= totalPages; i++) { %>
         <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-          <a class="page-link" href="/products?page=<%= i %>"><%= i %></a>
+          <a class="page-link" href="/products?<%= new URLSearchParams({
+            ...Object.fromEntries(Object.entries(query).filter(([key]) => key !== 'page')),
+            page: i
+          }).toString() %>"><%= i %></a>
         </li>
         <% } %>
         
         <% if (currentPage < totalPages) { %>
         <li class="page-item">
-          <a class="page-link" href="/products?page=<%= currentPage + 1 %>">Tiếp</a>
+          <a class="page-link" href="/products?<%= new URLSearchParams({
+            ...Object.fromEntries(Object.entries(query).filter(([key]) => key !== 'page')),
+            page: currentPage + 1
+          }).toString() %>">Tiếp</a>
         </li>
         <% } %>
       </ul>

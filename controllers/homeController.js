@@ -7,7 +7,7 @@ exports.getHomePage = async (req, res) => {
     const latestProducts = await Product.find({ status: "active" })
       .populate("category", "name")
       .sort({ createdAt: -1 })
-      .limit(6);
+      .limit(8);
 
     // Lấy tất cả categories
     const categories = await Category.find().sort({ name: 1 });
