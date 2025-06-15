@@ -1,0 +1,430 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Add New Product</h2>
+                <a href="/admin/products" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Products
+                </a>
+            </div>
+
+            <form action="/admin/products/add-product" method="POST" id="addProductForm">
+                <!-- Basic Product Information -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Basic Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="brand" class="form-label">Brand</label>
+                                <input type="text" class="form-control" id="brand" name="brand">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="imageUrl" class="form-label">Image URL</label>
+                                <input type="url" class="form-control" id="imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg">
+                                <div class="form-text">Enter the URL of the product image</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Select Category</option>
+                                    <% categories.forEach(category => { %>
+                                        <option value="<%= category._id %>"><%= category.name %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="tags" class="form-label">Tags</label>
+                                <input type="text" class="form-control" id="tags" name="tags" placeholder="Enter tags separated by commas">
+                                <div class="form-text">Separate multiple tags with commas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing & Inventory -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Pricing & Inventory</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="basePrice" class="form-label">Base Price <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="basePrice" name="basePrice" step="0.01" min="0" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="discountPercentage" class="form-label">Discount %</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" step="0.01" min="0" max="100">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="quantity" class="form-label">Quantity <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" min="0" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="discontinued">Discontinued</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3 d-flex align-items-end">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="featured" name="featured" value="true">
+                                    <label class="form-check-label" for="featured">
+                                        Featured Product
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Specs (Optional) -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Common Specifications (Optional)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="processor" class="form-label">Processor</label>
+                                <input type="text" class="form-control" id="processor" name="commonSpecs[processor]">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="operatingSystem" class="form-label">Operating System</label>
+                                <input type="text" class="form-control" id="operatingSystem" name="commonSpecs[operatingSystem]">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="screenSize" class="form-label">Screen Size</label>
+                                <input type="text" class="form-control" id="screenSize" name="commonSpecs[screenSize]">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="weight" class="form-label">Weight</label>
+                                <input type="text" class="form-control" id="weight" name="commonSpecs[weight]">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="origin" class="form-label">Origin</label>
+                                <select class="form-select" id="origin" name="commonSpecs[origin]">
+                                    <option value="">Select Origin</option>
+                                    <option value="Chính hãng">Chính hãng</option>
+                                    <option value="Hàng xách tay">Hàng xách tay</option>
+                                    <option value="Sản xuất tại Việt Nam">Sản xuất tại Việt Nam</option>
+                                    <option value="Nhập khẩu">Nhập khẩu</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Warranty Information -->
+                        <h6 class="mt-4 mb-3">Warranty Information</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="warrantyDuration" class="form-label">Duration (Months)</label>
+                                <input type="number" class="form-control" id="warrantyDuration" name="commonSpecs[warrantyInfo][durationInMonths]" min="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="warrantyType" class="form-label">Warranty Type</label>
+                                <select class="form-select" id="warrantyType" name="commonSpecs[warrantyInfo][type]">
+                                    <option value="">Select Type</option>
+                                    <option value="Bảo hành tại hãng">Bảo hành tại hãng</option>
+                                    <option value="Bảo hành tại cửa hàng">Bảo hành tại cửa hàng</option>
+                                    <option value="Bảo hành quốc tế">Bảo hành quốc tế</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="warrantyCoverage" class="form-label">Coverage</label>
+                                <input type="text" class="form-control" id="warrantyCoverage" name="commonSpecs[warrantyInfo][coverage]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Variants Section -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Product Variants</h5>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#variantModal">
+                            <i class="fas fa-plus"></i> Add Variant
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="variantsList">
+                            <p class="text-muted">No variants added yet. Click "Add Variant" to create product variants.</p>
+                        </div>
+                        <input type="hidden" name="variants" id="variantsData" value="[]">
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-end gap-2 mb-4">
+                    <a href="/admin/products" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Variant Modal -->
+<div class="modal fade" id="variantModal" tabindex="-1" aria-labelledby="variantModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="variantModalLabel">Add Product Variant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="variantForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="variantSku" class="form-label">SKU <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="variantSku" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="variantPrice" class="form-label">Price <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="variantPrice" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="variantStock" class="form-label">Stock <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="variantStock" min="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="variantStatus" class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-select" id="variantStatus" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="discontinued">Discontinued</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h6 class="mb-3">Attributes</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="variantColor" class="form-label">Color</label>
+                            <input type="text" class="form-control" id="variantColor">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="variantStorage" class="form-label">Storage</label>
+                            <input type="text" class="form-control" id="variantStorage">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="variantRam" class="form-label">RAM</label>
+                            <input type="text" class="form-control" id="variantRam">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="variantDisplaySize" class="form-label">Display Size</label>
+                            <input type="text" class="form-control" id="variantDisplaySize">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="variantConnectivity" class="form-label">Connectivity</label>
+                            <input type="text" class="form-control" id="variantConnectivity">
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="variantIsDefault">
+                                <label class="form-check-label" for="variantIsDefault">
+                                    Default Variant
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveVariant()">Save Variant</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let variants = [];
+let editingVariantIndex = -1;
+
+function saveVariant() {
+    const form = document.getElementById('variantForm');
+    const formData = new FormData(form);
+    
+    // Validate required fields
+    const sku = document.getElementById('variantSku').value.trim();
+    const price = document.getElementById('variantPrice').value;
+    const stock = document.getElementById('variantStock').value;
+    const status = document.getElementById('variantStatus').value;
+    
+    if (!sku || !price || !stock || !status) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+    
+    // Check for duplicate SKU (except when editing)
+    const existingSkuIndex = variants.findIndex((v, index) => v.sku === sku && index !== editingVariantIndex);
+    if (existingSkuIndex !== -1) {
+        alert('SKU already exists. Please use a unique SKU.');
+        return;
+    }
+    
+    const variant = {
+        sku: sku,
+        price: parseFloat(price),
+        stock: parseInt(stock),
+        status: status,
+        attributes: {
+            color: document.getElementById('variantColor').value.trim(),
+            storage: document.getElementById('variantStorage').value.trim(),
+            ram: document.getElementById('variantRam').value.trim(),
+            displaySize: document.getElementById('variantDisplaySize').value.trim(),
+            connectivity: document.getElementById('variantConnectivity').value.trim()
+        },
+        isDefault: document.getElementById('variantIsDefault').checked
+    };
+    
+    // If setting as default, unset other defaults
+    if (variant.isDefault) {
+        variants.forEach(v => v.isDefault = false);
+    }
+    
+    if (editingVariantIndex >= 0) {
+        variants[editingVariantIndex] = variant;
+        editingVariantIndex = -1;
+    } else {
+        variants.push(variant);
+    }
+    
+    updateVariantsList();
+    updateVariantsData();
+    
+    // Reset form and close modal
+    form.reset();
+    const modal = bootstrap.Modal.getInstance(document.getElementById('variantModal'));
+    modal.hide();
+}
+
+function updateVariantsList() {
+    const variantsList = document.getElementById('variantsList');
+    
+    if (variants.length === 0) {
+        variantsList.innerHTML = '<p class="text-muted">No variants added yet. Click "Add Variant" to create product variants.</p>';
+        return;
+    }
+    
+    let html = '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
+    html += '<th>SKU</th><th>Price</th><th>Stock</th><th>Color</th><th>Storage</th><th>Status</th><th>Default</th><th>Actions</th>';
+    html += '</tr></thead><tbody>';
+    
+    variants.forEach((variant, index) => {
+        html += `<tr>
+            <td>${variant.sku}</td>
+            <td>$${variant.price.toFixed(2)}</td>
+            <td>${variant.stock}</td>
+            <td>${variant.attributes.color || '-'}</td>
+            <td>${variant.attributes.storage || '-'}</td>
+            <td><span class="badge bg-${variant.status === 'active' ? 'success' : variant.status === 'inactive' ? 'warning' : 'danger'}">${variant.status}</span></td>
+            <td>${variant.isDefault ? '<i class="fas fa-check text-success"></i>' : ''}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="editVariant(${index})">Edit</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteVariant(${index})">Delete</button>
+            </td>
+        </tr>`;
+    });
+    
+    html += '</tbody></table></div>';
+    variantsList.innerHTML = html;
+}
+
+function updateVariantsData() {
+    document.getElementById('variantsData').value = JSON.stringify(variants);
+}
+
+function editVariant(index) {
+    const variant = variants[index];
+    editingVariantIndex = index;
+    
+    // Populate form with variant data
+    document.getElementById('variantSku').value = variant.sku;
+    document.getElementById('variantPrice').value = variant.price;
+    document.getElementById('variantStock').value = variant.stock;
+    document.getElementById('variantStatus').value = variant.status;
+    document.getElementById('variantColor').value = variant.attributes.color || '';
+    document.getElementById('variantStorage').value = variant.attributes.storage || '';
+    document.getElementById('variantRam').value = variant.attributes.ram || '';
+    document.getElementById('variantDisplaySize').value = variant.attributes.displaySize || '';
+    document.getElementById('variantConnectivity').value = variant.attributes.connectivity || '';
+    document.getElementById('variantIsDefault').checked = variant.isDefault;
+    
+    // Update modal title
+    document.getElementById('variantModalLabel').textContent = 'Edit Product Variant';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('variantModal'));
+    modal.show();
+}
+
+function deleteVariant(index) {
+    if (confirm('Are you sure you want to delete this variant?')) {
+        variants.splice(index, 1);
+        updateVariantsList();
+        updateVariantsData();
+    }
+}
+
+// Reset modal when it's closed
+document.getElementById('variantModal').addEventListener('hidden.bs.modal', function () {
+    document.getElementById('variantForm').reset();
+    document.getElementById('variantModalLabel').textContent = 'Add Product Variant';
+    editingVariantIndex = -1;
+});
+
+// Form validation
+document.getElementById('addProductForm').addEventListener('submit', function(e) {
+    // Additional validation can be added here
+    console.log('Form submitted with variants:', variants);
+});
+</script>
