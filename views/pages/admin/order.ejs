@@ -3,7 +3,7 @@
         <div class="col-12">
             <!-- Tiêu đề trang -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Quản lý đơn hàng</h2>
+                <h2>Order Management</h2>
             </div>
 
             <!-- Thanh tìm kiếm đơn giản hóa -->
@@ -16,7 +16,7 @@
                                     placeholder="Tìm kiếm theo mã đơn hàng, tên khách hàng, số điện thoại..." 
                                     value="<%= searchQuery || '' %>">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search me-1"></i> Tìm kiếm
+                                    <i class="fas fa-search me-1"></i> Search
                                 </button>
                             </div>
                         </div>
@@ -28,7 +28,7 @@
             <ul class="nav nav-tabs mb-4" id="orderStatusTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="processing-tab" data-bs-toggle="tab" data-bs-target="#processing" type="button" role="tab" aria-controls="processing" aria-selected="true">
-                        Đang xử lý
+                        Processing
                         <% const processingCount = orders.filter(o => o.status.toLowerCase() === 'processing').length; %>
                         <% if (processingCount > 0) { %>
                             <span class="badge bg-warning text-dark ms-1"><%= processingCount %></span>
@@ -37,7 +37,7 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="delivering-tab" data-bs-toggle="tab" data-bs-target="#delivering" type="button" role="tab" aria-controls="delivering" aria-selected="false">
-                        Đang giao
+                        Delivering
                         <% const deliveringCount = orders.filter(o => o.status.toLowerCase() === 'delivering').length; %>
                         <% if (deliveringCount > 0) { %>
                             <span class="badge bg-primary ms-1"><%= deliveringCount %></span>
@@ -46,7 +46,7 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="delivered-tab" data-bs-toggle="tab" data-bs-target="#delivered" type="button" role="tab" aria-controls="delivered" aria-selected="false">
-                        Đã giao hàng
+                        Delivered
                         <% const deliveredCount = orders.filter(o => o.status.toLowerCase() === 'delivered').length; %>
                         <% if (deliveredCount > 0) { %>
                             <span class="badge bg-success ms-1"><%= deliveredCount %></span>
@@ -55,7 +55,7 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="canceled-tab" data-bs-toggle="tab" data-bs-target="#canceled" type="button" role="tab" aria-controls="canceled" aria-selected="false">
-                        Đã hủy
+                        Cancelled
                         <% const canceledCount = orders.filter(o => o.status.toLowerCase() === 'canceled').length; %>
                         <% if (canceledCount > 0) { %>
                             <span class="badge bg-danger ms-1"><%= canceledCount %></span>
@@ -73,7 +73,7 @@
                     <% if (!processingOrders.length) { %>
                         <div class="alert alert-info text-center">
                             <i class="fas fa-info-circle me-2"></i>
-                            Không có đơn hàng đang xử lý.
+                            No processing orders.
                         </div>
                     <% } else { %>
                         <div class="order-list">
@@ -82,7 +82,7 @@
                                     <div class="card-header d-flex justify-content-between align-items-center bg-light">
                                         <div>
                                             <span class="order-id fw-bold">
-                                                Mã đơn hàng: #<%= order.orderNumber || `#${order._id}` %>
+                                                Order ID: #<%= order.orderNumber || `#${order._id}` %>
                                             </span>
                                             <span class="mx-3">|</span>
                                             <span class="order-date">
@@ -95,26 +95,26 @@
                                         <!-- Thông tin khách hàng -->
                                         <div class="row mb-3 pb-3 border-bottom">
                                             <div class="col-md-6">
-                                                <h5 class="mb-2">Thông tin khách hàng</h5>
-                                                <p class="mb-1"><strong>Họ tên:</strong> <%= order.user ? order.user.fullName : 'Không có thông tin' %></p>
-                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'Không có thông tin' %></p>
-                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone || 'Không có thông tin' %></p>
+                                                <h5 class="mb-2">Customer Info</h5>
+                                                <p class="mb-1"><strong>Name:</strong> <%= order.user ? order.user.fullName : 'N/A' %></p>
+                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'N/A' %></p>
+                                                <p class="mb-0"><strong>Phone:</strong> <%= order.shippingAddress.recipientPhone || 'N/A' %></p>
                                             </div>
                                             <div class="col-md-6">
-                                                <h5 class="mb-2">Địa chỉ giao hàng</h5>
-                                                <p class="mb-1"><strong>Người nhận:</strong> <%= order.shippingAddress.recipientName %></p>
-                                                <p class="mb-1"><strong>Địa chỉ:</strong> 
+                                                <h5 class="mb-2">Shipping Address</h5>
+                                                <p class="mb-1"><strong>Recipient:</strong> <%= order.shippingAddress.recipientName %></p>
+                                                <p class="mb-1"><strong>Address:</strong> 
                                                     <%= order.shippingAddress.streetAndNumber %>, 
                                                     <%= order.shippingAddress.ward %>, 
                                                     <%= order.shippingAddress.district %>, 
                                                     <%= order.shippingAddress.city %>
                                                 </p>
-                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone %></p>
+                                                <p class="mb-0"><strong>Phone:</strong> <%= order.shippingAddress.recipientPhone %></p>
                                             </div>
                                         </div>
                                         
                                         <!-- Danh sách sản phẩm trong đơn hàng - giống như tab tất cả -->
-                                        <h5 class="mb-3">Sản phẩm</h5>
+                                        <h5 class="mb-3">Products</h5>
                                         <% const itemsToShow = order.items || []; %>
                                         <% itemsToShow.slice(0, 3).forEach(item => { %>
                                             <!-- Giống như code trong tab tất cả -->
@@ -165,9 +165,9 @@
                                         <div class="row mt-3 pt-3 border-top">
                                             <div class="col-md-8">
                                                 <div class="mb-2">
-                                                    <span class="me-3"><strong>Trạng thái:</strong> <span class="badge bg-warning text-dark">Đang xử lý</span></span>
-                                                    <span><strong>Thanh toán:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
-                                                        <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                    <span class="me-3"><strong>Status:</strong> <span class="badge bg-warning text-dark">Processing</span></span>
+                                                    <span><strong>Payment:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
+                                                        <%= order.paymentStatus === 'completed' ? 'Paid' : 'Unpaid' %>
                                                     </span></span>
                                                 </div>
                                                 
@@ -177,22 +177,22 @@
                                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                         <input type="hidden" name="status" value="Delivering">
                                                         <button type="submit" class="btn btn-sm btn-success me-2">
-                                                            <i class="fas fa-check me-1"></i> Xác nhận & giao hàng
+                                                            <i class="fas fa-check me-1"></i> Confirm Delivered
                                                         </button>
                                                     </form>
                                                     <form action="/admin/orders/<%= order._id %>/change-status" method="POST" class="d-inline">
                                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                         <input type="hidden" name="status" value="Canceled">
                                                         <button type="submit" class="btn btn-sm btn-danger">
-                                                            <i class="fas fa-times me-1"></i> Hủy đơn hàng
+                                                            <i class="fas fa-times me-1"></i> Cancel Order
                                                         </button>
                                                     </form>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 text-end">
-                                                <p class="mb-1"><strong>Tổng tiền hàng:</strong> <%= formatPrice(order.itemsAmount) %></p>
-                                                <p class="mb-1"><strong>Phí vận chuyển:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
-                                                <p class="fs-5 fw-bold text-danger mb-0">Thành tiền: <%= formatPrice(order.totalAmount) %></p>
+                                                <p class="mb-1"><strong>Total:</strong> <%= formatPrice(order.itemsAmount) %></p>
+                                                <p class="mb-1"><strong>Shipping Fee:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
+                                                <p class="fs-5 fw-bold text-danger mb-0">Grand Total: <%= formatPrice(order.totalAmount) %></p>
                                             </div>
                                         </div>
                                     </div>
@@ -209,7 +209,7 @@
                     <% if (!deliveringOrders.length) { %>
                         <div class="alert alert-info text-center">
                             <i class="fas fa-info-circle me-2"></i>
-                            Không có đơn hàng đang giao.
+                            There are no delivering orders.
                         </div>
                     <% } else { %>
                         <div class="order-list">
@@ -219,7 +219,7 @@
                                     <div class="card-header d-flex justify-content-between align-items-center bg-light">
                                         <div>
                                             <span class="order-id fw-bold">
-                                                Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
+                                                Order ID: <%= order.orderNumber || `#${order._id}` %>
                                             </span>
                                             <span class="mx-3">|</span>
                                             <span class="order-date">
@@ -228,33 +228,33 @@
                                             </span>
                                         </div>
                                         <a href="/admin/orders/<%= order._id %>" class="btn btn-sm btn-outline-secondary">
-                                            <i class="fas fa-eye me-1"></i> Chi tiết
+                                            <i class="fas fa-eye me-1"></i> Details
                                         </a>
                                     </div>
                                     <div class="card-body">
                                         <!-- Thông tin khách hàng và địa chỉ -->
                                         <div class="row mb-3 pb-3 border-bottom">
                                             <div class="col-md-6">
-                                                <h5 class="mb-2">Thông tin khách hàng</h5>
-                                                <p class="mb-1"><strong>Họ tên:</strong> <%= order.user ? order.user.fullName : 'Không có thông tin' %></p>
-                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'Không có thông tin' %></p>
-                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone || 'Không có thông tin' %></p>
+                                                <h5 class="mb-2">Customer Info</h5>
+                                                <p class="mb-1"><strong>Name:</strong> <%= order.user ? order.user.fullName : 'N/A' %></p>
+                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'N/A' %></p>
+                                                <p class="mb-0"><strong>Phone:</strong> <%= order.shippingAddress.recipientPhone || 'N/A' %></p>
                                             </div>
                                             <div class="col-md-6">
-                                                <h5 class="mb-2">Địa chỉ giao hàng</h5>
-                                                <p class="mb-1"><strong>Người nhận:</strong> <%= order.shippingAddress.recipientName %></p>
-                                                <p class="mb-1"><strong>Địa chỉ:</strong> 
+                                                <h5 class="mb-2">Shipping Address</h5>
+                                                <p class="mb-1"><strong>Recipient:</strong> <%= order.shippingAddress.recipientName %></p>
+                                                <p class="mb-1"><strong>Address:</strong> 
                                                     <%= order.shippingAddress.streetAndNumber %>, 
                                                     <%= order.shippingAddress.ward %>, 
                                                     <%= order.shippingAddress.district %>, 
                                                     <%= order.shippingAddress.city %>
                                                 </p>
-                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone %></p>
+                                                <p class="mb-0"><strong>Phone:</strong> <%= order.shippingAddress.recipientPhone %></p>
                                             </div>
                                         </div>
                                         
                                         <!-- Danh sách sản phẩm trong đơn hàng - giống như trên -->
-                                        <h5 class="mb-3">Sản phẩm</h5>
+                                        <h5 class="mb-3">Products</h5>
                                         <% const itemsToShow = order.items || []; %>
                                         <% itemsToShow.slice(0, 3).forEach(item => { %>
                                             <!-- Hiển thị thông tin sản phẩm - giống như trên -->
@@ -304,9 +304,9 @@
                                         <div class="row mt-3 pt-3 border-top">
                                             <div class="col-md-8">
                                                 <div class="mb-2">
-                                                    <span class="me-3"><strong>Trạng thái:</strong> <span class="badge bg-primary">Đang giao hàng</span></span>
-                                                    <span><strong>Thanh toán:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
-                                                        <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                    <span class="me-3"><strong>Status:</strong> <span class="badge bg-primary">Delivering</span></span>
+                                                    <span><strong>Payment:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
+                                                        <%= order.paymentStatus === 'completed' ? 'Paid' : 'Unpaid' %>
                                                     </span></span>
                                                 </div>
                                                 
@@ -316,15 +316,15 @@
                                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                         <input type="hidden" name="status" value="Delivered">
                                                         <button type="submit" class="btn btn-sm btn-success">
-                                                            <i class="fas fa-check me-1"></i> Xác nhận đã giao hàng
+                                                            <i class="fas fa-check me-1"></i> Confirm Delivered
                                                         </button>
                                                     </form>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 text-end">
-                                                <p class="mb-1"><strong>Tổng tiền hàng:</strong> <%= formatPrice(order.itemsAmount) %></p>
-                                                <p class="mb-1"><strong>Phí vận chuyển:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
-                                                <p class="fs-5 fw-bold text-danger mb-0">Thành tiền: <%= formatPrice(order.totalAmount) %></p>
+                                                <p class="mb-1"><strong>Total:</strong> <%= formatPrice(order.itemsAmount) %></p>
+                                                <p class="mb-1"><strong>Shipping Fee:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
+                                                <p class="fs-5 fw-bold text-danger mb-0">Grand Total: <%= formatPrice(order.totalAmount) %></p>
                                             </div>
                                         </div>
                                     </div>
@@ -341,7 +341,7 @@
                     <% if (!deliveredOrders.length) { %>
                         <div class="alert alert-info text-center">
                             <i class="fas fa-info-circle me-2"></i>
-                            Không có đơn hàng đã giao.
+                            There are no delivered orders.
                         </div>
                     <% } else { %>
                         <div class="order-list">
@@ -352,7 +352,7 @@
                                     <div class="card-header d-flex justify-content-between align-items-center bg-light">
                                         <div>
                                             <span class="order-id fw-bold">
-                                                Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
+                                                Order ID: <%= order.orderNumber || `#${order._id}` %>
                                             </span>
                                             <span class="mx-3">|</span>
                                             <span class="order-date">
@@ -361,33 +361,33 @@
                                             </span>
                                         </div>
                                         <a href="/admin/orders/<%= order._id %>" class="btn btn-sm btn-outline-secondary">
-                                            <i class="fas fa-eye me-1"></i> Chi tiết
+                                            <i class="fas fa-eye me-1"></i> Details
                                         </a>
                                     </div>
                                     <div class="card-body">
                                         <!-- Thông tin khách hàng -->
                                         <div class="row mb-3 pb-3 border-bottom">
                                             <div class="col-md-6">
-                                                <h5 class="mb-2">Thông tin khách hàng</h5>
-                                                <p class="mb-1"><strong>Họ tên:</strong> <%= order.user ? order.user.fullName : 'Không có thông tin' %></p>
-                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'Không có thông tin' %></p>
-                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone || 'Không có thông tin' %></p>
+                                                <h5 class="mb-2">Customer Info</h5>
+                                                <p class="mb-1"><strong>Name:</strong> <%= order.user ? order.user.fullName : 'N/A' %></p>
+                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'N/A' %></p>
+                                                <p class="mb-0"><strong>Phone:</strong> <%= order.shippingAddress.recipientPhone || 'N/A' %></p>
                                             </div>
                                             <div class="col-md-6">
-                                                <h5 class="mb-2">Địa chỉ giao hàng</h5>
-                                                <p class="mb-1"><strong>Người nhận:</strong> <%= order.shippingAddress.recipientName %></p>
-                                                <p class="mb-1"><strong>Địa chỉ:</strong> 
+                                                <h5 class="mb-2">Shipping Address</h5>
+                                                <p class="mb-1"><strong>Recipient:</strong> <%= order.shippingAddress.recipientName %></p>
+                                                <p class="mb-1"><strong>Address:</strong> 
                                                     <%= order.shippingAddress.streetAndNumber %>, 
                                                     <%= order.shippingAddress.ward %>, 
                                                     <%= order.shippingAddress.district %>, 
                                                     <%= order.shippingAddress.city %>
                                                 </p>
-                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone %></p>
+                                                <p class="mb-0"><strong>Phone:</strong> <%= order.shippingAddress.recipientPhone %></p>
                                             </div>
                                         </div>
                                         
                                         <!-- Danh sách sản phẩm trong đơn hàng -->
-                                        <h5 class="mb-3">Sản phẩm</h5>
+                                        <h5 class="mb-3">Products</h5>
                                         <% const itemsToShow = order.items || []; %>
                                         <% itemsToShow.slice(0, 3).forEach(item => { %>
                                             <div class="d-flex mb-3 order-item">
@@ -436,16 +436,16 @@
                                         <div class="row mt-3 pt-3 border-top">
                                             <div class="col-md-8">
                                                 <div class="mb-2">
-                                                    <span class="me-3"><strong>Trạng thái:</strong> <span class="badge bg-success">Đã giao hàng</span></span>
-                                                    <span><strong>Thanh toán:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
-                                                        <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                    <span class="me-3"><strong>Status:</strong> <span class="badge bg-success">Delivered</span></span>
+                                                    <span><strong>Payment:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
+                                                        <%= order.paymentStatus === 'completed' ? 'Paid' : 'Unpaid' %>
                                                     </span></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 text-end">
-                                                <p class="mb-1"><strong>Tổng tiền hàng:</strong> <%= formatPrice(order.itemsAmount) %></p>
-                                                <p class="mb-1"><strong>Phí vận chuyển:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
-                                                <p class="fs-5 fw-bold text-danger mb-0">Thành tiền: <%= formatPrice(order.totalAmount) %></p>
+                                                <p class="mb-1"><strong>Total:</strong> <%= formatPrice(order.itemsAmount) %></p>
+                                                <p class="mb-1"><strong>Shipping Fee:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
+                                                <p class="fs-5 fw-bold text-danger mb-0">Grand Total: <%= formatPrice(order.totalAmount) %></p>
                                             </div>
                                         </div>
                                     </div>
@@ -462,7 +462,7 @@
                     <% if (!canceledOrders.length) { %>
                         <div class="alert alert-info text-center">
                             <i class="fas fa-info-circle me-2"></i>
-                            Không có đơn hàng đã hủy.
+                            There are no cancelled orders.
                         </div>
                     <% } else { %>
                         <div class="order-list">
@@ -473,7 +473,7 @@
                                     <div class="card-header d-flex justify-content-between align-items-center bg-light">
                                         <div>
                                             <span class="order-id fw-bold">
-                                               Mã đơn hàng: <%= order.orderNumber || `#${order._id}` %>
+                                               Order ID: <%= order.orderNumber || `#${order._id}` %>
                                             </span>
                                             <span class="mx-3">|</span>
                                             <span class="order-date">
@@ -482,33 +482,33 @@
                                             </span>
                                         </div>
                                         <a href="/admin/orders/<%= order._id %>" class="btn btn-sm btn-outline-secondary">
-                                            <i class="fas fa-eye me-1"></i> Chi tiết
+                                            <i class="fas fa-eye me-1"></i> Details
                                         </a>
                                     </div>
                                     <div class="card-body">
                                         <!-- Thông tin khách hàng -->
                                         <div class="row mb-3 pb-3 border-bottom">
                                             <div class="col-md-6">
-                                                <h5 class="mb-2">Thông tin khách hàng</h5>
-                                                <p class="mb-1"><strong>Họ tên:</strong> <%= order.user ? order.user.fullName : 'Không có thông tin' %></p>
-                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'Không có thông tin' %></p>
-                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone || 'Không có thông tin' %></p>
+                                                <h5 class="mb-2">Customer Info</h5>
+                                                <p class="mb-1"><strong>Name:</strong> <%= order.user ? order.user.fullName : 'N/A' %></p>
+                                                <p class="mb-1"><strong>Email:</strong> <%= order.user ? order.user.email : 'N/A' %></p>
+                                                <p class="mb-0"><strong>Phone:</strong> <%= order.shippingAddress.recipientPhone || 'N/A' %></p>
                                             </div>
                                             <div class="col-md-6">
-                                                <h5 class="mb-2">Địa chỉ giao hàng</h5>
-                                                <p class="mb-1"><strong>Người nhận:</strong> <%= order.shippingAddress.recipientName %></p>
-                                                <p class="mb-1"><strong>Địa chỉ:</strong> 
+                                                <h5 class="mb-2">Shipping Address</h5>
+                                                <p class="mb-1"><strong>Recipient:</strong> <%= order.shippingAddress.recipientName %></p>
+                                                <p class="mb-1"><strong>Address:</strong> 
                                                     <%= order.shippingAddress.streetAndNumber %>, 
                                                     <%= order.shippingAddress.ward %>, 
                                                     <%= order.shippingAddress.district %>, 
                                                     <%= order.shippingAddress.city %>
                                                 </p>
-                                                <p class="mb-0"><strong>SĐT:</strong> <%= order.shippingAddress.recipientPhone %></p>
+                                                <p class="mb-0"><strong>Phone:</strong> <%= order.shippingAddress.recipientPhone %></p>
                                             </div>
                                         </div>
                                         
                                         <!-- Danh sách sản phẩm trong đơn hàng -->
-                                        <h5 class="mb-3">Sản phẩm</h5>
+                                        <h5 class="mb-3">Products</h5>
                                         <% const itemsToShow = order.items || []; %>
                                         <% itemsToShow.slice(0, 3).forEach(item => { %>
                                             <!-- Hiển thị sản phẩm -->
@@ -557,16 +557,16 @@
                                         <div class="row mt-3 pt-3 border-top">
                                             <div class="col-md-8">
                                                 <div class="mb-2">
-                                                    <span class="me-3"><strong>Trạng thái:</strong> <span class="badge bg-danger">Đã hủy</span></span>
-                                                    <span><strong>Thanh toán:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
-                                                        <%= order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+                                                    <span class="me-3"><strong>Status:</strong> <span class="badge bg-danger">Cancelled</span></span>
+                                                    <span><strong>Payment:</strong> <span class="<%= order.paymentStatus === 'completed' ? 'badge bg-success' : 'badge bg-warning text-dark' %>">
+                                                        <%= order.paymentStatus === 'completed' ? 'Paid' : 'Unpaid' %>
                                                     </span></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 text-end">
-                                                <p class="mb-1"><strong>Tổng tiền hàng:</strong> <%= formatPrice(order.itemsAmount) %></p>
-                                                <p class="mb-1"><strong>Phí vận chuyển:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
-                                                <p class="fs-5 fw-bold text-danger mb-0">Thành tiền: <%= formatPrice(order.totalAmount) %></p>
+                                                <p class="mb-1"><strong>Total:</strong> <%= formatPrice(order.itemsAmount) %></p>
+                                                <p class="mb-1"><strong>Shipping Fee:</strong> <%= formatPrice(order.shippingInfo ? order.shippingInfo.shippingFee : 0) %></p>
+                                                <p class="fs-5 fw-bold text-danger mb-0">Grand Total: <%= formatPrice(order.totalAmount) %></p>
                                             </div>
                                         </div>
                                     </div>
