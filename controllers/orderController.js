@@ -485,7 +485,7 @@ const getOrderDetailsAdmin = asyncHandler(async (req, res) => {
 const changeOrderStatus = asyncHandler(async (req, res) => {
   const { status } = req.body;
   const { id } = req.params;
-
+  console.log(`Yêu cầu cập nhật trạng thái đơn hàng ${id} thành "${status}"`);
   if (!["Processing", "Delivering", "Delivered", "Canceled"].includes(status)) {
     req.flash("error_msg", "Trạng thái không hợp lệ");
     return res.redirect(`/admin/orders/${id}`);
@@ -497,6 +497,8 @@ const changeOrderStatus = asyncHandler(async (req, res) => {
     req.flash("error_msg", "Không tìm thấy đơn hàng");
     return res.redirect("/admin/orders");
   }
+
+  const oldStatus = order.status;
 
   // Cập nhật trạng thái đơn hàng
   order.status = status;
@@ -512,7 +514,9 @@ const changeOrderStatus = asyncHandler(async (req, res) => {
 
   // Lưu thay đổi
   await order.save();
-
+  console.log(
+    `Đã cập nhật trạng thái đơn hàng ${id} từ "${oldStatus}" thành "${status}"`
+  );
   // Thực hiện các hành động liên quan khi thay đổi trạng thái
   if (status === "Delivered") {
     // Cập nhật số lượng sản phẩm đã bán
@@ -521,15 +525,32 @@ const changeOrderStatus = asyncHandler(async (req, res) => {
         $inc: { soldCount: item.quantity },
       });
     }
-
-    // Gửi email thông báo cho người dùng
-    // (bạn có thể triển khai chức năng này sau)
-  } else if (status === "Canceled") {
-    // Hoàn lại số lượng sản phẩm trong kho
+  } else if (status === "Delivering" && oldStatus === "Processing") {
+    console.log(`Đang cập nhật số lượng tồn kho cho đơn hàng ${id}`);
     for (const item of order.items) {
-      await Product.findByIdAndUpdate(item.product, {
-        $inc: { countInStock: item.quantity },
-      });
+      console.log(
+        `Sản phẩm: ${item.product}, Số lượng cần trừ: ${item.quantity}`
+      );
+
+      // Lấy thông tin sản phẩm trước khi cập nhật để kiểm tra
+      const productBefore = await Product.findById(item.product);
+      console.log(
+        `Số lượng tồn kho hiện tại của sản phẩm ${item.product}: ${
+          productBefore ? productBefore.quantity : "không tìm thấy sản phẩm"
+        }`
+      );
+
+      // Thực hiện cập nhật
+      const result = await Product.findByIdAndUpdate(
+        item.product,
+        { $inc: { quantity: -item.quantity } },
+        { new: true } // Trả về document sau khi update
+      );
+
+      console.log(`Kết quả cập nhật: ${result ? "thành công" : "thất bại"}`);
+      if (result) {
+        console.log(`Số lượng tồn kho sau khi cập nhật: ${result.quantity}`);
+      }
     }
   }
 
