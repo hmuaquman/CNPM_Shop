@@ -65,6 +65,28 @@ const getCart = asyncHandler(async (req, res) => {
 // @route   POST /cart/add
 // @access  Private
 const addToCart = asyncHandler(async (req, res) => {
+  // Kiểm tra xem người dùng đã đăng nhập chưa
+  if (!req.user) {
+    // Nếu là AJAX request
+    if (
+      req.xhr ||
+      (req.headers && req.headers["x-requested-with"] === "XMLHttpRequest")
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng",
+        redirectTo: "/auth/login",
+      });
+    } else {
+      // Lưu URL hiện tại vào session để sau khi đăng nhập có thể quay lại
+      req.session.returnTo = req.originalUrl;
+      req.flash(
+        "error_msg",
+        "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng"
+      );
+      return res.redirect("/auth/login");
+    }
+  }
   const { productId, variantId, quantity } = req.body;
   const userId = req.user._id;
   const isAjax =

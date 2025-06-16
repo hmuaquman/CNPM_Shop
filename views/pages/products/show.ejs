@@ -463,64 +463,56 @@ if (addToCartForm) {
       addToCartBtn.disabled = true;
       addToCartBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...';
       
-      // Tạo FormData từ form
-      const formData = new FormData(this);
-      
       // Gửi request
       const response = await fetch('/cart/add', {
         method: 'POST',
         body: JSON.stringify({
-            productId: this.querySelector('input[name="productId"]').value,
-            quantity: this.querySelector('input[name="quantity"]').value || 1,
-            variantId: this.querySelector('input[name="variantId"]')?.value || ''
+          productId: this.querySelector('input[name="productId"]').value,
+          quantity: this.querySelector('input[name="quantity"]').value || 1,
+          variantId: this.querySelector('input[name="variantId"]')?.value || ''
         }),
         headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
         }
-        });
-        
-      // Xử lý kết quả
-      const result = await response.json();
+      });
       
-      if (response.ok) {
-        // Hiển thị thông báo thành công
-        const messageContainer = document.createElement('div');
-        messageContainer.className = 'alert alert-success alert-dismissible fade show position-fixed start-50 translate-middle-x mt-3';
-        messageContainer.style.zIndex = '1050';
-        messageContainer.style.top = '10px';
-        messageContainer.style.maxWidth = '90%';
+      // Kiểm tra content-type trong response
+      const contentType = response.headers.get('content-type');
+      
+      // Nếu redirect hoặc không phải JSON
+      if (response.redirected || !contentType || !contentType.includes('application/json')) {
+        // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+        window.location.href = '/auth/login?returnTo=' + encodeURIComponent(window.location.pathname);
+        return;
+      }
+      
+      // Xử lý phản hồi JSON (chỉ parse nếu là JSON)
+      if (contentType && contentType.includes('application/json')) {
+        const result = await response.json();
         
-        messageContainer.innerHTML = `
-          <div class="d-flex align-items-center">
-            <i class="fas fa-check-circle me-2"></i>
-            <strong>${result.message}</strong>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-        
-        document.body.appendChild(messageContainer);
-        
-        // Cập nhật số lượng giỏ hàng nếu có phần hiển thị này
-        const cartCountElements = document.querySelectorAll('.cart-count');
-        if (cartCountElements.length > 0 && result.cartCount) {
-          cartCountElements.forEach(el => {
-            el.textContent = result.cartCount;
-          });
+        if (response.ok) {
+          // Thông báo thành công
+          alert(result.message || 'Đã thêm sản phẩm vào giỏ hàng');
+        } else {
+          // Thông báo lỗi
+          alert(result.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+          
+          // Nếu lỗi liên quan đến xác thực, chuyển hướng
+          if (result.redirectTo) {
+            window.location.href = result.redirectTo;
+            return;
+          }
         }
-        
-        // Tự động ẩn thông báo sau 3 giây
-        setTimeout(() => {
-          messageContainer.classList.remove('show');
-          setTimeout(() => {
-            if (document.body.contains(messageContainer)) {
-              document.body.removeChild(messageContainer);
-            }
-          }, 150);
-        }, 3000);
       } else {
-        // Hiển thị thông báo lỗi
-        alert(result.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+        // Nếu không phải JSON, có thể là HTML
+        alert('Có lỗi xảy ra khi thêm vào giỏ hàng');
+        
+        // Nếu status là 401 hoặc 403, có thể chuyển đến trang đăng nhập
+        if (response.status === 401 || response.status === 403) {
+          window.location.href = '/auth/login?returnTo=' + encodeURIComponent(window.location.pathname);
+          return;
+        }
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
