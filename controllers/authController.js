@@ -98,6 +98,15 @@ exports.login = async (req, res) => {
 
     console.log("✓ User found:", user.userName, user.email, "Role:", user.role);
 
+    if (user.status === "blocked") {
+      console.log("🔒 Account is blocked:", user.userName);
+      req.flash(
+        "error_msg",
+        "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ."
+      );
+      return res.redirect("/auth/login");
+    }
+
     // Kiểm tra mật khẩu
     const isMatch = await user.matchPassword(password);
     console.log("🔓 Password match result:", isMatch);

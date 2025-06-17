@@ -73,33 +73,31 @@
         <h5 class="mb-0">Danh mục</h5>
       </div>
       <div class="card-body">
-      <select
-        class="form-select"
-        id="category-select"
-        onchange="if (this.value) window.location.href = this.value"
-      >
-        <option value="/products?<%= new URLSearchParams(Object.fromEntries(
-          Object.entries(query).filter(([key]) => key !== 'category' && key !== 'page')
-        )).toString() %>" <%= !query.category ? 'selected' : '' %>>
-          Tất cả sản phẩm
-        </option>
-        <% if (categories && categories.length > 0) { %>
-          <% categories.forEach(category => { %>
-            <option
-              value="/products?<%= new URLSearchParams({
-                ...Object.fromEntries(
-                  Object.entries(query).filter(([key]) => key !== 'page')
-                ),
-                category: category._id
-              }).toString() %>"
-              <%= query && query.category === category._id.toString() ? 'selected' : '' %>
-            >
-              <%= category.name %>
-            </option>
-          <% }) %>
-        <% } %>
-      </select>
-    </div>
+        <select
+          class="form-select"
+          id="category-select"
+          onchange="if (this.value) window.location.href = this.value"
+        >
+          <option value="/products" <%= !query.category ? 'selected' : '' %>>
+            Tất cả sản phẩm
+          </option>
+          <% if (categories && categories.length > 0) { %>
+            <% categories.forEach(category => { %>
+              <option
+                value="/products?<%= new URLSearchParams({
+                  ...Object.fromEntries(
+                    Object.entries(query).filter(([key]) => key !== 'page')
+                  ),
+                  category: category._id
+                }).toString() %>"
+                <%= query && query.category === category._id.toString() ? 'selected' : '' %>
+              >
+                <%= category.name %>
+              </option>
+            <% }) %>
+          <% } %>
+        </select>
+      </div>
     </div>
 
     <!-- Lọc theo thương hiệu -->
